@@ -47,99 +47,113 @@ def image_slicing(input_map_directory, output_directory, axes_list =
     os.mkdir(output_directory)
 
   #creating logfile  
-  text = open(os.path.join(output_directory,'logfile_image_slicing.txt'),'a')
+  logfile = os.path.join(output_directory, 'loffile_image_slicing.txt')
+  text = open(logfile,'a')
   text.write('this is a log file for the progress of image_slicing(). \n')
-
+  text.close()
   #opening file
   for file in os.listdir(input_map_directory):
-    f=str(file)
-    mrc = mrcfile.open(os.path.join(input_map_directory,f))
-    #mrc.print_header()
-    print('Opening file')
-    file_name = os.path.splitext(f)[0]
-    print(file_name)
-    text.write('for file'+file_name+'.\n\n Opening file...\n')
+    if file.endswith('.map'):
+      f=str(file)
+      mrc = mrcfile.open(os.path.join(input_map_directory,f))
+      #mrc.print_header()
+      print('Opening file')
+      file_name = os.path.splitext(f)[0]
+      print(file_name)
+      text=open(logfile,'a')
+      text.write('\n'+file_name+'\n')
 
-    if file_name.endswith('_i'):
-      protein=file_name[:-2]
-    else:
-      protein=file_name
-    print(protein)
 
-    output_dir1 = os.path.join(output_directory,protein)
-    #ensuring the output directory exists
-    if not os.path.isdir(output_dir1):
-      print("creating output directory "+output_dir1)
-      text.write('creating output directory '+output_dir1+'\n')
-      os.mkdir(output_dir1)
 
-    output_dir2 = os.path.join(output_dir1,file_name)
-    if not os.path.isdir(output_dir2):
-      print("creating output directory "+ output_dir2)
-      text.write('creating output directory '+output_dir2+'\n')
-      os.mkdir(output_dir2)
-    
- #   '''the value of axis_list was specified above, we need to loop over the axes
- #   specified in this list and transpose the data columns accordingly- we need the
- #   sectioning axis to be in mrc.data[2]'''
-    
-    for axis in axes_list:
-      if axis in ['X']:
-        text.write('\nFor the '+axis+' axis. \n\n')
-        print("transposing")
-        text.write('transposing...\n')
-        loc_mrcdata_a=np.transpose(mrc.data,(1,2,0))
-      elif axis in ['Y']:
-        loc_mrcdata_a=np.transpose(mrc.data,(2,0,1))
+      if file_name.endswith('_i'):
+        protein=file_name[:-2]
       else:
-        loc_mrcdata_a=mrc.data
-      
-      output_dir3 = os.path.join(output_dir2,axis)
-      if not os.path.isdir(output_dir3):
-        print("creating output directory "+output_dir3)
-        text.write('creating output directory '+output_dir3+'\n')
-        os.mkdir(output_dir3)
+        protein=file_name
+      print(protein)
+  
+      output_dir1 = os.path.join(output_directory,protein)
+     #ensuring the output directory exists
+      if not os.path.isdir(output_dir1):
+        print("creating output directory "+output_dir1)
+        #text.write('creating output directory '+output_dir1+'\n')
+        os.mkdir(output_dir1)  
+
+      output_dir2 = os.path.join(output_dir1,file_name)
+      if not os.path.isdir(output_dir2):
+        print("creating output directory "+ output_dir2)
+        #text.write('creating output directory '+output_dir2+'\n')
+        os.mkdir(output_dir2)
+     
+#    '''the value of axis_list was specified above, we need to loop over the axes
+ #     specified in this list and transpose the data columns accordingly- we need the
+ #     sectioning axis to be in mrc.data[2]'''
+      text.close()
+
+      for axis in axes_list:
+        if axis in ['X']:
+          #text.write('\nFor the '+axis+' axis. \n\n')
+          print("transposing")
+          #text.write('transposing...\n')
+          loc_mrcdata_a=np.transpose(mrc.data,(1,2,0))
+        elif axis in ['Y']:
+          loc_mrcdata_a=np.transpose(mrc.data,(2,0,1))
+        else:
+          loc_mrcdata_a=mrc.data
+       
+        output_dir3 = os.path.join(output_dir2,axis)
+        if not os.path.isdir(output_dir3):
+          print("creating output directory "+output_dir3)
+          #text.write('creating output directory '+output_dir3+'\n')
+          os.mkdir(output_dir3)  
 
 #'''a variable to log image file names in order- completely optional, but can
 #be helpful.'''
        #bluring the data using a gaussian filter
-      if blur:
-        loc_mrcdata=scipy.ndimage.filters.gaussian_filter(loc_mrcdata_a,(sigma,sigma,sigma))
-        print('bluring map')
-        text.write('bluring map\n')
-      else:
-        loc_mrcdata=loc_mrcdata_a
-     
-      num=0
-      for section in range(0,loc_mrcdata.shape[2], section_skip):
-        print("processing section",section)
-        text.write('\nprocessing section '+str(section)+'\n')
-        num +=1
-        myim = loc_mrcdata[:,:,section].copy(order='C')
-        
-        #to normalise the contrast of the image
-        if normalise:
-         print('normalising')
-         text.write('normalising\n')
-         myim = 255.0*np.clip((myim-map_min)/(map_max-map_min),0,1)
-
-        #this is to same the files in order and otherwise unimportant
-        if num < 10:
-         imgout_filename = file_name +'_00'+str(num)+'_'+str(section)+axis+'.png'
-        elif num < 100:
-         imgout_filename = file_name +'_0'+str(num)+'_'+str(section)+axis+'.png'
+        if blur:
+          loc_mrcdata=scipy.ndimage.filters.gaussian_filter(loc_mrcdata_a,(sigma,sigma,sigma))
+          print('bluring map')
+          #text.write('bluring map\n')
         else:
-          imgout_filename =file_name+'_'+str(num)+'_'+str(section)+axis+'.png'
-        #saving file
-        img_out = pimg.fromarray(myim)
-        img_new =  img_out.convert('RGB')
-        img_new.save(output_dir3+'/'+imgout_filename)
-        print('saved image: '+imgout_filename+' in directory '+output_dir3+'\n')
-        text.write('saved image: '+imgout_filename+' in directory '+output_dir3+'\n')
+          loc_mrcdata=loc_mrcdata_a
        
-    
+        num=0
+        for section in range(0,loc_mrcdata.shape[2], section_skip):
+          print("processing section",section)
+          #text.write('\nprocessing section '+str(section)+'\n')
+          num +=1
+          myim = loc_mrcdata[:,:,section].copy(order='C')
+         
+          #to normalise the contrast of the image
+          if normalise:
+            print('normalising')
+            #text.write('normalising\n')
+            myim = 255.0*np.clip((myim-map_min)/(map_max-map_min),0,1)  
+
+          #this is to same the files in order and otherwise unimportant
+          if num < 10:
+            imgout_filename = file_name +'_00'+str(num)+'_'+str(section)+axis+'.png'
+          elif num < 100:
+            imgout_filename = file_name +'_0'+str(num)+'_'+str(section)+axis+'.png'
+          else:
+            imgout_filename =file_name+'_'+str(num)+'_'+str(section)+axis+'.png'
+         #saving file
+          img_out = pimg.fromarray(myim)
+          img_new =  img_out.convert('RGB')
+          img_new.save(output_dir3+'/'+imgout_filename)
+          print('saved image: '+imgout_filename+' in directory '+output_dir3+'\n')
+          text=open(logfile,'a')
+          if not os.path.exists(os.path.join(output_dir3,imgout_filename)):
+            text.write(imageout_filename+' did not work')
+            continue
+
+          text.write('saved image: '+imgout_filename+'\n')
+          text.close()
+       
+    else:
+      continue
     print("Finished. The images are saved in ",output_dir1 )
-    text.write('Finished. The images are saved in ",output_dir1')
+    text=open(logfile,'a')
+    text.write('Finished. The images are saved in %s' %output_dir1)
     text.close()
 ##########################################################################################
 #input and output directories

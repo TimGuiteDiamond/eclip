@@ -2,9 +2,9 @@
 
 from ConvMAP import image_slicing
 
-input_map_directory1='/dls/science/users/ycc62267/mapfdr/gauss'
+input_map_directory1='/dls/mx-scratch/ycc62267/mapfdr'
 
-output_directory1='/dls/science/users/ycc62267/imgfdr/gauss/blurdir'
+output_directory1='/dls/mx-scratch/ycc62267/imgfdr/blur2_5'
 
 image_slicing(input_map_directory1,output_directory1)
 
