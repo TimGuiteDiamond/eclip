@@ -52,7 +52,12 @@ def image_slicing(input_map_directory, output_directory, axes_list =
   text.write('this is a log file for the progress of image_slicing(). \n')
   text.close()
   #opening file
+ # m=0
   for file in os.listdir(input_map_directory):
+ #   m+=1
+ #   if m>3:
+ #     break
+
     if file.endswith('.map'):
       f=str(file)
       mrc = mrcfile.open(os.path.join(input_map_directory,f))
