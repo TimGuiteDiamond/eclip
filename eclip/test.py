@@ -110,7 +110,7 @@ def inputTrainingImages(database,input_shape,Protein_id):
     if label[i] ==0:
       #print(filearray[i].shape)
       length=len(filearray[i])
-      filearray[i]=filearray[i]/10
+      filearray[i]=filearray[i]/1
 
   ntrain=len(filearray)
   x_train = filearray.reshape(ntrain,input_shape[0],input_shape[1],input_shape[2])
@@ -141,7 +141,7 @@ class mapModel(Sequential):
   def createCustom1(self,input_shape1):
     #mess with these once code is working... currently from keras tutorial -
     #generic setup
-    self.add(Convolution2D(32,(3,3),activation ='relu',input_shape=input_shape1))
+    self.add(Convolution2D(32,(3,3),kernel_initializer.he_normal(),activation ='relu',input_shape=input_shape1))
     self.add(Convolution2D(32,(3,3),activation = 'relu'))
     self.add(MaxPooling2D(pool_size =(2,2)))
     self.add(Dropout(0.25))
@@ -154,7 +154,7 @@ class mapModel(Sequential):
   def createCustom2(self,input_shape2):
     #another model, with more layers and a different final layer
     #padding??
-    self.add(Convolution2D(32,(3,3),activation='relu',padding='same',input_shape=input_shape2))
+    self.add(Convolution2D(32,(3,3),kernel_initializer=initializers.he_normal(),activation='relu',padding='same',input_shape=input_shape2))
     self.add(MaxPooling2D(pool_size=(2,2)))
     self.add(BatchNormalization())
     self.add(Convolution2D(64,(3,3),activation='relu',padding='same'))
@@ -167,7 +167,7 @@ class mapModel(Sequential):
    # self.add(Dropout(0.5))
     self.add(BatchNormalization())
     self.add(Dense(128,activation='relu'))
-    self.add(Dense(1,activation='sigmoid'))
+    self.add(Dense(2,activation='softmax'))
 
   def createCustom3(self,input_shape3):
     #another model
@@ -209,12 +209,12 @@ print(sum(y_train))
 
 
 model = mapModel()
-model.createCustom3(input_shape3=[201,201,3])
+model.createCustom2(input_shape2=[201,201,3])
 
 #compile the model
 #optimiser could be opt=keras.optimizers.SGD(lr=0.0001), but should check
 #initiate RMSprop optimizer - mess with this once code is working
-opt = keras.optimizers.Adam(lr=0.001)
+opt = keras.optimizers.Adam(lr=0.0001)
 
 model.compile(loss = 'categorical_crossentropy',
               optimizer = opt,
@@ -228,7 +228,8 @@ print('model compiled')
 #look at the need for augmenting the data- we have a lot so it may not be
 #necessary
 print(y_test.shape)
-history=model.fit(x_train,y_train,class_weight=class_weights,batch_size = 32, epochs=5, verbose=1,validation_split=(0.33))
+history=model.fit(x_train,y_train,class_weight=class_weights,batch_size = 15,
+epochs=30, verbose=1,validation_split=(0.33))
 plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])
 plt.title('model train')
