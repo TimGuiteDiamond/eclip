@@ -13,58 +13,14 @@ import os
 from sklearn.utils import shuffle
 from sklearn.utils import class_weight
 import keras
+from keras import initializers
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Convolution2D, MaxPooling2D, BatchNormalization
 from keras.utils import np_utils
 from keras.utils import plot_model, to_categorical
+from keras.applications import vgg16
 ################################################################################################
-
-#fnumsamples = len(filearray[:0])numsamples = len(filearray[:0])rom keras.applications import vgg16, inception_v3, resnet50, mobilenet
-
-
-
-#first we will need to read the data into an array and divide it into train and
-#test data. 
-
-#create an array of all the images 
-#loop though  .../blur2_5/ to find protein names
-#loop through sub directories to find file names
-#create a dictionary with filenames and image files
-
-#read document for assigning g or b and link to correct dictionary place
-#combine to make an array/dataset with x_data=(image,x,y) and y_data=(catagory, 2)
-#reshape data to make it explicitly declare the depth of x_data: x_data=(n,
-#depth,width,height)
-#change x_data to floats and normalise between 0 and 1
-#divide into test and train (might have to do this earlier)
-
-#def inputTrainingImages(dirin,input_shape,fractionTrain):
-  #this code is to read the image files into an array and divide it into test
-  #and train data.
-
-  #reading in data - the images should all be the same size in the end
-  #we will need to redo this when the files are sorted 
-
-  #reading the images into a filelist
-#  filelist = []
-  #list of file paths
-#  for file in os.listdir(dirin):
-#    filelist.append(os.path.join(dirin,file))
-
-
-  #reading the images into an array
-#  filearray=np.array([np.array(plt.imread(filename)).flatten() for filename in filelist])
-  #in the line above, we may need to use .flatten() to move the file into 1D
-#  print('the images have been read in')
-#  numsamples = len(filearray[0:])
-  
-#  label = np.ones(numsamples)
-
-  #shuffle data
-#  filearray,label = shuffle(filearray,label,random_state = 2)
-#  print('x after shuffle: ', filearray.shape)
-#  print('y after shuffle: ', label.shape)
 
 
 #############################################################################################
@@ -75,7 +31,7 @@ def normalarray(n_array):
   norm_array=(n_array-mini)/(maxi-mini)
   return norm_array
 
-def inputTrainingImages(database,input_shape,fractionTrain):
+def inputTrainingImages(database,input_shape,Protein_id):
   conn=sqlite3.connect(database)
   cur=conn.cursor()
 
@@ -83,7 +39,7 @@ def inputTrainingImages(database,input_shape,fractionTrain):
   #Protein_id is a list of the pdb_id_ids from the database
   #cur.execute('''SELECT pdb_id_id FROM Phasing''')
   #Protein_id=cur.fetchall()
-  Protein_id=[584]
+
   #Create a list of directory names (x_dir) and a list of the scores (y_list)
   x_dir=[]
   y_list=[]
@@ -123,20 +79,17 @@ def inputTrainingImages(database,input_shape,fractionTrain):
       for file in os.listdir(img_dir):
         location=os.path.join(img_dir,file)
         filelist.append(location)
-        print(location)
+       # print(location)
       #  print('adding %s to filelist'%file)
         label.append(y_list[i])
   
   #Normalising:
-
-  
-
-
   filearray=np.array([normalarray(np.array(plt.imread(filename))).flatten() for filename in
   filelist])
-  
   print('images have been read in')
-  numsamples = len(filearray[0:])
+  numsamples = len(filearray)
+  print(numsamples)
+  print(filearray.shape)
   #print(label) 
   #label is a list of scores for each image
   #filearray is an array of each image
@@ -152,20 +105,19 @@ def inputTrainingImages(database,input_shape,fractionTrain):
   print('x after shuffle: ', filearray.shape)
   print('y after shuffle: ', label.shape)
 
+#setting all y=0 to all zeros for x - testing
+  for i in range(0,len(label)):
+    if label[i] ==0:
+      #print(filearray[i].shape)
+      length=len(filearray[i])
+      filearray[i]=filearray[i]/10
 
-  #spliting into train and test
-  ntrain = int(numsamples*fractionTrain)
-
-  x_train = filearray[:ntrain].reshape(ntrain,input_shape[0],input_shape[1],input_shape[2])
-  y_train = to_categorical(label[:ntrain],2)#this is used to create a binary class matrix
+  ntrain=len(filearray)
+  x_train = filearray.reshape(ntrain,input_shape[0],input_shape[1],input_shape[2])
+  y_train = to_categorical(label,2)#this is used to create a binary class matrix
 #  y_train=label[:ntrain]
-  ntest = numsamples - ntrain
-  x_test = filearray[ntrain:].reshape(ntest,input_shape[0],input_shape[1],input_shape[2])
-  y_test = to_categorical(label[ntrain:],2)
-#  y_test=label[ntrain:]
-  batch_size = numsamples
-
-  return x_train, x_test, y_train, y_test
+ 
+  return x_train, y_train
 
 #inputTrainingImages(dirin='/dls/mx-scratch/ycc62267/imgfdr/blur2_5/3S6E/3S6E_i/X',input_shape=[160,288,3],fractionTrain= 0.8)
 
@@ -217,11 +169,32 @@ class mapModel(Sequential):
     self.add(Dense(128,activation='relu'))
     self.add(Dense(1,activation='sigmoid'))
 
+  def createCustom3(self,input_shape3):
+    #another model
+    self.add(Convolution2D(32,(3,3),kernel_initializer=initializers.he_normal(),padding='same',activation='relu',input_shape=input_shape3))
+    self.add(Convolution2D(32,(3,3),activation = 'relu'))
+    self.add(MaxPooling2D(pool_size=(2,2)))
+ #   self.add(Dropout(0.25))
+
+ #   self.add(Convolution2D(64,(3,3),padding='same', activation='relu'))
+ #   self.add(Convolution2D(64,(3,3),activation='relu'))
+ #   self.add(MaxPooling2D(pool_size=(2,2)))
+ #   self.add(Dropout(0.25))
+
+    self.add(Flatten())
+    self.add(Dense(80,kernel_initializer=initializers.he_normal(),activation='relu'))
+ #   self.add(Dropout(0.5))
+    self.add(Dense(2,activation='softmax'))
+
+
 ####################################################################################
 
+x_train,y_train=inputTrainingImages(database='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',input_shape=[201,201,3],Protein_id=[584,504,114])
 
+x_test, y_test=inputTrainingImages(database='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',input_shape=[201,201,3],Protein_id=
+[334])
 
-x_train, x_test, y_train, y_test=inputTrainingImages(database='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',input_shape=[201,201,3],fractionTrain=0.8)
+#x_train, x_test, y_train, y_test=inputTrainingImages(database='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',input_shape=[201,201,3],fractionTrain=0.8)
 
 ones=sum(y_train)
 length=len(y_train)
@@ -236,14 +209,14 @@ print(sum(y_train))
 
 
 model = mapModel()
-model.createCustom1(input_shape1=[201,201,3])
+model.createCustom3(input_shape3=[201,201,3])
 
 #compile the model
 #optimiser could be opt=keras.optimizers.SGD(lr=0.0001), but should check
 #initiate RMSprop optimizer - mess with this once code is working
-opt = keras.optimizers.Adam(lr=0.01)
+opt = keras.optimizers.Adam(lr=0.001)
 
-model.compile(loss = 'binary_crossentropy',
+model.compile(loss = 'categorical_crossentropy',
               optimizer = opt,
               metrics = ['accuracy'])
 print('model compiled')
@@ -254,12 +227,11 @@ print('model compiled')
 #varies the weights.
 #look at the need for augmenting the data- we have a lot so it may not be
 #necessary
-
-history=model.fit(x_train,y_train,class_weight=class_weights,batch_size = 32, epochs=5, verbose
-=1,validation_split=(0.33))
+print(y_test.shape)
+history=model.fit(x_train,y_train,class_weight=class_weights,batch_size = 32, epochs=5, verbose=1,validation_split=(0.33))
 plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])
-plt.title('model train vs validation loss')
+plt.title('model train')
 plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['train','validation'],loc='upper right')
