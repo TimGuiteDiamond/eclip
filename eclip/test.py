@@ -18,8 +18,10 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Convolution2D, MaxPooling2D, BatchNormalization
 from keras.utils import np_utils
-from keras.utils import plot_model, to_categorical
+from keras.utils import to_categorical, plot_model
 from keras.applications import vgg16
+
+
 ################################################################################################
 
 
@@ -31,24 +33,24 @@ def normalarray(n_array):
   norm_array=(n_array-mini)/(maxi-mini)
   return norm_array
 
-def inputTrainingImages(database,input_shape,Protein_id):
+def inputTrainingImages(database,input_shape,fractionTrain):
   conn=sqlite3.connect(database)
   cur=conn.cursor()
 
   
   #Protein_id is a list of the pdb_id_ids from the database
-  #cur.execute('''SELECT pdb_id_id FROM Phasing''')
-  #Protein_id=cur.fetchall()
+  cur.execute('''SELECT pdb_id_id FROM Phasing''')
+  Protein_id=cur.fetchall()
 
   #Create a list of directory names (x_dir) and a list of the scores (y_list)
   x_dir=[]
   y_list=[]
-  #get rid of m for the real thing- cuts down the number of samples used
-  m=0
+
+  
   for item in Protein_id:
-    m+=1
-    if m>4:
-      break
+ 
+
+
     cur.execute('''SELECT ep_success_o FROM Phasing WHERE pdb_id_id = "%s"'''%item)
     y_o=list(cur.fetchall()[0])[0]
     if not y_o==None:
@@ -69,18 +71,23 @@ def inputTrainingImages(database,input_shape,Protein_id):
   #directories, in each of these there are files.
   
   #Create an array of the images using x_dir (and keeping the same order!!! -
-  #CHECK THIS!!)
+
   filelist=[]
   label=[]
+  
   for i in range(0,len(y_list)):
     dirin = x_dir[i]
     for dir in os.listdir(dirin):
       img_dir=os.path.join(dirin,dir)
+      m=0
       for file in os.listdir(img_dir):
+        m+=1
+        if m>2:
+          break
         location=os.path.join(img_dir,file)
         filelist.append(location)
-       # print(location)
-      #  print('adding %s to filelist'%file)
+ 
+
         label.append(y_list[i])
   
   #Normalising:
@@ -90,13 +97,13 @@ def inputTrainingImages(database,input_shape,Protein_id):
   numsamples = len(filearray)
   print(numsamples)
   print(filearray.shape)
-  #print(label) 
+
   #label is a list of scores for each image
   #filearray is an array of each image
   
   #need to make label and array:
   label=np.asarray(label)
-  #print(label)
+
   #label is an array of scores for each image
   #filearray is an array of each image
   
@@ -108,18 +115,22 @@ def inputTrainingImages(database,input_shape,Protein_id):
 #setting all y=0 to all zeros for x - testing
   for i in range(0,len(label)):
     if label[i] ==0:
-      #print(filearray[i].shape)
+
       length=len(filearray[i])
       filearray[i]=filearray[i]/1
 
-  ntrain=len(filearray)
-  x_train = filearray.reshape(ntrain,input_shape[0],input_shape[1],input_shape[2])
-  y_train = to_categorical(label,2)#this is used to create a binary class matrix
-#  y_train=label[:ntrain]
- 
-  return x_train, y_train
+  ntrain=int(numsamples*fractionTrain)
 
-#inputTrainingImages(dirin='/dls/mx-scratch/ycc62267/imgfdr/blur2_5/3S6E/3S6E_i/X',input_shape=[160,288,3],fractionTrain= 0.8)
+  x_train = filearray[:ntrain].reshape(ntrain,input_shape[0],input_shape[1],input_shape[2])
+  y_train = to_categorical(label[:ntrain],2)#this is used to create a binary class matrix
+
+  ntest=numsamples-ntrain
+  x_test = filearray[ntrain:].reshape(ntest,input_shape[0],input_shape[1],input_shape[2])
+  y_test= to_categorical(label[ntrain:],2)
+ 
+  return x_train, y_train, x_test, y_test
+
+
 
 #define the model architecture
 #should probably design a model or at least think about the most helpful. 
@@ -153,18 +164,18 @@ class mapModel(Sequential):
 
   def createCustom2(self,input_shape2):
     #another model, with more layers and a different final layer
-    #padding??
+ 
     self.add(Convolution2D(32,(3,3),kernel_initializer=initializers.he_normal(),activation='relu',padding='same',input_shape=input_shape2))
     self.add(MaxPooling2D(pool_size=(2,2)))
     self.add(BatchNormalization())
     self.add(Convolution2D(64,(3,3),activation='relu',padding='same'))
-    self.add(Convolution2D(64,(3,3),activation='relu',padding='same'))
+   # self.add(Convolution2D(64,(3,3),activation='relu',padding='same'))
     self.add(MaxPooling2D(pool_size=(2,2)))
     self.add(BatchNormalization())
     self.add(Convolution2D(128,(3,3),activation='relu',padding='same'))
     self.add(MaxPooling2D(pool_size=(2,2)))
     self.add(Flatten())
-   # self.add(Dropout(0.5))
+    self.add(Dropout(0.5))
     self.add(BatchNormalization())
     self.add(Dense(128,activation='relu'))
     self.add(Dense(2,activation='softmax'))
@@ -186,26 +197,48 @@ class mapModel(Sequential):
  #   self.add(Dropout(0.5))
     self.add(Dense(2,activation='softmax'))
 
-
+##this needs some work on- dont really understand this bit!
+#class WeightsCheck(keras.callbacks.Callback):
+#    def on_epoch_begin(self,batch,logs={}):
+#      for layer in model.layers[16:17]:
+#        print(layer.get_weights())
+#    def on_epoch_end(self,batch,logs={}):
+#      for layer in model.layers[16:17]):
+#        print(layer.get_weights())
 ####################################################################################
 
-x_train,y_train=inputTrainingImages(database='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',input_shape=[201,201,3],Protein_id=[584,504,114])
+#x_train,y_train=inputTrainingImages(database='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',input_shape=[201,201,3],Protein_id=[584,504,114])
 
-x_test, y_test=inputTrainingImages(database='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',input_shape=[201,201,3],Protein_id=
-[334])
+#x_test, y_test=inputTrainingImages(database='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',input_shape=[201,201,3],Protein_id=[334])
 
-#x_train, x_test, y_train, y_test=inputTrainingImages(database='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',input_shape=[201,201,3],fractionTrain=0.8)
+x_train , y_train, x_test, y_test=inputTrainingImages(database='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',input_shape=[201,201,3],fractionTrain=0.8)
 
+print('train')
 ones=sum(y_train)
 length=len(y_train)
 zeros=length-ones
 ratio=ones/zeros
+print('ones %s' %ones)
+print('zeros %s' %zeros)
+print(ratio)
+
+
+print('test')
+ones=sum(y_test)
+length=len(y_test)
+zeros=length-ones
+ratio=ones/zeros
+print('ones %s' %ones)
+print('zeros %s' %zeros)
+print(ratio)
+
 
 y_ints=[y.argmax() for y in y_train]
 class_weights=dict(enumerate(class_weight.compute_class_weight('balanced',np.unique(y_ints),y_ints)))
-print(class_weights)
-print(len(y_train))
-print(sum(y_train))
+print('classweights %s'%class_weights)
+
+
+
 
 
 model = mapModel()
@@ -222,14 +255,22 @@ model.compile(loss = 'categorical_crossentropy',
 print('model compiled')
 
 
+##loading previous weights option
+#load_weights=False
+#weights_file = 'file location for previous weights'
+#if load_weights:
+#  model.load_weights(weights_file)
+#  print('weights loaded')
+
+#weights_check = WeightsCheck()
 
 #fit the model on the training data- this is the bit that trains the model -
 #varies the weights.
 #look at the need for augmenting the data- we have a lot so it may not be
 #necessary
-print(y_test.shape)
-history=model.fit(x_train,y_train,class_weight=class_weights,batch_size = 15,
-epochs=30, verbose=1,validation_split=(0.33))
+
+history=model.fit(x_train,y_train,class_weight=class_weights,batch_size = 32,
+epochs=30, verbose=1,validation_split=(0.33),callbacks=[])
 plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])
 plt.title('model train')
@@ -238,6 +279,7 @@ plt.xlabel('epoch')
 plt.legend(['train','validation'],loc='upper right')
 plt.show()
 #verbose gives a progress bar
+
 
 prediction=model.predict(x_test,batch_size=32,verbose=1)
 print(prediction)
@@ -248,4 +290,50 @@ print(prediction)
 loss,acc = model.evaluate(x_test, y_test, verbose =1)
 print('loss is: %s'%loss)
 print('accuracy is: %s'%acc)
+
+
+
+
+##exporting model
+#json_string=model.to_json()
+#outfile=open('model.json','w')
+##outfile.write(json_string)???
+#outfile.close()
+
+#yam1_string=model.to_yam1()
+#outfile2 = sopen('model.yam1','w')
+#outfile2.write(yam1_string)
+#outfile2.close()
+
+##writing predictions and true positive etc
+#fileout= '/dls/science/users/ycc62267/eclip/eclip/predictions.txt'
+#outfile=open(fileout,'w')
+n_tn = 0
+n_tp=0
+n_fn=0
+n_fp=0
+#
+#print('writing predictions')
+for i in range(len(prediction)):
+  outfile.write(str(prediction[i])+";"+str(y_test[i])+'\n')
+  if prediction[i][0] > 0.5 and y_test[i][0]>0.5:
+    n_tin+=1
+  if prediction[i][0]>0.5 and y_test[i][1]>0.5:
+    n_fn+=1
+  if prediction[i][1]>0.5 and y_test[i][1]>0.5:
+    n_tp+=1
+  if prediction[i][1]>0.5 and y_test[i][0]>0.5:
+    n_fp+=1
+#
+#outfile.close()
+print('Number of true negatives = ',n_tn)
+print('Number of false negatives = ',n_fn)
+print('Number of true positives = ',n_tp)
+print('Number of false positives = ',n_fp)
+
+##saveing output weights to a file:
+#import hdf5
+#weights_out = 'model.hdf5'
+#model.save_weights(weights_out)
+
 
