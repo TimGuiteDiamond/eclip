@@ -10,11 +10,13 @@ import matplotlib.pyplot  as plt
 plt.switch_backend('agg')
 np.random.seed(123) # for reproduciblility
 import os
+import itertools
 
 from sklearn.utils import shuffle
 from sklearn.utils import class_weight
 import keras
 from keras import initializers
+from keras import regularizers
 from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Convolution2D, MaxPooling2D, BatchNormalization
@@ -25,6 +27,8 @@ from keras.applications import vgg16
 from keras.utils import multi_gpu_model
 
 from sklearn.metrics import confusion_matrix
+
+import random
 ################################################################################################
 
 
@@ -82,22 +86,22 @@ def inputTrainingImages(database,input_shape,fractionTrain):
     dirin = x_dir[i]
     for dir in os.listdir(dirin):
       img_dir=os.path.join(dirin,dir)
-      m=0
 
       #chosing random files from directory
-      #for m<5:
-      #  m=+1
-      #  filename=random.choice(os.listdir(img_dir))
-      #  location=os.path.join(img_dir,filename)
-      #  filelist.append(location)
-      #  label.append(y_list[i])
-      for file in os.listdir(img_dir):
-        m+=1
-        if m>4:
-          break
-        location=os.path.join(img_dir,file)
+      for m in range(1,10):
+        filename=random.choice(os.listdir(img_dir))
+        location=os.path.join(img_dir,filename)
         filelist.append(location)
         label.append(y_list[i])
+        
+      #m=0
+      #for file in os.listdir(img_dir):
+      #  m+=1
+      #  if m>6:
+      #    break
+      #  location=os.path.join(img_dir,file)
+      #  filelist.append(location)
+      #  label.append(y_list[i])
   
   #Normalising:
   filearray=np.array([normalarray(np.array(plt.imread(filename))).flatten() for filename in
@@ -198,20 +202,20 @@ class mapModel(Sequential):
     text.write("MaxPooling2D(pool_size(2,2),name='Pool_2')\n")
     self.add(BatchNormalization())
     text.write("BatchNormalizaion()\n")
-    self.add(Dropout(0.5))
-    text.write("Dropout(0.5)\n")
+ #   self.add(Dropout(0.5))
+ #   text.write("Dropout(0.5)\n")
  #   self.add(Convolution2D(128,(3,3),activation='relu',padding='same',name='Conv_3'))
  #   text.write("Convolution2D(128,(3,3),activation='relu',padding='same',name='Conv_3')\n")
-    self.add(MaxPooling2D(pool_size=(2,2),name='Pool_3'))
-    text.write("MaxPooling2D(pool_size=(2,2),name='Pool_3')\n")
+ #   self.add(MaxPooling2D(pool_size=(2,2),name='Pool_3'))
+ #   text.write("MaxPooling2D(pool_size=(2,2),name='Pool_3')\n")
     self.add(Flatten())
     text.write("Flatten()\n")
     self.add(Dropout(0.75))
     text.write("Dropout(0.75)\n")
     self.add(BatchNormalization())
     text.write("BatchNormalizaion()\n")
-    self.add(Dense(128,activation='relu',name='Dense_1'))
-    text.write("Dense(128,activation='relu',name='Dense_1')\n")
+    self.add(Dense(128,activation='relu',name='Dense_1',kernel_regularizer=regularizers.l2(0.15)))
+    text.write("Dense(128,activation='relu',name='Dense_1',kernel_regularizer=regularizers.l2(0.5))\n")
     self.add(Dense(2,activation='softmax',name='predictions'))
     text.write("Dense(2,activation='softmax',name='predictions')\n")
     text.close()
@@ -258,12 +262,12 @@ class mapModel(Sequential):
 
 ####################################################################################
 batchsize=32
-epochs=150
+epochs=100
 loss_equation='categorical_crossentropy'
 learning_rate = 0.0001
 parallel=True
 trial_num=1
-date='310718'
+date='010818'
 decay_rt = 1e-8
 
 output_directory = '/dls/science/users/ycc62267/eclip/eclip/paratry'
@@ -320,7 +324,7 @@ model.compile(loss = loss_equation,
               metrics = ['accuracy'])
 print('model compiled')
 
-
+##################################################################################################################
 ##loading previous weights option
 #load_weights=False
 #weights_file = 'file location for previous weights'
@@ -329,7 +333,7 @@ print('model compiled')
 #  print('weights loaded')
 
 #weights_check = WeightsCheck()
-
+####################################################################################################################
 #fit the model on the training data- this is the bit that trains the model -
 #varies the weights.
 #look at the need for augmenting the data- we have a lot so it may not be
@@ -376,8 +380,14 @@ print('accuracy is: %s'%acc)
 text.write('loss is: %s\n'%loss)
 text.write('accuracy is: %s\n'%acc)
 text.write('predictions:\n')
-prediction(print_fn=lambda x: text.write(x+'\n'))
 
+with open(logfile,'a') as f:
+  for line in prediction:
+    np.savetxt(f,line,fmt='%.2f',delimiter=',',newline=' ')
+    f.write('\n')
+
+
+###################################################################################
 
 #exporting model
 json_string=model.to_json()
@@ -390,7 +400,7 @@ yaml_string=model.to_yaml()
 with open('/dls/science/users/ycc62267/eclip/eclip/model.yaml','w') as outfile2:
   outfile2.write(yaml_string)
 outfile2.close()
-
+#######################################################################################
 ##writing predictions and true positive etc
 fileout= '/dls/science/users/ycc62267/eclip/eclip/predictions.txt'
 outfile=open(fileout,'w')
@@ -426,12 +436,12 @@ text.write('Number of false negatives = %s\n'%n_fn)
 text.write('Number of true positives = %s\n'%n_tp)
 text.write('Number of false positives = %s\n'%n_fp)
 
-
+#############################################################################################
 ##saveing output weights to a file:
 #import hdf5
 weights_out = '/dls/science/users/ycc62267/eclip/eclip/model.h5'
 model.save_weights(weights_out)
-
+#############################################################################################
 print(model.summary())
 model.summary(print_fn=lambda x: text.write(x+'\n'))
 text.close()
@@ -439,7 +449,7 @@ text.close()
 
 ############################################################################################
 #Confusion matrix
-def plot_confusion_matrix(cm,classes,normalize=False,title='Confusion matrix',cmap=plt.cm.Blues):
+def plot_confusion_matrix(cm,classes, normalize=False,title='Confusion matrix',cmap=plt.cm.Blues):
   if normalize:
     cm=cm.astype('float')/cm.sum(axis=1)[:,np.newaxis]
   plt.imshow(cm,interpolation='nearest',cmap=cmap)
@@ -449,28 +459,31 @@ def plot_confusion_matrix(cm,classes,normalize=False,title='Confusion matrix',cm
   plt.xticks(tick_marks,classes,rotation=45)
   plt.yticks(tick_marks,classes)
 
-  fmt='.2f' if normalise else 'd'
+  fmt='.2f' if normalize else 'd'
   thresh = cm.max()/2.
-  for i,j in intertools.product(range(cm.shape[0]),range(cm.shape[1])):
+  for i,j in itertools.product(range(cm.shape[0]),range(cm.shape[1])):
     plt.text(j,i,format(cm[i,j],fmt),
               horizontalalignment="center",
               color = "white" if cm[i,j]>thresh else "black")
   plt.tight_layout()
   plt.ylabel('True label')
   plt.xlabel('Predicted label')
-print(y_pred)
-print(y_test)
-#y_pred=prediction
-y_pred=np.asarray(y_pred)
-print(y_pred)
-cnf_matrix = confusion_matrix(y_test,y_pred)
+
+y_t=y_test[:,1].tolist()
+cnf_matrix = confusion_matrix(y_t,y_pred)
 np.set_printoptions(precision=2)
 
-plt.figure()
+class_names=[0,1]
+fig=plt.figure()
 plot_confusion_matrix(cnf_matrix,classes=class_names,normalize=True,title='Normalized Confusion Matrix')
+fig.savefig('/dls/science/users/ycc62267/eclip/eclip/paratry/NCnf'+date+'_'+str(trial_num)+'.png')
+plt.close()
 
+fig=plt.figure()
+plot_confusion_matrix(cnf_matrix,classes=class_names,title='Confusion Matrix')
 fig.savefig('/dls/science/users/ycc62267/eclip/eclip/paratry/Cnf'+date+'_'+str(trial_num)+'.png')
 plt.close()
+
 #plt.show()
 
 
