@@ -10,8 +10,17 @@ import itertools
 #########################
 
 class ConfusionMatrix():
-  '''This class creates a confusion matrix plot for y_test and y_pred and saves it
-  in outputname '''
+  '''
+  This class creates a confusion matrix plot for y_test and y_pred and saves it
+  in outputname 
+  
+  **Arguments for ConfusionMatrix class:**
+  
+  * **y_test:** A list of the true scores
+  * **y_pred:** A list of the predicted scores
+  * **outputname:** File location for the Confusion matrix image
+  
+  '''
   
   def __init__(self,y_test,y_pred,outputname):
       y_t=y_test[:,1].tolist()
@@ -32,6 +41,11 @@ class ConfusionMatrix():
 
     
   def plot_confusion_matrix(self,cm,classes,normalize=False,title='Confusion Matrix',cmap=plt.cm.Blues):
+    '''
+    plot_confusion_matrix produces the confusion matrix image
+
+    '''
+    
     if normalize:
       cm=cm.astype('float')/cm.sum(axis=1)[:,np.newaxis]
     plt.imshow(cm,interpolation='nearest',cmap=cmap)
@@ -53,6 +67,26 @@ class ConfusionMatrix():
     plt.xlabel('Predicted label')
 
   def printConvstats(prediction,outfile,logfile,y_test):
+    '''
+    printConvstats writes to a logfile the values for true negatives, true
+    positives, false negatives and false positives and prints these values to
+    the terminal. It also converts the predictions into a list
+    to be used to produce the confusion matrix. 
+
+    **Arguments for printConvstats:**
+
+    * **prediction:** The prediction produced through keras predict
+    * **outfile:** File location to write prediction into
+    * **logfile:** File location of logfile
+    * **y_test:** True scores for test data
+
+    **Outputs for printConvstats:**
+
+    * **outfile:** Saved txt file of predictions
+    * **y_pred:** A list of the predicted scores
+    * **logfile update:**
+
+    '''
     outfile=open(outfile,'w')
     text=open(logfile,'a')
     n_tn=0
@@ -91,6 +125,19 @@ class ConfusionMatrix():
 
   
 def fitplot(loss,val_loss,acc,val_acc,outputfile):
+  '''
+  fitplot is a function that plots a figure of two graphs. One graph of
+  validation and training loss against epochs and one graph of validation and
+  training accuracy against epochs.
+
+  **Arguments for fitplot:**
+  * **loss:** The training loss from keras.fit
+  * **val_loss:** The validation loss from keras.fit
+  * **acc:** The trainging accuracy from keras.fit
+  * **val_acc:** The validation accuracy from keras.fit
+  * **outputfile:** File location for the saved image
+
+  '''
   fig=plt.figure()
   plt.subplot(2,2,1)
   plt.plot(loss)
