@@ -9,37 +9,40 @@ import numpy as np
 #mrcfile is a CCP-EM library for i/o to MRC format map files
 import mrcfile 
 
-###################################################################
-'''arguments for image_slicing:
-input_map_directory: this is a string indicating where to find the .map files
-output_directory: this is a string indicating where to save the image files
 
-axes_list: axis to section along (default: axes_list = ['X','Y','Z'])
 
-window_size: the linear dimension of the scanning window for each slice
-(default:  window_size=20)
 
-offset: the offset distance between each window position. (default: offset = 10
-)
-
-section_skip: the separation between each section slice. (default: section_skip
-=2)
-
-normalise: boolean, decide whether to normalise values in a slice to be between
-map_min and map_max (default: normalise = True)
-
-map_min: minimum value for the map (default: map_min = -2.14)
-map_max: maximum vlaue for the map (default: map_max =  4.19)
-blur: boolean, decide whether to blur the data via a gaussian filter. (default:
-blur = True)
-sigma: if blur is True, this is the standard deviation for the gaussian.
-(default: sigma = 2.5)
-'''
-########################################################################
 def image_slicing(input_map_directory, output_directory, axes_list =
 ['X','Y','Z'],window_size=10,offset =
 10,section_skip=2,normalise = True
 ,map_min=-2.14,map_max=4.19,blur=True,sigma=2.5):
+
+
+
+  '''
+
+  ConvMAP takes a set of 3D electron density maps and slices them into 2d
+  surfaces and saves these as images. 
+|
+
+**Arguments for image_slicing:**
+
+* **input_map_directory:** this is a string indicating where to find the .map files\ 
+* **output_directory:** this is a string indicating where to save the image files\ 
+* **axes_list:** axis to section along (default: axes_list = ['X','Y','Z'])\ 
+* **window_size:** the linear dimension of the scanning window for each slice (default:  window_size=20)\ 
+* **offset:** the offset distance between each window position. (default: offset = 10)\ 
+* **section_skip:** the separation between each section slice. (default: section_skip =2)\ 
+* **normalise:** boolean, decide whether to normalise values in a slice to be between map_min and map_max (default: normalise = True)\ 
+* **map_min:** minimum value for the map (default: map_min = -2.14)\  
+* **map_max:** maximum vlaue for the map (default: map_max =  4.19)\ 
+* **blur:** boolean, decide whether to blur the data via a gaussian filter. (default: blur = True)\ 
+* **sigma:** if blur is True, this is the standard deviation for the gaussian.(default: sigma = 2.5)\ 
+  
+  
+  '''
+
+
 
   #checking output_directory exists
   if not os.path.isdir(output_directory):
@@ -52,11 +55,11 @@ def image_slicing(input_map_directory, output_directory, axes_list =
   text.write('this is a log file for the progress of image_slicing(). \n')
   text.close()
   #opening file
- # m=0
+  m=0
   for file in os.listdir(input_map_directory):
- #   m+=1
- #   if m>3:
- #     break
+    m+=1
+    if m>3:
+      break
 
     if file.endswith('.map'):
       f=str(file)
@@ -161,6 +164,24 @@ def image_slicing(input_map_directory, output_directory, axes_list =
     text.write('Finished. The images are saved in %s' %output_dir1)
     text.close()
 ##########################################################################################
+
+
+###########################################################################################
+#to allow it to be called in the command line 
+
+if __name__=="__main__":
+  import argparse
+
+  parser = argparse.ArgumentParser(description = 'command line argument')
+  parser.add_argument('--input', dest = 'input_map_dir', type = str,help='the input map directory',default='/dls/mx-scratch/ycc62267/mapfdrbox')
+  parser.add_argument('--output',dest='output_dir', type=str,help='the output directory for the images',default = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox')
+
+  args=parser.parse_args()
+
+  image_slicing(args.input_map_dir,args.output_dir)
+
+
+###########################################################################################
 #input and output directories
 #input_map_directory1 = '/dls/science/users/ycc62267/mapfdr/gauss'
 #output_directory1 = '/dls/science/users/ycc62267/imgfdr/gauss/blur25'

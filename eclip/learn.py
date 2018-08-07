@@ -29,7 +29,7 @@ from keras.utils import multi_gpu_model #, np_utils
 
 
 from eclip.utils.datamanip import inputTrainingImages
-from eclip.utils.visu import ConfusionMatrix, fitplot
+from eclip.utils.visu import ConfusionMatrix, fitplot, plot_test_results
 from eclip.utils.modelmanip import mapModel, expjson, expyaml
 
 
@@ -182,6 +182,11 @@ def main():
   #: A confusion matrix is plotted to visually assess the successes of the model
   cnfout=os.path.join(output_directory,'CnfM'+date+'_'+str(trial_num)+'.png')
   ConfusionMatrix(y_test,y_pred,cnfout)
+
+
+  #:A plot of predictions and true values of test set
+  splotout=os.path.join(output_directory,'Compplot'+date+'_'+str(trial_num)+'.png')
+  plot_test_results(y_test,y_pred,splotout)
   
 if __name__=="__main__":
 

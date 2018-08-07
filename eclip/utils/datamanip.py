@@ -104,7 +104,7 @@ def inputTrainingImages(database,input_shape,fractionTrain):
       img_dir=os.path.join(dirin,dir)
 
       #chosing random files from directory
-      for m in range(1,5):
+      for m in range(1,10):
         filename=random.choice(os.listdir(img_dir))
         location=os.path.join(img_dir,filename)
         filelist.append(location)
@@ -315,3 +315,26 @@ def trialsplitlist(listloc):
     list_protein.append(protein)
   text.close()
   return list_protein
+
+
+
+def columnclear(database, tablename, column):
+  '''
+  Function to change all values in a column of  a given column of an SQLite
+  database to Null
+
+  **Arguments for columnclear:**
+
+  * **database:** file location for a given database
+  * **tablename:** name of table
+  * **column:** name of column
+
+  '''
+  conn = sqlite3.connect(database)
+  cur = conn.cursor()
+  for i in columns:
+   cur.execute('''UPDATE %s SET %s = Null'''%(tablename,i))
+
+
+
+

@@ -44,6 +44,17 @@ class ConfusionMatrix():
     '''
     plot_confusion_matrix produces the confusion matrix image
 
+    **Arguments for plot_confusion_matrix:**
+
+    * **self:** 
+    * **cm:** confusion matrix as an array
+    * **classes:** a list of the class names
+    * **normalize:** a boolean stating whether to produce a normalised plot or
+    * not
+    * **title:** Title for the plot
+    * **cmap:** controls the color mape used
+
+
     '''
     
     if normalize:
@@ -107,7 +118,7 @@ class ConfusionMatrix():
         n_tp+=1
         y_pred.append(1)
       elif prediction[i][1]>0.5 and y_test[i][0]>0.5:
-        n_fp+=1
+        n_fp+=1 
         y_pred.append(1)
     outfile.close()
     print('Number of ture negatives = ',n_tn)
@@ -156,3 +167,45 @@ def fitplot(loss,val_loss,acc,val_acc,outputfile):
   fig.savefig(outputfile)
   plt.close(fig)
 
+
+
+def plot_test_results(y_test, y_pred,outputfile):
+
+  '''
+  plot_test_results takes the predicted and expected scores for data and outputs
+  a plot of the comparison between these
+
+  **Arguments for plot_test_results:***
+
+  * **y_test:** This is a list of the true scores for the data
+  * **y_pred:** This is a list of the predicted (percentage) scores of the data
+  * **outputfile:** This is the location to save the plot as a .png file
+
+  **Outputs of plot_test_results:**
+
+  * **image:** The image of the plot saved in the location specified by outputfile
+  '''
+
+  y_test = [ y_test for _,y_test in sorted(zip(y_pred,y_test))]
+  y_pred= sorted(y_pred)
+  x=np.arange(len(y_test))
+
+
+  truex=list(np.where(y_test == np.rint(y_pred))[0])
+  falsex=list(np.where(y_test != np.rint(y_pred))[0])
+
+  truey=[y_test[i] for i in truex]
+  falsey=[y_test[i] for i in falsex]
+  print(len(x))
+  print(len(y_pred))
+  print(len(truey))
+  print(len(truex))
+  print(len(falsex))
+  print(len(falsey))
+  fig=plt.figure()
+  plt.plot(x,y_pred,truex,truey,'g.',falsex,falsey,'r.')
+  plt.xlabel('index')
+  plt.ylabel('score')
+  plt.legend(['predictions','true value correct','true value incorrect'],loc  =5)
+  fig.savefig(outputfile)
+  plt.close(fig)

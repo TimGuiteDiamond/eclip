@@ -1,5 +1,6 @@
 ################
-''' Code to predict new scores for full maps'''
+''' Code to predict new scores for full maps and check this against the true
+scores'''
 ##############
 import keras
 import sqlite3
@@ -13,11 +14,11 @@ def main():
 
   '''
   predic loads a model from a json file and weights from a weights file and uses
-  this to predict the score for a new map - already in image form. the
+  this to predict the score for a map - already in image form. The
   predictions are then saved to a txt file and added to the sqlite database. 
 
-  **Warning** this requires the protein to be present in the PDB_id part of the
-  database
+  These predictions are then compared to the true scores and a set of statistics
+  is produced in a txt file alongside a plot of these results. 
 
  
   '''
@@ -34,7 +35,8 @@ def main():
   date = '070818'
 
   outfile = os.path.join(outdir,'newpredic'+date+'.txt')
-   #######################################################################
+  resoutfile= os.path.join(outdir,'map_results_plot'+date+'.png')
+    #######################################################################
   
   x, name, proteins = importData(datafileloc=fileloc,proteinlist=protein_split,
   input_shape=inputshape)
@@ -52,9 +54,17 @@ def main():
     RuntimeError('Not a valid method')
   
 
-  #updating sqlite database
+  # Selecting true scores from database and creating a list of various
+  # parameters
   conn = sqlite3.connect('/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite')
   cur=conn.cursor()
+
+  n_tp=0
+  n_tn=0
+  n_fp=0
+  n_fn=0 
+  errors =[]
+  y_true = []
   
   for i  in range(0,len(proteins)):
     protein = proteins[i]
@@ -69,11 +79,6 @@ def main():
     cur.execute('''
       SELECT id FROM PDB_id WHERE PDB_id.pdb_id="%s" ''' %(protein_name))
     protein_id = cur.fetchone()[0] 
-  
-    #adding new protein_id to Phasing
-    cur.execute('''
-      INSERT OR IGNORE INTO Phasing (pdb_id_id) VALUES (%s) ''' %(protein_id))
-  
   #  cur.execute('''
   #    UPDATE Phasing SET (ep_score_i, ep_confidence_i, ep_score_o,
   #    ep_confidence_o) = (Null,Null,Null,Null)''')  
@@ -81,14 +86,54 @@ def main():
       cur.execute('''
         UPDATE Phasing SET (ep_score_i, ep_confidence_i)=(%s,%s) WHERE
         Phasing.pdb_id_id = "%s"''' %(score,pred,protein_id))
+      cur.execute('''
+        SELECT ep_success_i FROM Phasing WHERE Phasing.pdb_id_id =
+        "%s"'''%(protein_id))
+      truescore= list(cur.fetchall()[0])[0]
     else:
       cur.execute('''
         UPDATE Phasing SET (ep_score_o,ep_confidence_o)=(%s,%s) WHERE
         Phasing.pdb_id_id = "%s"''' %(score,pred,protein_id))
+      cur.execute('''
+        SELECT ep_success_o FROM Phasing WHERE Phasing.pdb_id_id =
+        "%s"'''%(protein_id))
+      truescore= list(cur.fetchall()[0])[0]
       
+    if truescore ==None:
+      continue
+    truescore=int(truescore)
+    print('score: %s truescore: %s'%(score,truescore))
+    y_true.append(truescore)
+    #print('updating...')
+    #print(score,pred,protein_id)
+    if truescore == 1 and score ==1:
+      n_tp+=1
+    elif truescore ==1 and score ==0:
+      n_fn+=1
+      errors.append(str(protein_id)+': '+protein)
+    elif truescore ==0 and score ==1:
+      n_fp+=1
+      errors.append(str(protein_id)+': '+protein)
+    else:
+      n_tn+=1
   conn.commit()
   conn.close()
   print('update EP_success successful')
-    
+  acc = (n_tp+n_tn)/(n_fp+n_fn+n_tp+n_tn)
+   
+  #writing to text file 
+  text= open(outfile,'a')
+  text.write('''\nNumber of true positives:%s\n
+              Number of true negatives: %s\n
+              Number of false positives: %s\n
+              Number of false negatives: %s\n'''
+              %(n_tp,n_tn,n_fp,n_fn))
+  text.write('accuracy = %s'%acc)
+  for i in errors:
+    text.write(i+'\n')
+
+  # plot test results
+  plot_test_results(y_true,preds,resoutfile)
+  
 if __name__=='__main__':
   main()
