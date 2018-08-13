@@ -3,24 +3,15 @@
 #############
 import keras
 from keras import initializers, regularizers
-from keras.models import Sequential#, load_model
+from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Convolution2D, MaxPooling2D, BatchNormalization
 from keras.utils import np_utils
-#from keras.utils import to_catagorical, plot_model
-#from keras.applications import vgg16
-#from keras.utils import mulit_gup_model
-
-
 from keras.models import model_from_json
-
-
-
-
 ################
 #creating a model
 class mapModel(Sequential):
-  #have chosed a sequential model
+
   '''
   
   mapModel is a class to build a Sequential keras model
@@ -30,8 +21,6 @@ class mapModel(Sequential):
   def __init__(self):
     Sequential.__init__(self)
 
-  #def creatCustom1(self,input_shape1,logfile):
-    #fill this one in once you are using it...
 
   def createCustom2(self,input_shape2,logfile):
     '''

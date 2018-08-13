@@ -2,12 +2,13 @@
 ''' Code to predict new scores for full maps and check this against the true
 scores'''
 ##############
-import keras
+#from keras.models import predict
 import sqlite3
+import os
 
 from utils.modelmanip import loadjson
 from utils.datamanip import importData, avefirstscore, roundfirstscore,trialsplitlist
-from utils.visu import plot_test_results
+from utils.visu import plot_test_results, ConfusionMatrix
 ################
 
 def main():
@@ -26,16 +27,22 @@ def main():
   jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry/model.json'
   weights_file ='/dls/science/users/ycc62267/eclip/eclip/paratry/model.h5'
   fileloc = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/'
-  protein_split = trialsplitlist('/dls/science/users/ycc62267/eclip/eclip/trialsplit.txt')
+  protein_split =trialsplitlist('/dls/science/users/ycc62267/eclip/eclip/trialsplit100819.txt')
   inputshape = [201,201,3]
   #method can be either 'average first' or 'round first'
   method = 'average first'
   #output predictions file
   outdir = '/dls/science/users/ycc62267/eclip/eclip/paratry/'
-  date = '070818'
+  date = '100818'
+  trial_num = 5
+  threshold= 0.5
 
-  outfile = os.path.join(outdir,'newpredic'+date+'.txt')
-  resoutfile= os.path.join(outdir,'map_results_plot'+date+'.png')
+  while os.path.exists(os.path.join(outdir,'map_results_plot'+date+'_'+str(trial_num)+'.png')):
+    trial_num+=1
+
+  outfile = os.path.join(outdir,'newpredic'+date+'_'+str(trial_num)+'.txt')
+  resoutfile= os.path.join(outdir,'map_results_plot'+date+'_'+str(trial_num)+'.png')
+  cnfout=os.path.join(outdir,'map_cnf'+date+'_'+str(trial_num)+'.png')
     #######################################################################
   
   x, name, proteins = importData(datafileloc=fileloc,proteinlist=protein_split,
@@ -47,9 +54,9 @@ def main():
   
   #round first
   if method == 'round first':
-    scores, preds, ones, zeros = roundfirstscore(proteins,name, prediction,outfile)
+    scores, preds, ones, zeros = roundfirstscore(proteins,name, prediction,outfile,threshold)
   if method == 'average first':
-    scores, preds, ones, zeros = avefirstscore(proteins,name, prediction,outfile)
+    scores, preds, ones, zeros = avefirstscore(proteins,name, prediction,outfile,threshold)
   else:
     RuntimeError('Not a valid method')
   
@@ -79,9 +86,7 @@ def main():
     cur.execute('''
       SELECT id FROM PDB_id WHERE PDB_id.pdb_id="%s" ''' %(protein_name))
     protein_id = cur.fetchone()[0] 
-  #  cur.execute('''
-  #    UPDATE Phasing SET (ep_score_i, ep_confidence_i, ep_score_o,
-  #    ep_confidence_o) = (Null,Null,Null,Null)''')  
+ 
     if protein.endswith('_i'):
       cur.execute('''
         UPDATE Phasing SET (ep_score_i, ep_confidence_i)=(%s,%s) WHERE
@@ -104,8 +109,7 @@ def main():
     truescore=int(truescore)
     print('score: %s truescore: %s'%(score,truescore))
     y_true.append(truescore)
-    #print('updating...')
-    #print(score,pred,protein_id)
+   
     if truescore == 1 and score ==1:
       n_tp+=1
     elif truescore ==1 and score ==0:
@@ -134,6 +138,9 @@ def main():
 
   # plot test results
   plot_test_results(y_true,preds,resoutfile)
+  
+  # plot Confusion matrix
+  ConfusionMatrix(y_true,scores,cnfout)
   
 if __name__=='__main__':
   main()

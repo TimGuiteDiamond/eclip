@@ -45,9 +45,9 @@ def main():
   
   #round first
   if method == 'round first':
-    scores, preds, ones, zeros = roundfirstscore(proteins,name, prediction,outfile)
+    scores, preds, ones, zeros = roundfirstscore(proteins,name,prediction,outfile,threshold)
   if method == 'average first':
-    scores, preds, ones, zeros = avefirstscore(proteins,name, prediction,outfile)
+    scores, preds, ones, zeros = avefirstscore(proteins,name,prediction,outfile,threshold)
   else:
     RuntimeError('Not a valid method')
   
@@ -74,9 +74,7 @@ def main():
     cur.execute('''
       INSERT OR IGNORE INTO Phasing (pdb_id_id) VALUES (%s) ''' %(protein_id))
   
-  #  cur.execute('''
-  #    UPDATE Phasing SET (ep_score_i, ep_confidence_i, ep_score_o,
-  #    ep_confidence_o) = (Null,Null,Null,Null)''')  
+  
     if protein.endswith('_i'):
       cur.execute('''
         UPDATE Phasing SET (ep_score_i, ep_confidence_i)=(%s,%s) WHERE

@@ -63,7 +63,7 @@ def inputTrainingImages(database,input_shape,fractionTrain):
   x_dir=[]
   y_list=[]
 
-  t=open('/dls/science/users/ycc62267/eclip/eclip/trialsplit.txt','w')
+  t=open('/dls/science/users/ycc62267/eclip/eclip/trialsplit100819_2.txt','w')
   if trialsplit == True:
     for i in range(0,51):
       name_id=random.choice(Protein_id)
@@ -177,15 +177,16 @@ def importData(datafileloc,proteinlist, input_shape):
          
           name.append(protein_name)
 
+  #making an array
   filearray=np.array([normalarray(np.array(plt.imread(filename))).flatten() for filename in filelist])
   numsamples= len(filearray)
 
-
+  #reshaping
   x_predic = filearray[:numsamples].reshape(numsamples,input_shape[0],input_shape[1],input_shape[2])
   return x_predic, name, protein_list
 
 
-def avefirstscore(proteins,name,prediction,outfile):
+def avefirstscore(proteins,name,prediction,outfile,threshold):
 
   ''' A function to convert the prediction of the model into a score, confidence
   measure, and a count of the ones and zeros for one map. The average first
@@ -197,6 +198,7 @@ def avefirstscore(proteins,name,prediction,outfile):
   * **proteins:** a list of the proteins being predicted
   * **predictionsL** the predictions produced by the model
   * **outfileL** the text file to save the predictions to
+  * **threshold:** the certainty decimal tht the flag needs to have to classify as 1
 
   **Outputs of avefirstscore:**
 
@@ -222,7 +224,7 @@ def avefirstscore(proteins,name,prediction,outfile):
       if name[i] == protein:
         x+= prediction[i][1]
         text.write('prediction: '+str(prediction[i][1])+'\n')
-        if prediction[i][1]>=0.5:
+        if prediction[i][1]>=threshold:
           ones+=1
         else:
           zeros+=1
@@ -233,7 +235,7 @@ def avefirstscore(proteins,name,prediction,outfile):
     p=x/n
     pred.append(p)
     text.write('averaged likelihood of being phased: %s\n'%p)
-    if p>=0.5:
+    if p>=threshold:
       score.append(1)
       text.write('score of map: 1\n')
     else:
@@ -244,7 +246,7 @@ def avefirstscore(proteins,name,prediction,outfile):
   text.close()
   return score, pred, ones, zeros
 
-def roundfirstscore(proteins,name, prediction,outfile):
+def roundfirstscore(proteins,name, prediction,outfile,threshold):
 
   ''' A function to convert the prediction of the model into a score, confidence
   measure, and a count of the ones and zeros for one map. The round first method
@@ -275,7 +277,7 @@ def roundfirstscore(proteins,name, prediction,outfile):
     for i in range(0,len(name)):
       if name[i]==protein:
         text.write('prediction: '+str(prediction[i][1])+'\n')
-        if prediction[i][1]>=0.5:
+        if prediction[i][1]>=threshold:
           x=+1
           ones=+1
         else:
@@ -284,7 +286,7 @@ def roundfirstscore(proteins,name, prediction,outfile):
     p=x/n
     pred.append(p)
     text.write('averaged likelihood of being phased: %s\n'%p)
-    if p>=0.5:
+    if p>=threshold:
       score.append(1)
       text.write('score of map: 1\n')
     else:

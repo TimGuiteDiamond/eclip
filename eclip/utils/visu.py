@@ -23,16 +23,16 @@ class ConfusionMatrix():
   '''
   
   def __init__(self,y_test,y_pred,outputname):
-      y_t=y_test[:,1].tolist()
+
+      if type(y_test)!= list:
+        y_t=y_test[:,1].tolist()
+      else:
+        y_t=y_test
 
       cnf_matrix=confusion_matrix(y_t,y_pred)
       np.set_printoptions(precision=2)
 
       class_names=[0,1]
-      #fig=plt.figure()
-      #self.plot_confusion_matrix(cnf_matrix,classes=class_names,normalize=True,title='Normalized Confusion Matrix')
-      #fig.savefig(outputname)
-      #plt.close()
 
       fig=plt.figure()
       self.plot_confusion_matrix(cnf_matrix,classes=class_names,title='Confusion Matrix')

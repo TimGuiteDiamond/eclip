@@ -1,32 +1,17 @@
-#this is a beginning ideas for the machine learning for image slices
-
 #one idea is to use the package Keras. this works in a modular manner- and is
 #was used for the EM ones
 
-#import required packages
+
 import numpy as np
-#from PIL import Image
 import matplotlib.pyplot  as plt
 plt.switch_backend('agg')
 np.random.seed(123) # for reproduciblility
 import os
 
-#from sklearn.utils import shuffle
 from sklearn.utils import class_weight
-#from sklearn.metrics import confusion_matrix
-
-#import random
-
 
 import keras
-#from keras import initializers,regularizers
-#from keras.models import Sequential, load_model
-#from keras.layers import Dense, Dropout, Activation, Flatten
-#from keras.layers import Convolution2D, MaxPooling2D, BatchNormalization
-from keras.utils import multi_gpu_model #, np_utils
-#from keras.utils import plot_model, to_categorical
-#from keras.applications import vgg16
-
+from keras.utils import multi_gpu_model
 
 from eclip.utils.datamanip import inputTrainingImages
 from eclip.utils.visu import ConfusionMatrix, fitplot, plot_test_results
@@ -62,12 +47,12 @@ def main():
  
   #: Parameters are set for running
   batchsize = 32 
-  epochs=100
+  epochs=300
   loss_equation='categorical_crossentropy'
   learning_rate=0.0001
   parallel=True
   trial_num=1
-  date='020818'
+  date='130818'
   decay_rt=1e-8
   input_shape = [201,201,3]
   output_directory = '/dls/science/users/ycc62267/eclip/eclip/paratry'
@@ -186,9 +171,15 @@ def main():
 
   #:A plot of predictions and true values of test set
   splotout=os.path.join(output_directory,'Compplot'+date+'_'+str(trial_num)+'.png')
-  plot_test_results(y_test,y_pred,splotout)
+  y_test=list(y_test[:,1])
+
+  #y_p=prediction[:,1]
+  y_p=list(prediction[:,1])
+  print(y_test)
+  print(y_p)
+  print(type(y_test))
+  print(type(y_p))
+  plot_test_results(y_test,y_p,splotout)
   
 if __name__=="__main__":
-
-
   main()
