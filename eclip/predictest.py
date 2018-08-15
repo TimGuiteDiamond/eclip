@@ -11,8 +11,16 @@ from utils.datamanip import importData, avefirstscore, roundfirstscore,trialspli
 from utils.visu import plot_test_results, ConfusionMatrix
 ################
 
-def main():
-
+def main(jsonfile ='/dls/science/users/ycc62267/eclip/eclip/paratry/model.json',
+        weights_file ='/dls/science/users/ycc62267/eclip/eclip/paratry/model.h5', 
+        fileloc = '/dls/mx-scratch/ycc62267/ingfdr/blur2_5_maxminbox/', 
+        protein_split_list ='/dls/science/users/ycc62267/eclip/eclip/trialsplit.txt',
+        input_shape =[201,201,3],
+        method = 'average first',
+        outdir ='/dls/science/users/ycc62267/eclip/eclip/paratry/',
+        date ='150818',
+        trial_num=1,
+        threshould = 0.5):
   '''
   predic loads a model from a json file and weights from a weights file and uses
   this to predict the score for a map - already in image form. The
@@ -21,25 +29,25 @@ def main():
   These predictions are then compared to the true scores and a set of statistics
   is produced in a txt file alongside a plot of these results. 
 
- 
+  **Arguments:**
+
+  * **jsonfile:** The location to find model. default: jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry/model.json'
+  * **weights_file:** The loctaion to find model weights. default: weights_file ='/dls/science/users/ycc62267/eclip/eclip/paratry/model.h5'
+  * **fileloc:** location to find files. default: fileloc = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/'
+  * **protein_split_list:** text file with list of proteins to use. default: protein_split_list= '/dls/science/users/ycc62267/eclip/eclip/trialsplit.txt'
+  * **inputshape:** The input shape of the images. default: inputshape = [201,201,3]
+  * **method:** option parameter for how to round. Can be either 'average first' or 'round first'. default: method = 'average first'
+  * **outdir:** output predictions file. default: '/dls/science/users/ycc62267/eclip/eclip/paratry/'
+  * **date:** date. default: date = '100818'
+  * **trial_num:** default: trial_num = 5
+  * **threshold:** default: threshold= 0.5
+
   '''
-    ######################################################################
-  jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry/model.json'
-  weights_file ='/dls/science/users/ycc62267/eclip/eclip/paratry/model.h5'
-  fileloc = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/'
-  protein_split =trialsplitlist('/dls/science/users/ycc62267/eclip/eclip/trialsplit100819.txt')
-  inputshape = [201,201,3]
-  #method can be either 'average first' or 'round first'
-  method = 'average first'
-  #output predictions file
-  outdir = '/dls/science/users/ycc62267/eclip/eclip/paratry/'
-  date = '100818'
-  trial_num = 5
-  threshold= 0.5
 
   while os.path.exists(os.path.join(outdir,'map_results_plot'+date+'_'+str(trial_num)+'.png')):
     trial_num+=1
-
+  
+  protein_split = trialsplitlist(protein_split_list)
   outfile = os.path.join(outdir,'newpredic'+date+'_'+str(trial_num)+'.txt')
   resoutfile= os.path.join(outdir,'map_results_plot'+date+'_'+str(trial_num)+'.png')
   cnfout=os.path.join(outdir,'map_cnf'+date+'_'+str(trial_num)+'.png')

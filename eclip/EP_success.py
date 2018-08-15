@@ -1,8 +1,6 @@
-#forming Classification collumn for EP images
+''' Forming Classification collumn for EP images '''
 
-#need to read the file
-#/dls/mx-scratch/melanie/for_METRIX/results_201710/EP_phasing/$NAME/$BEST_SPACE_GROUP/$NAME.lst
-#and find percentage. if percentage > 25%, then good (1) , if < then bad (0)
+
 
 #find 'Best trace (cycle **  with  CC  ** %)'i
 import sqlite3
@@ -84,14 +82,16 @@ def makelistinverse(dir_in):
   
   
   
-def main():
-
+def main(sqlite_db='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite', 
+        dir_in='/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox', 
+        raw=False):
+  
+  
   #connecting to SQLite database
-  conn=sqlite3.connect('/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite')
+  conn=sqlite3.connect(sqlite_db)
   cur=conn.cursor()
   
-  dir_in = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox'
-  
+   
   #I have used two different methods to fill the columns of the database, both
   #work and i haven't decided which is better.
   
@@ -117,16 +117,21 @@ def main():
       INSERT OR IGNORE INTO Phasing (pdb_id_id) VALUES (%s) ''' %(pdb_pk))
     if percent > 25:
       cur.execute('''
-        UPDATE Phasing SET (ep_success_o, ep_percent_0)=(1,%s) WHERE
+        UPDATE Phasing SET (ep_success_o, ep_percent_o)=(1,%s) WHERE
         Phasing.pdb_id_id = "%s"''' %(percent, pdb_pk))
     else:
       cur.execute('''
-        UPDATE Phasing SET (ep_success_o,ep_percent_0)=(0,%s) WHERE
+        UPDATE Phasing SET (ep_success_o,ep_percent_o)=(0,%s) WHERE
         Phasing.pdb_id_id = "%s"''' %(percent,pdb_pk))
-    directory = os.path.join(dir_in,name,name)
-    cur.execute('''
-      UPDATE Phasing SET ep_img_o = "%s" WHERE Phasing.pdb_id_id = "%s"'''%(directory,pdb_pk))
-  
+
+    if raw:
+      directory = os.path.join(dir_in,name,name)
+      cur.execute('''
+        UPDATE Phasing SET ep_raw_o = "%s" WHERE Phasing.pdb_id_id = "%s"'''%(directory,pdb_pk))
+    else:
+      directory = os.path.join(dir_in,name,name)
+      cur.execute('''
+        UPDATE Phasing SET ep_img_o = "%s" WHERE Phasing.pdb_id_id = "%s"'''%(directory,pdb_pk))
   
   inverse_list = makelistinverse(dir_in)
   for n in inverse_list:
@@ -153,21 +158,27 @@ def main():
       UPDATE Phasing SET ep_success_i=1 WHERE  ep_percent_i > 25''' )
     cur.execute('''
       UPDATE Phasing SET ep_success_i=0 WHERE ep_percent_i < 25''' )
-    directory = os.path.join(dir_in,name,name_i)
-    cur.execute('''
-      UPDATE Phasing SET ep_img_i = "%s" WHERE Phasing.pdb_id_id =
-      "%s"'''%(directory,pdb_pk))
+    if raw:
+      directory = os.path.join(dir_in,name,name_i)
+      cur.execute('''
+        UPDATE Phasing SET ep_raw_i = "%s" WHERE Phasing.pdb_id_id =
+        "%s"'''%(directory,pdb_pk))
+    else:
+      directory = os.path.join(dir_in,name,name_i)
+      cur.execute('''
+        UPDATE Phasing SET ep_img_i = "%s" WHERE Phasing.pdb_id_id = "%s"'''%(directory,pdb_pk))
+
   
   #to catch other exceptions- there may be a better way to do this- there should
   #not be many exceptions!
   cur.execute('''
-    SELECT pdb_id_id FROM Phasing WHERE (ep_percent_0 - ep_percent_i)>10 AND
-    (ep_percent_0 NOT NULL AND ep_percent_i NOT NULL)''')
+    SELECT pdb_id_id FROM Phasing WHERE (ep_percent_o - ep_percent_i)>10 AND
+    (ep_percent_o NOT NULL AND ep_percent_i NOT NULL)''')
   list_o=cur.fetchall()
   
   cur.execute('''
-    SELECT pdb_id_id FROM Phasing WHERE (ep_percent_i - ep_percent_0)>10 AND
-    (ep_percent_0 NOT NULL AND ep_percent_i NOT NULL)''')
+    SELECT pdb_id_id FROM Phasing WHERE (ep_percent_i - ep_percent_o)>10 AND
+    (ep_percent_o NOT NULL AND ep_percent_i NOT NULL)''')
   list_i=cur.fetchall()
   
   number=len(list_o)+len(list_i)
@@ -175,11 +186,11 @@ def main():
   
   
   cur.execute('''
-    UPDATE Phasing SET ep_success_o =1 WHERE (ep_percent_0 - ep_percent_i)>10 AND
-    (ep_percent_0 NOT NULL AND ep_percent_i NOT NULL)''')
+    UPDATE Phasing SET ep_success_o =1 WHERE (ep_percent_o - ep_percent_i)>10 AND
+    (ep_percent_o NOT NULL AND ep_percent_i NOT NULL)''')
   cur.execute('''
-    UPDATE Phasing SET ep_success_i =1 WHERE (ep_percent_i-ep_percent_0)>10 AND
-    (ep_percent_0 NOT NULL AND ep_percent_i NOT NULL)''')
+    UPDATE Phasing SET ep_success_i =1 WHERE (ep_percent_i-ep_percent_o)>10 AND
+    (ep_percent_o NOT NULL AND ep_percent_i NOT NULL)''')
   
   
   
@@ -187,6 +198,20 @@ def main():
   conn.close()
   print('EP_success successful')
 
-
+############################################################################
 if __name__=="__main__":
-  main()
+  
+
+  import argparse
+
+  parser = argparse.ArgumentParser(description = 'command line argument')
+  parser.add_argument('--sqlitedb',dest = 'sqlitedb', type = str, help = 'the location of the sqlite database',default = '/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite')
+  parser.add_argument('--dir_in',dest='dir_in',type=str,help='the directory input image location',default = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox')
+  parser.add_argument('--raw',dest='raw',type=str,help='parameter specifying raw or not',default=False)
+
+  args = parser.parse_args()
+  sqlite_db=args.sqlitedb
+  dir_in = args.dir_in
+  raw=args.raw
+
+  main(sqlite_db,dir_in,raw)

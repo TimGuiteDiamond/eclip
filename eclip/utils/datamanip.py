@@ -32,7 +32,7 @@ def normalarray(n_array):
   norm_array=(n_array-mini)/(maxi-mini)
   return norm_array
 
-def inputTrainingImages(database,input_shape,fractionTrain):
+def inputTrainingImages(database,input_shape,fractionTrain,raw = False):
   '''
 
   **Arguments for inputTrainingImages:**
@@ -40,6 +40,7 @@ def inputTrainingImages(database,input_shape,fractionTrain):
   * **database:** The file location of an sqlite database with the correct format
   * **input_shape:** The dimensions of the image files to be retrieved
   * **fractionTrain:** The fraction of the data retrieved to be used to test the model
+  * **raw:** parameter specifying whether to take the raw or processed imagedata default = False
 
   **Outputs of inputTrainingImages:**
 
@@ -63,7 +64,7 @@ def inputTrainingImages(database,input_shape,fractionTrain):
   x_dir=[]
   y_list=[]
 
-  t=open('/dls/science/users/ycc62267/eclip/eclip/trialsplit100819_2.txt','w')
+  t=open('/dls/science/users/ycc62267/eclip/eclip/trialsplit.txt','w')
   if trialsplit == True:
     for i in range(0,51):
       name_id=random.choice(Protein_id)
@@ -78,17 +79,26 @@ def inputTrainingImages(database,input_shape,fractionTrain):
     y_o=list(cur.fetchall()[0])[0]
     if not y_o==None:
       y_list.append(y_o)
-      cur.execute('''SELECT ep_img_o FROM Phasing WHERE pdb_id_id =
-      "%s"'''%item)
-      x_o=list(cur.fetchall()[0])[0]
+      if raw:
+        cur.execute('''SELECT ep_raw_o FROM Phasing WHERE pdb_id_id =
+        "%s"'''%item)
+        x_o=list(cur.fetchall()[0])[0]
+      else:
+        cur.execute('''SELECT ep_img_o FROM Phasing WHERE pdb_id_id =
+        "%s"'''%item)
+        x_o=list(cur.fetchall()[0])[0]
       x_dir.append(x_o)
     cur.execute('''SELECT ep_success_i FROM Phasing WHERE pdb_id_id =
     "%s"'''%item)
     y_i=list(cur.fetchall()[0])[0]
     if not y_i == None:
       y_list.append(y_i)
-      cur.execute('SELECT ep_img_i FROM Phasing WHERE pdb_id_id = "%s"'''%item)
-      x_i=list(cur.fetchall()[0])[0]
+      if raw:
+        cur.execute('''SELECT ep_raw_i FROM Phasing WHERE pdb_id_id = "%s"'''%item)
+        x_i = list(cur.fetchall()[0])[0]
+      else:
+        cur.execute('SELECT ep_img_i FROM Phasing WHERE pdb_id_id = "%s"'''%item)
+        x_i=list(cur.fetchall()[0])[0]
       x_dir.append(x_i)
 
   #x_dir is a list of directories, in these directories there are X,Y,Z

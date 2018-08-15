@@ -20,7 +20,18 @@ from eclip.utils.modelmanip import mapModel, expjson, expyaml
 
 ################################################################################################
 
-def main():
+def main(batchsize = 64, 
+        epochs = 300, 
+        loss_equation = 'categorical_crossentropy', 
+        learning_rate= 0.0001,
+        parallel= True, 
+        trial_num=1,
+        date='150818',
+        decay_rt=1e-8,
+        Raw=False,
+        input_shape=[201,201,3],
+        output_directory  = '/dls/science/users/ycc62267/eclip/eclip/paratry'):
+
   '''
   |
   
@@ -43,19 +54,22 @@ def main():
    * Plot------_-.png
    * CnfM------_-.png
 
-  '''
- 
-  #: Parameters are set for running
-  batchsize = 32 
-  epochs=300
-  loss_equation='categorical_crossentropy'
-  learning_rate=0.0001
-  parallel=True
-  trial_num=1
-  date='130818'
-  decay_rt=1e-8
-  input_shape = [201,201,3]
-  output_directory = '/dls/science/users/ycc62267/eclip/eclip/paratry'
+
+   **Arguments:**
+
+   * **batchsize:** The batchsize for learning. default: batchsize = 128 
+   * **epochs:** The epochs for learning. default: epochs=300
+   * **loss_equation:** The loss equation for learning. default: loss_equation='categorical_crossentropy'
+   * **learning_rate:** The starting learning rate. default: learning_rate =0.0001
+   * **parallel:** Parameter to state whether using data parallisation. default: parrallel =True
+   * **trial_num:** Automatic starter for trial number. default: trial_num =1
+   * **date:** Date of run. default: date ='150818'
+   * **decay_rt:** rate of decay of learning rate. default: decay_rt =1e-8
+   * **Raw: parameter to state whether learning on raw or processed data. default: Raw = False
+   * **input_shape:** The input shape of the images. default: input_shape = [201,201,3]
+   * **output_directory:** Directory location for the states etc to be saved. default: output_directory = '/dls/science/users/ycc62267/eclip/eclip/paratry'
+
+   '''
 
   #: trial_num is increased untill there are no previously saved plots with that trial_number
   while os.path.exists(os.path.join(output_directory,'Plot'+date+'_'+str(trial_num)+'.png')):
@@ -66,13 +80,13 @@ def main():
   #: A log file is created to record the starting parameters and the results of the learning.
   text=open(logfile,'w')
   text.write('''Running learn.py for parameters: \n batchsize: %s \n epochs : %s \n
-  loss: %s \n learning rate: %s \n parallelization: %s \n decay rate: %s \n'''
-  %(batchsize,epochs,loss_equation,learning_rate,parallel,decay_rt))
+  loss: %s \n learning rate: %s \n parallelization: %s \n decay rate: %s \n Raw:%s \n'''
+  %(batchsize,epochs,loss_equation,learning_rate,parallel,decay_rt,Raw))
   print('running learn.py')
   text.close()
   
   #: learn calls inputTrainingImages to select image data and change into the correct form.
-  x_train, y_train,x_test,y_test=inputTrainingImages(database='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',input_shape=input_shape,fractionTrain=0.8)
+  x_train,y_train,x_test,y_test=inputTrainingImages(database='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',input_shape=input_shape,fractionTrain=0.8,raw=Raw)
   
   #Printing the data dimensions to logfile
   text=open(logfile,'a')
