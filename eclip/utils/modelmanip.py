@@ -21,11 +21,56 @@ class mapModel(Sequential):
   def __init__(self):
     Sequential.__init__(self)
 
+  def createCustom1(self,input_shape1,logfile):
+    '''
+    
+    createCustom builds up the layers in the model for raw data.
+
+    **Arguments for createCustom1:**
+    * **self:**
+    * **input_shape1:** The shape of the input images as arrays
+    * **logfile:** The file location of the logfile
+
+    **Output for createCustom1:**
+    * **self:** A sequential model is built as a class
+
+    '''
+
+    text=open(logfile,'a')
+    text.write('\nModel setup:\n')
+
+    self.add(Convolution2D(32,(3,3),kernel_initializer=initializers.he_normal(),
+                            activation='relu',padding='same',input_shape=input_shape1,name='Conv_1'))
+    text.write('''Convolution2D(32,(3,3),kernel_initializer=initializers.he_normal(), 
+                    activation='relu',padding='same',input_shape=input_shape1,name='Conv_1')\n''')
+    self.add(MaxPooling2D(pool_size=(2,2),name='Pool_1'))
+    text.write("MaxPooling2D(pool_size=(2,2),name='Pool_1')\n")
+    self.add(BatchNormalization())
+    text.write("BatchNormalization()\n")
+    self.add(Convolution2D(32,(3,3),activation='relu',padding='same',name='Conv_2'))
+    text.write("Convolution2D(32,(3,3),activation='relu',padding='same',name='Conv_2')\n")
+    self.add(MaxPooling2D(pool_size=(2,2),name='Pool_2'))
+    text.write("MaxPooling2D(pool_size=(2,2),name='Pool_2')\n")
+    self.add(BatchNormalization())
+    text.write("BatchNormalization()\n")
+    self.add(Flatten())
+    text.write("Flatten()\n")
+    self.add(Dropout(0.75))
+    text.write("Dropout(0.75)\n")
+    self.add(BatchNormalization())
+    text.write("BatchNormalization()\n")
+    self.add(Dense(64,activation='relu',name='Dense_1',kernel_regularizer=regularizers.l2(0.15)))
+    text.write("Dense(64,activation='relu',name='Dense_1',kernel_regularizer=regularizers.l2(0.15))\n")
+    self.add(Dense(2,activation='softmax',name='predictions'))
+    text.write("Dense(2,activation='softmax',name='predictions')\n")
+    text.close()
+
+
 
   def createCustom2(self,input_shape2,logfile):
     '''
     
-    createCustom2 builds up the layers in the model.
+    createCustom2 builds up the layers in the model for processed data.
 
     **Arguments for createCustom2:**
     * **self:**
@@ -40,8 +85,10 @@ class mapModel(Sequential):
     text=open(logfile,'a')
     text.write('\nModel setup:\n')
 
-    self.add(Convolution2D(32,(3,3),kernel_initializer=initializers.he_normal(),activation='relu',padding='same',input_shape=input_shape2,name='Conv_1'))
-    text.write("Convolution2D(32,(3,3),kernel_initializer=initializers.he_normal(),activation='relu',padding='same',input_shape=input_shape2,name='Conv_1')\n")
+    self.add(Convolution2D(32,(3,3),kernel_initializer=initializers.he_normal(),
+                            activation='relu',padding='same',input_shape=input_shape2,name='Conv_1'))
+    text.write('''Convolution2D(32,(3,3),kernel_initializer=initializers.he_normal(),
+                   activation='relu',padding='same',input_shape=input_shape2,name='Conv_1')\n''')
     self.add(MaxPooling2D(pool_size=(2,2),name='Pool_1'))
     text.write("MaxPooling2D(pool_size=(2,2),name='Pool_1')\n")
     self.add(BatchNormalization())

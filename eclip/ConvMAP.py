@@ -1,5 +1,5 @@
-'''this is a code to convert .map to images, following the same structure as
-from cyro EM and edited. This splits the 3D map into 2d image slices'''
+'''This is a module to convert .map to images, following the same structure as
+from cyro EM and edited. This splits the 3D map into 2D image slices'''
 
 import os
 from PIL import Image as pimg
@@ -69,18 +69,12 @@ def image_slicing(input_map_directory,
   #  m+=1
   #  if m>3:
   #    break
-
     if file.endswith('.map'):
       f=str(file)
       mrc = mrcfile.open(os.path.join(input_map_directory,f))
-      #mrc.print_header()
-      print('Opening file')
       file_name = os.path.splitext(f)[0]
-      print(file_name)
       text=open(logfile,'a')
       text.write('\n'+file_name+'\n')
-
-
 
       if file_name.endswith('_i'):
         protein=file_name[:-2]
@@ -106,7 +100,6 @@ def image_slicing(input_map_directory,
 
       for axis in axes_list:
         if axis in ['X']:
-          print("transposing")
           loc_mrcdata_a=np.transpose(mrc.data,(1,2,0))
         elif axis in ['Y']:
           loc_mrcdata_a=np.transpose(mrc.data,(2,0,1))
@@ -118,16 +111,14 @@ def image_slicing(input_map_directory,
           print("creating output directory "+output_dir3)
           os.mkdir(output_dir3)  
 
-        #a variable to log image file names in order- completely optional, but can
-        #be helpful.'''
         #bluring the data using a gaussian filter
-
         if blur:
           loc_mrcdata=scipy.ndimage.filters.gaussian_filter(loc_mrcdata_a,(sigma,sigma,sigma))
           print('bluring map') 
         else:
           loc_mrcdata=loc_mrcdata_a
        
+        #to slice the images
         num=0
         for section in range(0,loc_mrcdata.shape[2], section_skip):
           print("processing section",section)
@@ -139,18 +130,18 @@ def image_slicing(input_map_directory,
             print('normalising') 
             myim = 255.0*np.clip((myim-map_min)/(map_max-map_min),0,1)  
 
-          #this is to same the files in order and otherwise unimportant
+          #this is to same the files in order and is otherwise unimportant
           if num < 10:
             imgout_filename = file_name +'_00'+str(num)+'_'+str(section)+axis+'.png'
           elif num < 100:
             imgout_filename = file_name +'_0'+str(num)+'_'+str(section)+axis+'.png'
           else:
             imgout_filename =file_name+'_'+str(num)+'_'+str(section)+axis+'.png'
+
          #saving file
           img_out = pimg.fromarray(myim)
           img_new =  img_out.convert('RGB')
           img_new.save(output_dir3+'/'+imgout_filename)
-          print('saved image: '+imgout_filename+' in directory '+output_dir3+'\n')
           text=open(logfile,'a')
           if not os.path.exists(os.path.join(output_dir3,imgout_filename)):
             text.write(imageout_filename+' did not work')
@@ -167,16 +158,20 @@ def image_slicing(input_map_directory,
     text.close()
 ##########################################################################################
 
-
-###########################################################################################
-
-
 if __name__=="__main__":
   import argparse
 
   parser = argparse.ArgumentParser(description = 'command line argument')
-  parser.add_argument('--input', dest = 'input_map_dir', type = str,help='the input map directory',default='/dls/mx-scratch/ycc62267/mapfdrbox')
-  parser.add_argument('--output',dest='output_dir', type=str,help='the output directory for the images',default = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox')
+  parser.add_argument('--input', 
+                      dest = 'input_map_dir', 
+                      type = str,
+                      help='the input map directory',
+                      default='/dls/mx-scratch/ycc62267/mapfdrbox')
+  parser.add_argument('--output',
+                      dest='output_dir', 
+                      type=str,
+                      help='the output directory for the images',
+                      default = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox')
 
   args=parser.parse_args()
 

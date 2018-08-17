@@ -9,7 +9,19 @@ from utils.datamanip import importData, avefirstscore, roundfirstscore,trialspli
 from utils.visu import plot_test_results
 ################
 
-def main():
+def main(jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry/model.json',
+          weights_file ='/dls/science/users/ycc62267/eclip/eclip/paratry/model.h5',
+          sqlite_db = '/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite'
+          fileloc = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/',
+          protein_split_list= '/dls/science/users/ycc62267/eclip/eclip/trialsplit.txt',
+          inputshape = [201,201,3],
+          method = 'average first',
+          outdir = '/dls/science/users/ycc62267/eclip/eclip/paratry/',
+          date = '070818'
+          trial_num = 1,
+          threshold = 0.5
+          raw = False):
+
 
   '''
   predic loads a model from a json file and weights from a weights file and uses
@@ -20,8 +32,7 @@ def main():
   database
 
  
-  '''
-    ######################################################################
+  
   jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry/model.json'
   weights_file ='/dls/science/users/ycc62267/eclip/eclip/paratry/model.h5'
   fileloc = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/'
@@ -32,12 +43,17 @@ def main():
   #output predictions file
   outdir = '/dls/science/users/ycc62267/eclip/eclip/paratry/'
   date = '070818'
+  '''
 
-  outfile = os.path.join(outdir,'newpredic'+date+'.txt')
-   #######################################################################
+  while os.path.exists(os.path.join(outdir,'datapredic'+ date +'_'+str(trial_num)+'.txt'):
+    trial_num+=1
   
-  x, name, proteins = importData(datafileloc=fileloc,proteinlist=protein_split,
-  input_shape=inputshape)
+  protein_split = trialsplitlist(protein_split_list)
+  outfile = os.path.join(outdir,'datapredic'+date+'_'+str(trial_num)+'.txt')
+    
+  x, name, proteins = importData(datafileloc=fileloc,
+                                  proteinlist=protein_split,
+                                  input_shape=inputshape)
   
   model = loadjson(jsonfile,weights_file)
   prediction = model.predict(x)
@@ -53,7 +69,7 @@ def main():
   
 
   #updating sqlite database
-  conn = sqlite3.connect('/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite')
+  conn = sqlite3.connect(sqlite_db)
   cur=conn.cursor()
   
   for i  in range(0,len(proteins)):
@@ -74,19 +90,108 @@ def main():
     cur.execute('''
       INSERT OR IGNORE INTO Phasing (pdb_id_id) VALUES (%s) ''' %(protein_id))
   
-  
+    if raw:
+        score_loc_i = 'ep_score_rawi'
+        confidence_loc _i = 'ep_confidence_rawi'
+        score_loc_o = 'ep_score_rawo'
+        confidence_loc_o = 'ep_confidence_rawo'
+    else: 
+        score_loc_i = 'ep_score_i'
+        confidence_loc _i = 'ep_confidence_i'
+        score_loc_o = 'ep_score_o'
+        confidence_loc_o = 'ep_confidence_o'
+
+
     if protein.endswith('_i'):
       cur.execute('''
-        UPDATE Phasing SET (ep_score_i, ep_confidence_i)=(%s,%s) WHERE
-        Phasing.pdb_id_id = "%s"''' %(score,pred,protein_id))
+        UPDATE Phasing SET (%s, %s)=(%s,%s) WHERE Phasing.pdb_id_id = "%s"
+        ''' %(score_loc_i,confidence_loc_i,score,pred,protein_id))
     else:
       cur.execute('''
-        UPDATE Phasing SET (ep_score_o,ep_confidence_o)=(%s,%s) WHERE
-        Phasing.pdb_id_id = "%s"''' %(score,pred,protein_id))
+        UPDATE Phasing SET (%s,%s)=(%s,%s) WHERE Phasing.pdb_id_id = "%s"
+        ''' %(score_loc_o,confidence_loc_o,score,pred,protein_id))
       
   conn.commit()
   conn.close()
   print('update EP_success successful')
     
 if __name__=='__main__':
-  main()
+
+  import argparse
+
+  parser = argparse.ArgumentParser(description = 'command line argument')
+  parser.add_argument('--jsn',
+                      dest = 'json',
+                      type = str,
+                      help = 'location of json file for model',
+                      default =
+                      '/dls/science/users/ycc62267/eclip/eclip/paratry/model.json')
+  parser.add_argument('--wfl',
+                      dest = 'weights',
+                      type = str,
+                      help = 'location of file for weights of model',
+                      default =
+                      '/dls/science/users/ycc62267/eclip/eclip/paratry/model.h5')
+  parser.add_argument('--db',
+                      dest = 'sqlitedb',
+                      type = str,
+                      help = 'location of database',
+                      default =
+                      '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/')
+  parser.add_argument('--psl',
+                      dest = 'psl',
+                      type = str,
+                      help = 'location for list of unused proteins.',
+                      default =
+                      '/dls/science/users/ycc62267/eclip/eclip/trialsplit.txt')
+  parser.add_argument('--insh',
+                      dest = 'inshape',
+                      type = list,
+                      help = 'dimensions of input images',
+                      default = [201,201,3])
+  parser.add_argument('--met',
+                      dest = 'met',
+                      type = str,
+                      help = 'method to round',
+                      default = 'average first')
+  parser.add_argument('--out',
+                      dest = 'out',
+                      type = str,
+                      help = 'output directory for saved files',
+                      default =
+                      '/dls/science/users/ycc62267/eclip/eclip/paratry/')
+  parser.add_argument('--date',
+                      dest = 'date',
+                      type = str,
+                      help = 'date to appear on saved files',
+                      default = '160818')
+  parser.add_argument('--trial',
+                      dest = 'trial',
+                      type = int,
+                      help = 'trial number',
+                      default = 1)
+  parser.add_argument('--th',
+                      dest = 'thresh',
+                      type = float,
+                      help = 'Value to round up from',
+                      default = 0.5)
+  parser.add_argument('--raw',
+                      dest = 'raw',
+                      type = bool,
+                      help = 'Boolean, True if raw data',
+                      default = False)
+  
+  args = parser.parse_args()
+
+  main(args.json,
+        args.weights,
+        args.sqlitedb,
+        args.psl,
+        args.inshape,
+        args.met,
+        args.out,
+        args.date,
+        args.trial,
+        args.thresh
+        args.raw)
+  

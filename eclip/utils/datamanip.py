@@ -32,7 +32,7 @@ def normalarray(n_array):
   norm_array=(n_array-mini)/(maxi-mini)
   return norm_array
 
-def inputTrainingImages(database,input_shape,fractionTrain,raw = False):
+def inputTrainingImages(database,input_shape,fractionTrain,raw = False,number=10):
   '''
 
   **Arguments for inputTrainingImages:**
@@ -114,7 +114,7 @@ def inputTrainingImages(database,input_shape,fractionTrain,raw = False):
       img_dir=os.path.join(dirin,dir)
 
       #chosing random files from directory
-      for m in range(1,10):
+      for m in range(1,number):
         filename=random.choice(os.listdir(img_dir))
         location=os.path.join(img_dir,filename)
         filelist.append(location)

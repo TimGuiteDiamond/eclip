@@ -30,7 +30,8 @@ def main(batchsize = 64,
         decay_rt=1e-8,
         Raw=False,
         input_shape=[201,201,3],
-        output_directory  = '/dls/science/users/ycc62267/eclip/eclip/paratry'):
+        output_directory  = '/dls/science/users/ycc62267/eclip/eclip/paratry',
+        number = 10):
 
   '''
   |
@@ -86,7 +87,11 @@ def main(batchsize = 64,
   text.close()
   
   #: learn calls inputTrainingImages to select image data and change into the correct form.
-  x_train,y_train,x_test,y_test=inputTrainingImages(database='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',input_shape=input_shape,fractionTrain=0.8,raw=Raw)
+  x_train,y_train,x_test,y_test=inputTrainingImages(
+                            database='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',
+                            input_shape=input_shape,
+                            fractionTrain=0.8,
+                            raw=Raw, number=number)
   
   #Printing the data dimensions to logfile
   text=open(logfile,'a')
@@ -100,15 +105,19 @@ def main(batchsize = 64,
   
   #: Class weights are used to counter the effect of an imbalanced input dataset
   y_ints=[y.argmax() for y in y_train]
-  class_weights=dict(enumerate(class_weight.compute_class_weight('balanced',np.unique(y_ints),y_ints)))
-  print('classweights %s'%class_weights)
+  class_weights=dict(enumerate(
+                          class_weight.compute_class_weight('balanced',
+                                                            np.unique(y_ints),y_ints)))
   text.write('Class weights: %s' %class_weights)
   text.write('input_shape: %s'%input_shape)
   text.close()
   
   #building model
   model = mapModel()
-  model.createCustom2(input_shape2=input_shape,logfile=logfile)
+  if Raw:
+    model.createCustom1(input_shape1=input_shape, logfile=logfile)
+  else:
+    model.createCustom2(input_shape2=input_shape,logfile=logfile)
   
   
   #optimiser could be opt=keras.optimizers.SGD(lr=0.0001), but should check
@@ -131,11 +140,23 @@ def main(batchsize = 64,
   #fit the model on the training data- this is the bit that trains the model -
   #look at the need for augmenting the data- we have a lot so it may not be
   #necessary
-  history=model.fit(x_train,y_train,class_weight=class_weights,batch_size =batchsize, epochs=epochs, verbose=1,validation_split=(0.33),callbacks=[])
+  history=model.fit(x_train,
+                    y_train,
+                    class_weight=class_weights,
+                    batch_size =batchsize, 
+                    epochs=epochs, 
+                    verbose=1,
+                    validation_split=(0.33),
+                    callbacks=[])
   
-  #: The validation loss and training loss is plotted against epochs and likewise with the validation accuracy and training accuracy
+  #: The validation loss and training loss is plotted against epochs 
+  #: likewise with the validation accuracy and training accuracy
   outputplot=os.path.join(output_directory,'Plot'+date+'_'+str(trial_num)+'.png')
-  fitplot(history.history['loss'],history.history['val_loss'],history.history['acc'],history.history['val_acc'],outputplot)
+  fitplot(history.history['loss'],
+          history.history['val_loss'],
+          history.history['acc'],
+          history.history['val_acc'],
+          outputplot)
   
   #: Predicting the score of the test data
   prediction=model.predict(x_test,batch_size=batchsize,verbose=1)
@@ -173,7 +194,6 @@ def main(batchsize = 64,
   outpred=os.path.join(output_directory,'predict'+date+'_'+str(trial_num)+'.txt')
   y_pred=ConfusionMatrix.printConvstats(prediction,outpred,logfile,y_test)
    
-  print(model.summary())
   text=open(logfile,'a')
   model.summary(print_fn=lambda x: text.write(x+'\n'))
   text.close()
@@ -189,11 +209,88 @@ def main(batchsize = 64,
 
   #y_p=prediction[:,1]
   y_p=list(prediction[:,1])
-  print(y_test)
-  print(y_p)
-  print(type(y_test))
-  print(type(y_p))
   plot_test_results(y_test,y_p,splotout)
+
+########################################################################################  
   
 if __name__=="__main__":
-  main()
+  import argparse
+
+  parser = argparse.ArgumentParser(description = 'command line argument')
+  parser.add_argument('--batchsize',
+                      dest = 'batchs',
+                      type = int,
+                      help = 'The batch size to run',
+                      default = 64)
+  parser.add_argument('--epochs', 
+                      dest = 'epochs', 
+                      type = int,
+                      help = 'Number of epochs to run',
+                      default = 300)
+  parser.add_argument('--loss',
+                      dest = 'loss', 
+                      type = str,
+                      help = 'The name of loss equation to use',
+                      default = 'categorical_crossentropy')
+  parser.add_argument('--lrt', 
+                      dest = 'learnrt',
+                      type = float,
+                      help = 'The starting learning rate',
+                      default = 0.0001)
+  parser.add_argument('--para',
+                      dest='para',
+                      type = bool,
+                      help = 'boolean: True if data parallisation.',
+                      default = True)
+  parser.add_argument('--trial', 
+                      dest = 'trial',
+                      type = int,
+                      help = 'The starting trial number',
+                      default = 1)
+  parser.add_argument('--date',
+                      dest = 'date',
+                      type = str,
+                      help = 'Date to appear on saved names',
+                      default = '150818')
+  parser.add_argument('--drt',
+                      dest = 'decayrt',
+                      type = float,
+                      help = 'Date of decay of learning rate',
+                      default = 1e-8)
+  parser.add_argument('--raw',
+                      dest = 'raw',
+                      type = bool,
+                      help = 'boolean: True if using .pha files',
+                      default = False)
+  parser.add_argument('--insh',
+                      dest = 'inshape',
+                      type = list,
+                      help = 'list of image dimensions',
+                      default = [201,201,3])
+  parser.add_argument('--out', 
+                      dest = 'out',
+                      type = str,
+                      help = 'output directory for saved files',
+                      default = '/dls/science/users/ycc62267/eclip/eclip/paratry')
+  parser.add_argument('--nmb',
+                      dest = 'nmb',
+                      type = int,
+                      help = 'number of images per axis per protein',
+                      default = 10)
+                      
+
+  args=parser.parse_args()
+
+  main(args.batchs, 
+       args.epochs, 
+       args.loss,
+       args.learnrt,
+       args.para,
+       args.trial,
+       args.date,
+       args.decayrt,
+       args.raw,
+       args.inshape,
+       args.out,
+       args.nmb)
+       

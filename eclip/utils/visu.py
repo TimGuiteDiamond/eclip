@@ -2,6 +2,8 @@
 '''Functions for visualising the progess of the network'''
 #########################
 import numpy as np
+import matplotlib as mpl
+mpl.rc("savefig", dpi = 200)
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
 
@@ -32,7 +34,7 @@ class ConfusionMatrix():
       cnf_matrix=confusion_matrix(y_t,y_pred)
       np.set_printoptions(precision=2)
 
-      class_names=[0,1]
+      class_names=['Bad','Good']
 
       fig=plt.figure()
       self.plot_confusion_matrix(cnf_matrix,classes=class_names,title='Confusion Matrix')
@@ -76,6 +78,7 @@ class ConfusionMatrix():
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
+    plt.tight_layout()
 
   def printConvstats(prediction,outfile,logfile,y_test):
     '''
@@ -153,17 +156,18 @@ def fitplot(loss,val_loss,acc,val_acc,outputfile):
   plt.subplot(2,2,1)
   plt.plot(loss)
   plt.plot(val_loss)
-  plt.title('model train')
-  plt.ylabel('loss')
-  plt.xlabel('epoch')
-  plt.legend(['train','validation'],loc='upper right')
+  plt.title('a) Model Loss')
+  plt.ylabel('Loss')
+  plt.xlabel('Epoch')
+  plt.legend(['Train','Validation'],loc='upper right')
   plt.subplot(2,2,2)
   plt.plot(acc)
   plt.plot(val_acc)
-  plt.title('model train')
-  plt.ylabel('acc')
-  plt.xlabel('epoch')
-  plt.legend(['train','validation'],loc='lower right')
+  plt.title('b) Model Accuracy')
+  plt.ylabel('Accuracy')
+  plt.xlabel('Epoch')
+  plt.legend(['Train','Validation'],loc='lower right')
+  plt.tight_layout()
   fig.savefig(outputfile)
   plt.close(fig)
 
@@ -204,8 +208,10 @@ def plot_test_results(y_test, y_pred,outputfile):
   print(len(falsey))
   fig=plt.figure()
   plt.plot(x,y_pred,truex,truey,'g.',falsex,falsey,'r.')
-  plt.xlabel('index')
-  plt.ylabel('score')
-  plt.legend(['predictions','true value correct','true value incorrect'],loc  =5)
+  plt.title('Decimal Prediction against True Value')
+  plt.xlabel('Index')
+  plt.ylabel('Score')
+  plt.legend(['Predictions','True Value Correct','True Value Incorrect'],loc=6)
+  plt.tight_layout()
   fig.savefig(outputfile)
   plt.close(fig)

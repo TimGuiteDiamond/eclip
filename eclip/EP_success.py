@@ -1,87 +1,13 @@
 ''' Forming Classification collumn for EP images '''
 
+#############################################################################
 
-
-#find 'Best trace (cycle **  with  CC  ** %)'i
 import sqlite3
 import os.path
-from os import listdir
+from eclip.utils.get_data import getlogfilename, BestSym, getlstfilename
+from eclip.utils.get_data import percentfind, makelistinverse, makelistoriginal
 
-
-
-#get log_filename
-def getlogfilename(name):
-  out= '/dls/mx-scratch/melanie/for_METRIX/results_201710/EP_phasing'
-  log_filename=os.path.join(out,name,'simple_xia2_to_shelxcde.log')
-  return log_filename
-  
-#find best space group
-def BestSym(log_filename):
-  if log_filename is None:
-    raise RuntimeError('Need to specify hklin filename')
-  elif not os.path.exists(log_filename):
-    raise RuntimeError('%s does not exist' %log_filename)
-  
-  tx=open(log_filename).read()
-  index=tx.find('Best space group: ')
-  shift = len('Best space group: ')
-  start = int( index+shift)
-  stop =int(tx.find(' ',start,start+10))
-  if stop == -1:
-    print('BestSym did not work for %s'%log_filename)
-    best=-1
-  else:
-    best=tx[start:stop]
-  return best
-
-#get lst_filename
-def getlstfilename(name,name_i,best_space_group):
-  out = '/dls/mx-scratch/melanie/for_METRIX/results_201710/EP_phasing'
-  lst_filename= os.path.join(out,name,best_space_group,(name_i+'.lst'))
-  return lst_filename 
-
-#find percentage
-def percentfind(lst_filename):
-  if lst_filename is None:
-    raise RuntimeError('Need to specify hklin filename')
-  elif not os.path.exists(lst_filename):
-    raise RuntimeError('%s does not exist' %lst_filename)
-
-  tx=open(lst_filename).read()
-  index=tx.find('with CC ', -1000,-700)
-  shift = len('with CC ')
-  start=int(index+shift)
-  stop=int(tx.find('%',start,start+6))
-  if stop == -1:
-    give_up = int(tx.find('CC is less than zero - giving up',start))
-    if give_up == -1:
-      print('percentfind did not work for %s'%lst_filename)
-      Percent = -1
-    else: Percent = 0
-  else:
-    Percent = float(tx[start:stop])
-  return Percent
-
-
-def makelistoriginal(dir_in):
-  name_list=[]
-  for item in listdir(dir_in):
-    if os.path.isdir(os.path.join(dir_in,item,item)):
-      name_list.append(item)
-    else: continue
-  return name_list
-
-def makelistinverse(dir_in):
-  name_list = []
-  for item in listdir(dir_in):
-    item_i=item+'_i'
-    if os.path.isdir(os.path.join(dir_in,item,item_i)):
-      name_list.append(item_i)
-    else: continue
-  return name_list
-  
-  
-  
+###########################################################################################  
 def main(sqlite_db='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite', 
         dir_in='/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox', 
         raw=False):
@@ -182,7 +108,7 @@ def main(sqlite_db='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',
   list_i=cur.fetchall()
   
   number=len(list_o)+len(list_i)
-  print(number)
+  print('Number of exceptions: %s' %number)
   
   
   cur.execute('''
@@ -205,13 +131,22 @@ if __name__=="__main__":
   import argparse
 
   parser = argparse.ArgumentParser(description = 'command line argument')
-  parser.add_argument('--sqlitedb',dest = 'sqlitedb', type = str, help = 'the location of the sqlite database',default = '/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite')
-  parser.add_argument('--dir_in',dest='dir_in',type=str,help='the directory input image location',default = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox')
-  parser.add_argument('--raw',dest='raw',type=str,help='parameter specifying raw or not',default=False)
+  parser.add_argument('--sqlitedb',
+                      dest = 'sqlitedb', 
+                      type = str, 
+                      help = 'the location of the sqlite database',
+                      default = '/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite')
+  parser.add_argument('--dir_in',
+                      dest='dir_in',
+                      type=str,
+                      help='the directory input image location',
+                      default = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox')
+  parser.add_argument('--raw',
+                      dest='raw',
+                      type=str,
+                      help='parameter specifying raw or not',
+                      default=False)
 
   args = parser.parse_args()
-  sqlite_db=args.sqlitedb
-  dir_in = args.dir_in
-  raw=args.raw
-
-  main(sqlite_db,dir_in,raw)
+  
+  main(args.sqlitedb,args.dir_in,args.raw)
