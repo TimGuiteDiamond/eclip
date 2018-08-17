@@ -3,6 +3,7 @@
 ##############
 import keras
 import sqlite3
+import os.path
 
 from utils.modelmanip import loadjson
 from utils.datamanip import importData, avefirstscore, roundfirstscore,trialsplitlist
@@ -11,15 +12,15 @@ from utils.visu import plot_test_results
 
 def main(jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry/model.json',
           weights_file ='/dls/science/users/ycc62267/eclip/eclip/paratry/model.h5',
-          sqlite_db = '/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite'
+          sqlite_db = '/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',
           fileloc = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/',
           protein_split_list= '/dls/science/users/ycc62267/eclip/eclip/trialsplit.txt',
           inputshape = [201,201,3],
           method = 'average first',
           outdir = '/dls/science/users/ycc62267/eclip/eclip/paratry/',
-          date = '070818'
+          date = '070818a',
           trial_num = 1,
-          threshold = 0.5
+          threshold = 0.5,
           raw = False):
 
 
@@ -45,7 +46,7 @@ def main(jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry/model.json',
   date = '070818'
   '''
 
-  while os.path.exists(os.path.join(outdir,'datapredic'+ date +'_'+str(trial_num)+'.txt'):
+  while os.path.exists(os.path.join(outdir,'datapredic'+ date+'_'+str(trial_num)+'.txt')):
     trial_num+=1
   
   protein_split = trialsplitlist(protein_split_list)
@@ -92,12 +93,12 @@ def main(jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry/model.json',
   
     if raw:
         score_loc_i = 'ep_score_rawi'
-        confidence_loc _i = 'ep_confidence_rawi'
+        confidence_loc_i = 'ep_confidence_rawi'
         score_loc_o = 'ep_score_rawo'
         confidence_loc_o = 'ep_confidence_rawo'
     else: 
         score_loc_i = 'ep_score_i'
-        confidence_loc _i = 'ep_confidence_i'
+        confidence_loc_i = 'ep_confidence_i'
         score_loc_o = 'ep_score_o'
         confidence_loc_o = 'ep_confidence_o'
 
@@ -192,6 +193,6 @@ if __name__=='__main__':
         args.out,
         args.date,
         args.trial,
-        args.thresh
+        args.thresh,
         args.raw)
   
