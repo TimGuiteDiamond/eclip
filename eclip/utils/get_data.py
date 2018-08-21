@@ -6,13 +6,12 @@ from os import listdir
 ############################################################################
 
 #get log_filename
-def getlogfilename(name):
-  out= '/dls/mx-scratch/melanie/for_METRIX/results_201710/EP_phasing'
-  log_filename=os.path.join(out,name,'simple_xia2_to_shelxcde.log')
+def get_log_filename(out, name, filename):
+  log_filename=os.path.join(out,name,filename)
   return log_filename
   
 #find best space group
-def BestSym(log_filename):
+def best_sym(log_filename):
   if log_filename is None:
     raise RuntimeError('Need to specify hklin filename')
   elif not os.path.exists(log_filename):
@@ -31,13 +30,12 @@ def BestSym(log_filename):
   return best
 
 #get lst_filename
-def getlstfilename(name,name_i,best_space_group):
-  out = '/dls/mx-scratch/melanie/for_METRIX/results_201710/EP_phasing'
+def get_lst_filename(out,name,name_i,best_space_group):
   lst_filename= os.path.join(out,name,best_space_group,(name_i+'.lst'))
   return lst_filename 
 
 #find percentage
-def percentfind(lst_filename):
+def percent_find(lst_filename):
   if lst_filename is None:
     raise RuntimeError('Need to specify hklin filename')
   elif not os.path.exists(lst_filename):
@@ -59,7 +57,7 @@ def percentfind(lst_filename):
   return Percent
 
 
-def makelistoriginal(dir_in):
+def make_list_original(dir_in):
   name_list=[]
   for item in listdir(dir_in):
     if os.path.isdir(os.path.join(dir_in,item,item)):
@@ -67,7 +65,7 @@ def makelistoriginal(dir_in):
     else: continue
   return name_list
 
-def makelistinverse(dir_in):
+def make_list_inverse(dir_in):
   name_list = []
   for item in listdir(dir_in):
     item_i=item+'_i'

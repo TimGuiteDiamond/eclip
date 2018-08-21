@@ -8,9 +8,11 @@ from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Convolution2D, MaxPooling2D, BatchNormalization
 from keras.utils import np_utils
 from keras.models import model_from_json
+
+import logging
 ################
 #creating a model
-class mapModel(Sequential):
+class MapModel(Sequential):
 
   '''
   
@@ -21,7 +23,7 @@ class mapModel(Sequential):
   def __init__(self):
     Sequential.__init__(self)
 
-  def createCustom1(self,input_shape1,logfile):
+  def create_custom1(self,input_shape1,logfile):
     '''
     
     createCustom builds up the layers in the model for raw data.
@@ -36,38 +38,50 @@ class mapModel(Sequential):
 
     '''
 
-    text=open(logfile,'a')
-    text.write('\nModel setup:\n')
-
+    #text=open(logfile,'a')
+    #text.write('\nModel setup:\n')
+    logging.info('\nModel setup:\n')
     self.add(Convolution2D(32,(3,3),kernel_initializer=initializers.he_normal(),
                             activation='relu',padding='same',input_shape=input_shape1,name='Conv_1'))
-    text.write('''Convolution2D(32,(3,3),kernel_initializer=initializers.he_normal(), 
+    #text.write('''Convolution2D(32,(3,3),kernel_initializer=initializers.he_normal(), 
+    #                activation='relu',padding='same',input_shape=input_shape1,name='Conv_1')\n''')
+    logging.info('''Convolution2D(32,(3,3),kernel_initializer=initializers.he_normal(), 
                     activation='relu',padding='same',input_shape=input_shape1,name='Conv_1')\n''')
     self.add(MaxPooling2D(pool_size=(2,2),name='Pool_1'))
-    text.write("MaxPooling2D(pool_size=(2,2),name='Pool_1')\n")
+    #text.write("MaxPooling2D(pool_size=(2,2),name='Pool_1')\n")
+    logging.info("MaxPooling2D(pool_size=(2,2),name='Pool_1')\n")
     self.add(BatchNormalization())
-    text.write("BatchNormalization()\n")
+    #text.write("BatchNormalization()\n")
+    logging.info("BatchNormalization()\n")
     self.add(Convolution2D(32,(3,3),activation='relu',padding='same',name='Conv_2'))
-    text.write("Convolution2D(32,(3,3),activation='relu',padding='same',name='Conv_2')\n")
+    #text.write("Convolution2D(32,(3,3),activation='relu',padding='same',name='Conv_2')\n")
+    logging.info("Convolution2D(32,(3,3),activation='relu',padding='same',name='Conv_2')\n")
     self.add(MaxPooling2D(pool_size=(2,2),name='Pool_2'))
-    text.write("MaxPooling2D(pool_size=(2,2),name='Pool_2')\n")
+    #text.write("MaxPooling2D(pool_size=(2,2),name='Pool_2')\n")
+    logging.info("MaxPooling2D(pool_size=(2,2),name='Pool_2')\n")
     self.add(BatchNormalization())
-    text.write("BatchNormalization()\n")
+    #text.write("BatchNormalization()\n")
+    logging.info("BatchNormalization()\n")
     self.add(Flatten())
-    text.write("Flatten()\n")
+    #text.write("Flatten()\n")
+    logging.info("Flatten()\n")
     self.add(Dropout(0.75))
-    text.write("Dropout(0.75)\n")
+    #text.write("Dropout(0.75)\n")
+    logging.info("Dropout(0.75)\n")
     self.add(BatchNormalization())
-    text.write("BatchNormalization()\n")
+    #text.write("BatchNormalization()\n")
+    logging.info("BatchNormalization()\n")
     self.add(Dense(64,activation='relu',name='Dense_1',kernel_regularizer=regularizers.l2(0.15)))
-    text.write("Dense(64,activation='relu',name='Dense_1',kernel_regularizer=regularizers.l2(0.15))\n")
+    #text.write("Dense(64,activation='relu',name='Dense_1',kernel_regularizer=regularizers.l2(0.15))\n")
+    logging.info("Dense(64,activation='relu',name='Dense_1',kernel_regularizer=regularizers.l2(0.15))\n")
     self.add(Dense(2,activation='softmax',name='predictions'))
-    text.write("Dense(2,activation='softmax',name='predictions')\n")
-    text.close()
+    #text.write("Dense(2,activation='softmax',name='predictions')\n")
+    logging.info("Dense(2,activation='softmax',name='predictions')\n")
+    #text.close()
 
 
 
-  def createCustom2(self,input_shape2,logfile):
+  def create_custom2(self,input_shape2,logfile):
     '''
     
     createCustom2 builds up the layers in the model for processed data.
@@ -82,34 +96,46 @@ class mapModel(Sequential):
 
     '''
 
-    text=open(logfile,'a')
-    text.write('\nModel setup:\n')
+    #text=open(logfile,'a')
+    #text.write('\nModel setup:\n')
 
     self.add(Convolution2D(32,(3,3),kernel_initializer=initializers.he_normal(),
                             activation='relu',padding='same',input_shape=input_shape2,name='Conv_1'))
-    text.write('''Convolution2D(32,(3,3),kernel_initializer=initializers.he_normal(),
+    #text.write('''Convolution2D(32,(3,3),kernel_initializer=initializers.he_normal(),
+    #               activation='relu',padding='same',input_shape=input_shape2,name='Conv_1')\n''')
+    logging.info('''Convolution2D(32,(3,3),kernel_initializer=initializers.he_normal(),
                    activation='relu',padding='same',input_shape=input_shape2,name='Conv_1')\n''')
     self.add(MaxPooling2D(pool_size=(2,2),name='Pool_1'))
-    text.write("MaxPooling2D(pool_size=(2,2),name='Pool_1')\n")
+    #text.write("MaxPooling2D(pool_size=(2,2),name='Pool_1')\n")
+    logging.info("MaxPooling2D(pool_size=(2,2),name='Pool_1')\n")
     self.add(BatchNormalization())
-    text.write("BatchNormalization()\n")
-    self.add(Convolution2D(32,(3,3),activation='relu',padding='same',name='Conv_2'))
-    text.write("Convolution2D(32,(3,3),activation='relu',padding='same',name='Conv_2')\n")
+    #text.write("BatchNormalization()\n")
+    logging.info("BatchNormalization()\n")
+    self.add(Convolution2D(64,(3,3),activation='relu',padding='same',name='Conv_2'))
+    #text.write("Convolution2D(32,(3,3),activation='relu',padding='same',name='Conv_2')\n")
+    logging.info("Convolution2D(64,(3,3),activation='relu',padding='same',name='Conv_2')\n")
     self.add(MaxPooling2D(pool_size=(2,2),name='Pool_2'))
-    text.write("MaxPooling2D(pool_size=(2,2),name='Pool_2')\n")
+    #text.write("MaxPooling2D(pool_size=(2,2),name='Pool_2')\n")
+    logging.info("MaxPooling2D(pool_size=(2,2),name='Pool_2')\n")
     self.add(BatchNormalization())
-    text.write("BatchNormalization()\n")
+    #text.write("BatchNormalization()\n")
+    logging.info("BatchNormalization()\n")
     self.add(Flatten())
-    text.write("Flatten()\n")
+    #text.write("Flatten()\n")
+    logging.info("Flatten()\n")
     self.add(Dropout(0.75))
-    text.write("Dropout(0.75)\n")
+    #text.write("Dropout(0.75)\n")
+    logging.info("Dropout(0.75)\n")
     self.add(BatchNormalization())
-    text.write("BatchNormalization()\n")
+    #text.write("BatchNormalization()\n")
+    logging.info("BatchNormalization()\n")
     self.add(Dense(128,activation='relu',name='Dense_1',kernel_regularizer=regularizers.l2(0.15)))
-    text.write("Dense(128,activation='relu',name='Dense_1',kernel_regularizer=regularizers.l2(0.15))\n")
+    #text.write("Dense(128,activation='relu',name='Dense_1',kernel_regularizer=regularizers.l2(0.15))\n")
+    logging.info("Dense(128,activation='relu',name='Dense_1',kernel_regularizer=regularizers.l2(0.15))\n")
     self.add(Dense(2,activation='softmax',name='predictions'))
-    text.write("Dense(2,activation='softmax',name='predictions')\n")
-    text.close()
+    #text.write("Dense(2,activation='softmax',name='predictions')\n")
+    logging.info("Dense(2,activation='softmax',name='predictions')\n")
+    #text.close()
 
 
 ##This needs some work, i dont really understand it and have not checked it yet
@@ -121,7 +147,7 @@ class mapModel(Sequential):
 #    for layer in model.layers[16:17]):
 #      print(layer.get_weights())
 
-def expjson(outfile,model):
+def exp_json(outfile,model):
   '''
   expjson is a function that exports a model to a .json format file
 
@@ -136,7 +162,7 @@ def expjson(outfile,model):
     outfile.write(json_string)
   outfile.close()
 
-def expyaml(outfile,model):
+def exp_yaml(outfile,model):
   '''
   expyaml is a function that exports a model to a .yaml format file
 
@@ -153,7 +179,7 @@ def expyaml(outfile,model):
 
 
 #load model as json and fill with weights
-def loadjson(jsonfile,weights_file):
+def load_json(jsonfile,weights_file):
   '''
   loadjson is a function that loads a model from a .json file and populates it
   with weights from a .h5 file

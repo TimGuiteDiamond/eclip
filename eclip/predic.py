@@ -5,19 +5,19 @@ import keras
 import sqlite3
 import os.path
 
-from utils.modelmanip import loadjson
-from utils.datamanip import importData, avefirstscore, roundfirstscore,trialsplitlist
+from utils.modelmanip import load_json
+from utils.datamanip import import_data, ave_first_score,round_first_score,trial_split_list
 from utils.visu import plot_test_results
 ################
 
-def main(jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry/model.json',
-          weights_file ='/dls/science/users/ycc62267/eclip/eclip/paratry/model.h5',
+def main(jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.json',
+          weights_file ='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.h5',
           sqlite_db = '/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',
           fileloc = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/',
           protein_split_list= '/dls/science/users/ycc62267/eclip/eclip/trialsplit.txt',
           inputshape = [201,201,3],
           method = 'average first',
-          outdir = '/dls/science/users/ycc62267/eclip/eclip/paratry/',
+          outdir = '/dls/science/users/ycc62267/eclip/eclip/paratry1/',
           date = '070818a',
           trial_num = 1,
           threshold = 0.5,
@@ -34,37 +34,37 @@ def main(jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry/model.json',
 
  
   
-  jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry/model.json'
-  weights_file ='/dls/science/users/ycc62267/eclip/eclip/paratry/model.h5'
+  jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.json'
+  weights_file ='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.h5'
   fileloc = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/'
   protein_split = trialsplitlist('/dls/science/users/ycc62267/eclip/eclip/trialsplit.txt')
   inputshape = [201,201,3]
   #method can be either 'average first' or 'round first'
   method = 'average first'
   #output predictions file
-  outdir = '/dls/science/users/ycc62267/eclip/eclip/paratry/'
+  outdir = '/dls/science/users/ycc62267/eclip/eclip/paratry1/'
   date = '070818'
   '''
 
   while os.path.exists(os.path.join(outdir,'datapredic'+ date+'_'+str(trial_num)+'.txt')):
     trial_num+=1
   
-  protein_split = trialsplitlist(protein_split_list)
+  proteinsplit = trial_split_list(protein_split_list)
   outfile = os.path.join(outdir,'datapredic'+date+'_'+str(trial_num)+'.txt')
     
-  x, name, proteins = importData(datafileloc=fileloc,
-                                  proteinlist=protein_split,
+  x, name, proteins = import_data(datafileloc=fileloc,
+                                  proteinlist=proteinsplit,
                                   input_shape=inputshape)
   
-  model = loadjson(jsonfile,weights_file)
+  model = load_json(jsonfile,weights_file)
   prediction = model.predict(x)
    
   
   #round first
   if method == 'round first':
-    scores, preds, ones, zeros = roundfirstscore(proteins,name,prediction,outfile,threshold)
+    scores, preds, ones, zeros = round_first_score(proteins,name,prediction,outfile,threshold)
   if method == 'average first':
-    scores, preds, ones, zeros = avefirstscore(proteins,name,prediction,outfile,threshold)
+    scores, preds, ones, zeros = ave_first_score(proteins,name,prediction,outfile,threshold)
   else:
     RuntimeError('Not a valid method')
   
@@ -126,13 +126,13 @@ if __name__=='__main__':
                       type = str,
                       help = 'location of json file for model',
                       default =
-                      '/dls/science/users/ycc62267/eclip/eclip/paratry/model.json')
+                      '/dls/science/users/ycc62267/eclip/eclip/paratry1/model.json')
   parser.add_argument('--wfl',
                       dest = 'weights',
                       type = str,
                       help = 'location of file for weights of model',
                       default =
-                      '/dls/science/users/ycc62267/eclip/eclip/paratry/model.h5')
+                      '/dls/science/users/ycc62267/eclip/eclip/paratry1/model.h5')
   parser.add_argument('--db',
                       dest = 'sqlitedb',
                       type = str,
@@ -160,7 +160,7 @@ if __name__=='__main__':
                       type = str,
                       help = 'output directory for saved files',
                       default =
-                      '/dls/science/users/ycc62267/eclip/eclip/paratry/')
+                      '/dls/science/users/ycc62267/eclip/eclip/paratry1/')
   parser.add_argument('--date',
                       dest = 'date',
                       type = str,

@@ -9,6 +9,7 @@ plt.switch_backend('agg')
 
 from sklearn.metrics import confusion_matrix
 import itertools
+import logging
 #########################
 
 class ConfusionMatrix():
@@ -80,7 +81,7 @@ class ConfusionMatrix():
     plt.xlabel('Predicted label')
     plt.tight_layout()
 
-  def printConvstats(prediction,outfile,logfile,y_test):
+  def print_convstats(prediction,outfile,logfile,y_test):
     '''
     printConvstats writes to a logfile the values for true negatives, true
     positives, false negatives and false positives and prints these values to
@@ -102,7 +103,7 @@ class ConfusionMatrix():
 
     '''
     outfile=open(outfile,'w')
-    text=open(logfile,'a')
+    #text=open(logfile,'a')
     n_tn=0
     n_tp=0
     n_fn=0
@@ -128,17 +129,22 @@ class ConfusionMatrix():
     print('Number of false negatives = ',n_fn)
     print('Number of true positives = ', n_tp)
     print('Number of flase positives = ',n_fp)
-    text.write('Number of true negatives = %s\n'%n_tn)
-    text.write('Number of false negatives = %s\n'%n_fn)
-    text.write('Number of true positives = %s\n'%n_tp)
-    text.write('Number of false positives = %s\n'%n_fp)
-    
-    text.close()
+    #text.write('Number of true negatives = %s\n'%n_tn)
+    #text.write('Number of false negatives = %s\n'%n_fn)
+    #text.write('Number of true positives = %s\n'%n_tp)
+    #text.write('Number of false positives = %s\n'%n_fp)
+    #
+    #text.close()
+    logging.info('Number of true negatives = %s\n'%n_tn)
+    logging.info('Number of false negatives = %s\n'%n_fn)
+    logging.info('Number of true positives = %s\n'%n_tp)
+    logging.info('Number of false positives = %s\n'%n_fp)
+
     return y_pred
 
 
   
-def fitplot(loss,val_loss,acc,val_acc,outputfile):
+def fit_plot(loss,val_loss,acc,val_acc,outputfile):
   '''
   fitplot is a function that plots a figure of two graphs. One graph of
   validation and training loss against epochs and one graph of validation and

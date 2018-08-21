@@ -6,6 +6,7 @@ from EP_success import main as EPf
 from learn import main as learnf
 from predictest import main as predictestf
 import time
+import logging
 
 #############################################################
 def CreatingNewModel(input_map_directory1,
@@ -13,11 +14,21 @@ def CreatingNewModel(input_map_directory1,
                       sqlite_db,
                       raw,
                       epochs,
-                      number):
+                      number,
+                      trialnum,
+                      lgdir):
   start_time = time.time() 
   date = str(time.strftime("%d%m%y"))
   if raw:
     date = date+'raw'
+
+  date = args.
+  while os.path.exists(os.path.join(lgdir,'log'+date+'_'+str(trialnum)+'.log'):
+    trialnum+=1
+  logfile = os.path.join(lgfir, 'log'+date+'_'+str(trialnum)+'.log')
+
+  logging.basicConfig(filename = logfile, level = logging.DEBUG)
+  logging.info('Running running.py')
 
 # calling Convmap
   image_slicing(input_map_directory1,output_directory1)
@@ -27,11 +38,12 @@ def CreatingNewModel(input_map_directory1,
   EPf(sqlite_db,output_directory1,raw)  
 
 #calling learn
-  learnf(epochs=epochs,Raw=raw,date=date,number = number)
+  learnf(epochs=epochs,Raw=raw,date=date,number = number, trialnum = trialnum)
 
 #calling predictest
   predictestf(fileloc = output_directory1, date=date, raw=raw)
   print("--- %s seconds -----" %(time.time()-start_time))
+  logging.info('Finished')
 ###################################################################
 
 if __name__=="__main__":
@@ -69,16 +81,29 @@ if __name__=="__main__":
                       type = int,
                       help = 'number of images for learn.py per axis per protein',
                       default = 10)
+  parser.add_argument('--trial',
+                      dest = 'trial',
+                      type = int,
+                      help = 'The starting trial number',
+                      default = 1)
+  parser.add_arguemnt('--lgdir',
+                      dest = 'lgdir',
+                      type = str,
+                      help = 'output directory for stats etc.',
+                      default =
+                      '/dls/sicence/user/ycc62267/eclip/eclip/paratry1')
 
 
   args=parser.parse_args()
-
+  
   CreatingNewModel(args.input_m,
                   args.output_m,
                   args.sqlitedb,
                   args.raw,
                   args.epochs,
-                  args.nmb)
+                  args.nmb,
+                  args.trial,
+                  args.lgdir)
 
 
 ############################################################

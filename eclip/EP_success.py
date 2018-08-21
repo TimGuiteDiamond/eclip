@@ -4,17 +4,19 @@
 
 import sqlite3
 import os.path
-from eclip.utils.get_data import getlogfilename, BestSym, getlstfilename
-from eclip.utils.get_data import percentfind, makelistinverse, makelistoriginal
+from eclip.utils.get_data import get_log_filename, best_sym, get_lst_filename
+from eclip.utils.get_data import percent_find, make_list_inverse, make_list_original
 
 ###########################################################################################  
-def main(sqlite_db='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite', 
-        dir_in='/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox', 
-        raw=False):
+def main(sqlitedb='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite', 
+        dirin='/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox', 
+        raw=False
+        out = '/dls/science/melanie/for_METRIX/results_201710/EP_phasing',
+        filename = 'simple_xia2_to shelxcde.log'):
   
   
   #connecting to SQLite database
-  conn=sqlite3.connect(sqlite_db)
+  conn=sqlite3.connect(sqlitedb)
   cur=conn.cursor()
   
    
@@ -23,76 +25,76 @@ def main(sqlite_db='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',
   
   
   #for original:
-  originals_list= makelistoriginal(dir_in)
-  for n in originals_list:
+  origlst= make_list_original(dirin)
+  for n in origlst:
     #find label
     name=str(n)
-    log_filename=getlogfilename(name)
-    best_space_group = BestSym(log_filename)
-    if best_space_group == -1:
+    logfnm=get_log_filename(out,name,filename)
+    bsgrp = best_sym(logfnm)
+    if bsgrp == -1:
       continue
-    lst_filename = getlstfilename(name,name,best_space_group)
-    percent=percentfind(lst_filename)
+    lstfnm = get_lst_filename(out,name,name,bsgrp)
+    percent=percent_find(lstfnm)
     if percent == -1:
       continue
     #get pdb_id
     cur.execute('''
       SELECT id FROM PDB_id WHERE PDB_id.pdb_id="%s" ''' % (name))
-    pdb_pk = cur.fetchone()[0]
+    pdbpk = cur.fetchone()[0]
     cur.execute('''
-      INSERT OR IGNORE INTO Phasing (pdb_id_id) VALUES (%s) ''' %(pdb_pk))
+      INSERT OR IGNORE INTO Phasing (pdb_id_id) VALUES (%s) ''' %(pdbpk))
     if percent > 25:
       cur.execute('''
         UPDATE Phasing SET (ep_success_o, ep_percent_o)=(1,%s) WHERE
-        Phasing.pdb_id_id = "%s"''' %(percent, pdb_pk))
+        Phasing.pdb_id_id = "%s"''' %(percent, pdbpk))
     else:
       cur.execute('''
         UPDATE Phasing SET (ep_success_o,ep_percent_o)=(0,%s) WHERE
-        Phasing.pdb_id_id = "%s"''' %(percent,pdb_pk))
+        Phasing.pdb_id_id = "%s"''' %(percent,pdbpk))
 
     if raw:
-      directory = os.path.join(dir_in,name,name)
+      directory = os.path.join(dirin,name,name)
       cur.execute('''
-        UPDATE Phasing SET ep_raw_o = "%s" WHERE Phasing.pdb_id_id = "%s"'''%(directory,pdb_pk))
+        UPDATE Phasing SET ep_raw_o = "%s" WHERE Phasing.pdb_id_id = "%s"'''%(directory,pdbpk))
     else:
-      directory = os.path.join(dir_in,name,name)
+      directory = os.path.join(dirin,name,name)
       cur.execute('''
-        UPDATE Phasing SET ep_img_o = "%s" WHERE Phasing.pdb_id_id = "%s"'''%(directory,pdb_pk))
+        UPDATE Phasing SET ep_img_o = "%s" WHERE Phasing.pdb_id_id = "%s"'''%(directory,pdbpk))
   
-  inverse_list = makelistinverse(dir_in)
-  for n in inverse_list:
+  invlst = make_list_inverse(dirin)
+  for n in invlst:
     name_i=str(n)
     name=name_i[:-2]
-    log_filename=getlogfilename(name)
-    best_space_group = BestSym(log_filename)
-    if best_space_group == -1:
+    logfnm=get_log_filename(name)
+    bsgrp = best_sym(logfnm)
+    if bsgrp == -1:
       continue
-    lst_filename=getlstfilename(name,name_i,best_space_group)
-    percent=percentfind(lst_filename)
+    lstfnm=get_lst_filename(name,name_i,bsgrp)
+    percent=percent_find(lstfnm)
     if percent == -1:
       continue
     #get pdb_id
     cur.execute('''
       SELECT id FROM PDB_id WHERE PDB_id.pdb_id="%s" ''' % (name))
-    pdb_pk = cur.fetchone()[0]
+    pdbpk = cur.fetchone()[0]
     cur.execute('''
-      INSERT OR IGNORE INTO Phasing (pdb_id_id) VALUES (%s) ''' % (pdb_pk))
+      INSERT OR IGNORE INTO Phasing (pdb_id_id) VALUES (%s) ''' % (pdbpk))
     cur.execute('''
       UPDATE Phasing SET ep_percent_i = %s WHERE Phasing.pdb_id_id = "%s"'''
-      %(percent,pdb_pk))
+      %(percent,pdbpk))
     cur.execute('''
       UPDATE Phasing SET ep_success_i=1 WHERE  ep_percent_i > 25''' )
     cur.execute('''
       UPDATE Phasing SET ep_success_i=0 WHERE ep_percent_i < 25''' )
     if raw:
-      directory = os.path.join(dir_in,name,name_i)
+      directory = os.path.join(dirin,name,name_i)
       cur.execute('''
         UPDATE Phasing SET ep_raw_i = "%s" WHERE Phasing.pdb_id_id =
-        "%s"'''%(directory,pdb_pk))
+        "%s"'''%(directory,pdbpk))
     else:
-      directory = os.path.join(dir_in,name,name_i)
+      directory = os.path.join(dirin,name,name_i)
       cur.execute('''
-        UPDATE Phasing SET ep_img_i = "%s" WHERE Phasing.pdb_id_id = "%s"'''%(directory,pdb_pk))
+        UPDATE Phasing SET ep_img_i = "%s" WHERE Phasing.pdb_id_id = "%s"'''%(directory,pdbpk))
 
   
   #to catch other exceptions- there may be a better way to do this- there should
@@ -136,8 +138,8 @@ if __name__=="__main__":
                       type = str, 
                       help = 'the location of the sqlite database',
                       default = '/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite')
-  parser.add_argument('--dir_in',
-                      dest='dir_in',
+  parser.add_argument('--dirin',
+                      dest='dirin',
                       type=str,
                       help='the directory input image location',
                       default = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox')
@@ -146,7 +148,22 @@ if __name__=="__main__":
                       type=str,
                       help='parameter specifying raw or not',
                       default=False)
+  parser.ad_argument('--out',
+                      dest = 'out',
+                      type = str,
+                      help = 'directory to find log files etc',
+                      default =
+                      '/dls/science/melanie/for_METRIX/results_201710/EP_phasing')
+  parser.add_argument('--fnm',
+                      dest = 'fnm',
+                      type = str,
+                      help = 'name of log file',
+                      default = 'simple_xia2_to shelxcde.log')
 
   args = parser.parse_args()
   
-  main(args.sqlitedb,args.dir_in,args.raw)
+  main(args.sqlitedb,
+        args.dirin,
+        args.raw,
+        args.out,
+        args.fnm)

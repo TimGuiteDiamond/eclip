@@ -6,19 +6,19 @@ scores'''
 import sqlite3
 import os
 
-from utils.modelmanip import loadjson
-from utils.datamanip import importData, avefirstscore, roundfirstscore,trialsplitlist
+from utils.modelmanip import load_json
+from utils.datamanip import import_data, ave_first_score, round_first_score,trial_split_list
 from utils.visu import plot_test_results, ConfusionMatrix
 ################
 
-def main(jsonfile ='/dls/science/users/ycc62267/eclip/eclip/paratry/model.json',
-        weights_file ='/dls/science/users/ycc62267/eclip/eclip/paratry/model.h5', 
+def main(jsonfile ='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.json',
+        weights_file ='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.h5', 
         sqlite_db = '/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',
         fileloc = '/dls/mx-scratch/ycc62267/ingfdr/blur2_5_maxminbox/', 
         protein_split_list ='/dls/science/users/ycc62267/eclip/eclip/trialsplit.txt',
         inputshape =[201,201,3],
         method = 'average first',
-        outdir ='/dls/science/users/ycc62267/eclip/eclip/paratry/',
+        outdir ='/dls/science/users/ycc62267/eclip/eclip/paratry1/',
         date ='150818',
         trial_num=1,
         threshold = 0.5,
@@ -39,7 +39,8 @@ def main(jsonfile ='/dls/science/users/ycc62267/eclip/eclip/paratry/model.json',
   * **protein_split_list:** text file with list of proteins to use. default: protein_split_list= '/dls/science/users/ycc62267/eclip/eclip/trialsplit.txt'
   * **inputshape:** The input shape of the images. default: inputshape = [201,201,3]
   * **method:** option parameter for how to round. Can be either 'average first' or 'round first'. default: method = 'average first'
-  * **outdir:** output predictions file. default: '/dls/science/users/ycc62267/eclip/eclip/paratry/'
+  * **outdir:** output predictions file. default:
+  * '/dls/science/users/ycc62267/eclip/eclip/paratry1/'
   * **date:** date. default: date = '100818'
   * **trial_num:** default: trial_num = 5
   * **threshold:** default: threshold= 0.5
@@ -48,27 +49,25 @@ def main(jsonfile ='/dls/science/users/ycc62267/eclip/eclip/paratry/model.json',
 
 
    ########################################################################
-  while os.path.exists(os.path.join(outdir,'map_results_plot'+date+'_'+str(trial_num)+'.png')):
-    trial_num+=1
-  
-  protein_split = trialsplitlist(protein_split_list)
+   
+  proteinsplit = trial_split_list(protein_split_list)
   outfile = os.path.join(outdir,'newpredic'+date+'_'+str(trial_num)+'.txt')
   resoutfile= os.path.join(outdir,'map_results_plot'+date+'_'+str(trial_num)+'.png')
   cnfout=os.path.join(outdir,'map_cnf'+date+'_'+str(trial_num)+'.png')
     #######################################################################
   
-  x, name, proteins = importData(datafileloc=fileloc,proteinlist=protein_split,
+  x, name, proteins = import_data(datafileloc=fileloc,proteinlist=proteinsplit,
   input_shape=inputshape)
   
-  model = loadjson(jsonfile,weights_file)
+  model = load_json(jsonfile,weights_file)
   prediction = model.predict(x)
    
   
   #round first
   if method == 'round first':
-    scores, preds, ones, zeros = roundfirstscore(proteins,name, prediction,outfile,threshold)
+    scores, preds, ones, zeros = round_first_score(proteins,name, prediction,outfile,threshold)
   if method == 'average first':
-    scores, preds, ones, zeros = avefirstscore(proteins,name, prediction,outfile,threshold)
+    scores, preds, ones, zeros = ave_first_score(proteins,name, prediction,outfile,threshold)
   else:
     RuntimeError('Not a valid method')
   
@@ -159,6 +158,14 @@ def main(jsonfile ='/dls/science/users/ycc62267/eclip/eclip/paratry/model.json',
   text.write('accuracy = %s'%acc)
   for i in errors:
     text.write(i+'\n')
+ 
+  #adding to log file 
+  logging.info('''\nNumber of true positives:%s\n
+              Number of true negatives: %s\n
+              Number of false positives: %s\n
+              Number of false negatives: %s\n'''
+              %(n_tp,n_tn,n_fp,n_fn))
+  logging.info('accuracy = %s'%acc)
 
   # plot test results
   plot_test_results(y_true,preds,resoutfile)
@@ -170,18 +177,23 @@ def main(jsonfile ='/dls/science/users/ycc62267/eclip/eclip/paratry/model.json',
 #########################################################################
 if __name__=='__main__':
   import argparse
+  import time 
+  start_time = time.time()
+  date = str(time.strftime("%d%m%y"))
 
   parser = argparse.ArgumentParser(description = 'command line argument')
   parser.add_argument('--jsn',
                       dest = 'json',
                       type = str,
                       help = 'location of json file for model',
-                      default = '/dls/science/users/ycc62267/eclip/eclip/paratry/model.json')
+                      default =
+                      '/dls/science/users/ycc62267/eclip/eclip/paratry1/model.json')
   parser.add_argument('--wfl',
                       dest = 'weights',
                       type = str,
                       help = 'location of file for weights of model',
-                      default = '/dls/science/users/ycc62267/eclip/eclip/paratry/model.h5')
+                      default =
+                      '/dls/science/users/ycc62267/eclip/eclip/paratry1/model.h5')
   parser.add_argument('--db',
                       dest = 'sqlitedb',
                       type = str,
@@ -215,12 +227,12 @@ if __name__=='__main__':
                       type = str,
                       help = 'output directory for saved files.',
                       default =
-                      '/dls/science/users/ycc62267/eclip/eclip/paratry/')
+                      '/dls/science/users/ycc62267/eclip/eclip/paratry1/')
   parser.add_argument('--date',
                       dest = 'date',
                       type = str,
                       help = 'date to appear on saved files',
-                      default = '150818')
+                      default = date)
   parser.add_argument('--trial',
                       dest = 'trial',
                       type = int,
@@ -238,6 +250,19 @@ if __name__=='__main__':
                       default = False)
   
   args = parser.parse_args()
+  raw = args.raw
+  trialnum = args.trial
+  date = args.date
+  if raw:
+    date = date + 'raw'
+  outdir = args.out
+  while
+    os.path.exists(os.path.join(outdir,'log'+date+'_'+str(trialnum)+'.txt')):
+    trialnum+=1
+
+  logfile = os.path.join(outdir,'log'+date+'_'+str(trialnum)+'.txt')
+  logging.basicConfig(filename = logfile, level = logging.DEBUG)
+  logging.info('Running predictest.py')
 
   main(args.json,
         args.weights,
@@ -251,5 +276,5 @@ if __name__=='__main__':
         args.trial,
         args.thresh,
         args.raw)
-  
+  logging.info('Finished --%s seconds --'%(time.time() - start_time))
   

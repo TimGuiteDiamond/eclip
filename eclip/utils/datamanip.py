@@ -10,11 +10,12 @@ plt.switch_backend('agg')
 from sklearn.utils import shuffle, class_weight
 from sklearn.metrics import confusion_matrix
 import random
+import logging
 
 from keras.utils import to_categorical
 
 ####################################
-def normalarray(n_array):
+def normal_array(n_array):
 
   '''
   **Arguments for normalarray:**
@@ -32,7 +33,7 @@ def normalarray(n_array):
   norm_array=(n_array-mini)/(maxi-mini)
   return norm_array
 
-def inputTrainingImages(database,input_shape,fractionTrain,raw = False,number=10):
+def input_training_images(database,input_shape,fractionTrain,raw = False,number=10):
   '''
 
   **Arguments for inputTrainingImages:**
@@ -73,8 +74,11 @@ def inputTrainingImages(database,input_shape,fractionTrain,raw = False,number=10
       name_str=cur.fetchall()
       t.write(str(name_id)+' '+str(name_str)+'\n')
   t.close()
-
+  
   for item in Protein_id:
+ 
+   
+   
     cur.execute('''SELECT ep_success_o FROM Phasing WHERE pdb_id_id = "%s"'''%item)
     y_o=list(cur.fetchall()[0])[0]
     if not y_o==None:
@@ -115,12 +119,12 @@ def inputTrainingImages(database,input_shape,fractionTrain,raw = False,number=10
 
       #chosing random files from directory
       for m in range(1,number):
-        filename=random.choice(os.listdir(img_dir))
-        location=os.path.join(img_dir,filename)
+        file_name=random.choice(os.listdir(img_dir))
+        location=os.path.join(img_dir,file_name)
         filelist.append(location)
         label.append(y_list[i])
 
-  filearray=np.array([normalarray(np.array(plt.imread(filename))).flatten() for filename in filelist])
+  filearray=np.array([normal_array(np.array(plt.imread(filename))).flatten() for filename in filelist])
   print('images have been read in')
   numsamples = len(filearray)
 
@@ -154,7 +158,7 @@ def inputTrainingImages(database,input_shape,fractionTrain,raw = False,number=10
   return x_train,y_train,x_test,y_test
 
 
-def importData(datafileloc,proteinlist, input_shape):
+def import_data(datafileloc,proteinlist, input_shape):
   '''Function to import new data to predict
 
   **Arguments for importData:**
@@ -196,7 +200,7 @@ def importData(datafileloc,proteinlist, input_shape):
   return x_predic, name, protein_list
 
 
-def avefirstscore(proteins,name,prediction,outfile,threshold):
+def ave_first_score(proteins,name,prediction,outfile,threshold):
 
   ''' A function to convert the prediction of the model into a score, confidence
   measure, and a count of the ones and zeros for one map. The average first
@@ -219,7 +223,7 @@ def avefirstscore(proteins,name,prediction,outfile,threshold):
 
   '''
 
-  text=open(outfile,'a')
+  #text=open(outfile,'a')
   pred = []
   score =[]
   for protein in proteins:
@@ -227,13 +231,15 @@ def avefirstscore(proteins,name,prediction,outfile,threshold):
     n=0
     ones = 0
     zeros = 0
-    text.write('\n'+protein+':\n')
+    #text.write('\n'+protein+':\n')
+    logging.info('\n'+protein+'\n')
     for i in range(0,len(name)):
       print(name[i])
       print(protein)
       if name[i] == protein:
         x+= prediction[i][1]
-        text.write('prediction: '+str(prediction[i][1])+'\n')
+        logging.info('prediction: '+str(prediction[i][1])+'\n')
+        #text.write('prediction: '+str(prediction[i][1])+'\n')
         if prediction[i][1]>=threshold:
           ones+=1
         else:
@@ -244,19 +250,24 @@ def avefirstscore(proteins,name,prediction,outfile,threshold):
         continue
     p=x/n
     pred.append(p)
-    text.write('averaged likelihood of being phased: %s\n'%p)
+    #text.write('averaged likelihood of being phased: %s\n'%p)
+    logging.info('averaged likelihood of being phased: %s\n'%p)
     if p>=threshold:
       score.append(1)
-      text.write('score of map: 1\n')
+      #text.write('score of map: 1\n')
+      logging.info('score of map: 1\n')
     else:
       score.append(0)
-      text.write('score of map:0\n')
-    text.write('ones %s\n'%ones)
-    text.write('zeros %s\n'%zeros)
-  text.close()
+      #text.write('score of map:0\n')
+      logging.info('score of map: 0\n')
+    #text.write('ones %s\n'%ones)
+    #text.write('zeros %s\n'%zeros)
+    logging.info('ones %s\nzeros %s\n'%(ones,zeros))
+
+  #text.close()
   return score, pred, ones, zeros
 
-def roundfirstscore(proteins,name, prediction,outfile,threshold):
+def round_first_score(proteins,name, prediction,outfile,threshold):
 
   ''' A function to convert the prediction of the model into a score, confidence
   measure, and a count of the ones and zeros for one map. The round first method
@@ -279,14 +290,16 @@ def roundfirstscore(proteins,name, prediction,outfile,threshold):
   '''
   pred = []
   score =[]
-  text=open(outfile,'a')
+  #text=open(outfile,'a')
   for proteins in proteins:
     x=0
     n=0
-    text.write('\n'+protein+':\n')
+    #text.write('\n'+protein+':\n')
+    logging.info('\n'+protein+'\n')
     for i in range(0,len(name)):
       if name[i]==protein:
-        text.write('prediction: '+str(prediction[i][1])+'\n')
+        #text.write('prediction: '+str(prediction[i][1])+'\n')
+        loggin.info('prediction: '+str(prediciton[i][1])+'\n')
         if prediction[i][1]>=threshold:
           x=+1
           ones=+1
@@ -295,20 +308,25 @@ def roundfirstscore(proteins,name, prediction,outfile,threshold):
         n+=1
     p=x/n
     pred.append(p)
-    text.write('averaged likelihood of being phased: %s\n'%p)
+    #text.write('averaged likelihood of being phased: %s\n'%p)
+    logging.info('averaged likelihood of being phased: %s\n'%p)
     if p>=threshold:
       score.append(1)
-      text.write('score of map: 1\n')
+      #text.write('score of map: 1\n')
+      logging.info('score of map: 1\n')
     else:
       score.append(0)
-      text.write('score of map: 0\n')
-    text.write('ones %s\n'%ones)
-    text.write('zeros %s\n'%zeros)
-    text.close()
+      #text.write('score of map: 0\n')
+      logging.info('score of map: 0\n')
+    #text.write('ones %s\n'%ones)
+    #text.write('zeros %s\n'%zeros)
+    #text.close()
+    logging.info('ones %s\nzeros %s\n'%(ones,zeros))
+
     return score, pred, ones, zeros
 
 
-def trialsplitlist(listloc):
+def trial_split_list(listloc):
   ''' 
   A function to read the file detailing which proteins were not used to train  and read them into a list
 
@@ -330,7 +348,7 @@ def trialsplitlist(listloc):
 
 
 
-def columnclear(database, tablename, column):
+def column_clear(database, tablename, column):
   '''
   Function to change all values in a column of  a given column of an SQLite
   database to Null

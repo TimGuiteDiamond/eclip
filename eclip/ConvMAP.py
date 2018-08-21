@@ -13,15 +13,15 @@ import mrcfile
 
 ##########################################################################################
 
-def image_slicing(input_map_directory, 
-                  output_directory, 
-                  axes_list =['X','Y','Z'],
-                  window_size=10,
+def image_slicing(inputmapdirectory, 
+                  outputdirectory, 
+                  axeslist =['X','Y','Z'],
+                  windowsize=10,
                   offset =10,
                   section_skip=2,
                   normalise = True,
-                  map_min=-2.14,
-                  map_max=4.19,
+                  mapmin=-2.14,
+                  mapmax=4.19,
                   blur=True,
                   sigma=2.5):
 
@@ -35,15 +35,15 @@ def image_slicing(input_map_directory,
 
 **Arguments for image_slicing:**
 
-* **input_map_directory:** this is a string indicating where to find the .map files 
-* **output_directory:** this is a string indicating where to save the image files 
-* **axes_list:** axis to section along (default: axes_list = ['X','Y','Z'])
-* **window_size:** the linear dimension of the scanning window for each slice (default:  window_size=20) 
+* **inputmapdirectory:** this is a string indicating where to find the .map files 
+* **outputdirectory:** this is a string indicating where to save the image files 
+* **axeslist:** axis to section along (default: axeslist = ['X','Y','Z'])
+* **windowsize:** the linear dimension of the scanning window for each slice (default:  windowsize=20) 
 * **offset:** the offset distance between each window position. (default: offset = 10) 
-* **section_skip:** the separation between each section slice. (default: section_skip =2) 
-* **normalise:** boolean, decide whether to normalise values in a slice to be between map_min and map_max (default: normalise = True) 
-* **map_min:** minimum value for the map (default: map_min = -2.14)  
-* **map_max:** maximum vlaue for the map (default: map_max =  4.19) 
+* **sectionskip:** the separation between each section slice. (default: sectionskip =2) 
+* **normalise:** boolean, decide whether to normalise values in a slice to be between mapmin and mapmax (default: normalise = True) 
+* **mapmin:** minimum value for the map (default: mapmin = -2.14)  
+* **mapmax:** maximum vlaue for the map (default: mapmax =  4.19) 
 * **blur:** boolean, decide whether to blur the data via a gaussian filter. (default: blur = True) 
 * **sigma:** if blur is True, this is the standard deviation for the gaussian.(default: sigma = 2.5) 
   
@@ -53,129 +53,166 @@ def image_slicing(input_map_directory,
 
 
   #checking output_directory exists
-  if not os.path.isdir(output_directory):
-    print("creating output directory "+output_directory)
-    os.mkdir(output_directory)
+  if not os.path.isdir(outputdirectory):
+    print("creating output directory "+outputdirectory)
+    os.mkdir(outputdirectory)
 
   #creating logfile  
-  logfile = os.path.join(output_directory, 'loffile_image_slicing.txt')
-  text = open(logfile,'a')
-  text.write('this is a log file for the progress of image_slicing(). \n')
-  text.close()
+  #logfile = os.path.join(outputdirectory, 'loffile_image_slicing.txt')
+  #text = open(logfile,'a')
+  #text.write('this is a log file for the progress of image_slicing(). \n')
+  #text.close()
+
+  logging.info('this is a log fiel for the progress of image_slicing(). \n')
 
   #opening file
   #m=0
-  for file in os.listdir(input_map_directory):
+  for file in os.listdir(inputmapdirectory):
   #  m+=1
   #  if m>3:
   #    break
     if file.endswith('.map'):
       f=str(file)
-      mrc = mrcfile.open(os.path.join(input_map_directory,f))
-      file_name = os.path.splitext(f)[0]
-      text=open(logfile,'a')
-      text.write('\n'+file_name+'\n')
+      mrc = mrcfile.open(os.path.join(inputmapdirectory,f))
+      filename = os.path.splitext(f)[0]
+      #text=open(logfile,'a')
+      #text.write('\n'+filename+'\n')
+      logging.info('\n'+filename+'\n')
 
-      if file_name.endswith('_i'):
-        protein=file_name[:-2]
+      if filename.endswith('_i'):
+        protein=filename[:-2]
       else:
-        protein=file_name
+        protein=filename
       print(protein)
   
-      output_dir1 = os.path.join(output_directory,protein)
+      outputdir1 = os.path.join(outputdirectory,protein)
       #ensuring the output directory exists
-      if not os.path.isdir(output_dir1):
-        print("creating output directory "+output_dir1)
-        os.mkdir(output_dir1)  
+      if not os.path.isdir(outputdir1):
+        print("creating output directory "+outputdir1)
+        os.mkdir(outputdir1)  
 
-      output_dir2 = os.path.join(output_dir1,file_name)
-      if not os.path.isdir(output_dir2):
-        print("creating output directory "+ output_dir2)
-        os.mkdir(output_dir2)
+      outputdir2 = os.path.join(outputdir1,filename)
+      if not os.path.isdir(outputdir2):
+        print("creating output directory "+ outputdir2)
+        os.mkdir(outputdir2)
      
       #the value of axis_list was specified above, we need to loop over the axes
       #specified in this list and transpose the data columns accordingly- we need the
       #sectioning axis to be in mrc.data[2]
-      text.close()
+      #text.close()
 
-      for axis in axes_list:
+      for axis in axeslist:
         if axis in ['X']:
-          loc_mrcdata_a=np.transpose(mrc.data,(1,2,0))
+          locmrcdataa=np.transpose(mrc.data,(1,2,0))
         elif axis in ['Y']:
-          loc_mrcdata_a=np.transpose(mrc.data,(2,0,1))
+          locmrcdataa=np.transpose(mrc.data,(2,0,1))
         else:
-          loc_mrcdata_a=mrc.data
+          locmrcdataa=mrc.data
        
-        output_dir3 = os.path.join(output_dir2,axis)
-        if not os.path.isdir(output_dir3):
-          print("creating output directory "+output_dir3)
-          os.mkdir(output_dir3)  
+        outputdir3 = os.path.join(outputdir2,axis)
+        if not os.path.isdir(outputdir3):
+          print("creating output directory "+outputdir3)
+          os.mkdir(outputdir3)  
 
         #bluring the data using a gaussian filter
         if blur:
-          loc_mrcdata=scipy.ndimage.filters.gaussian_filter(loc_mrcdata_a,(sigma,sigma,sigma))
+          locmrcdata=scipy.ndimage.filters.gaussian_filter(locmrcdataa,(sigma,sigma,sigma))
           print('bluring map') 
         else:
-          loc_mrcdata=loc_mrcdata_a
+          locmrcdata=locmrcdataa
        
         #to slice the images
         num=0
-        for section in range(0,loc_mrcdata.shape[2], section_skip):
+        for section in range(0,locmrcdata.shape[2], sectionskip):
           print("processing section",section)
           num +=1
-          myim = loc_mrcdata[:,:,section].copy(order='C')
+          myim = locmrcdata[:,:,section].copy(order='C')
          
           #to normalise the contrast of the image
           if normalise:
             print('normalising') 
-            myim = 255.0*np.clip((myim-map_min)/(map_max-map_min),0,1)  
+            myim = 255.0*np.clip((myim-mapmin)/(mapmax-mapmin),0,1)  
 
           #this is to same the files in order and is otherwise unimportant
           if num < 10:
-            imgout_filename = file_name +'_00'+str(num)+'_'+str(section)+axis+'.png'
+            imgoutfilename = filename +'_00'+str(num)+'_'+str(section)+axis+'.png'
           elif num < 100:
-            imgout_filename = file_name +'_0'+str(num)+'_'+str(section)+axis+'.png'
+            imgoutfilename = filename +'_0'+str(num)+'_'+str(section)+axis+'.png'
           else:
-            imgout_filename =file_name+'_'+str(num)+'_'+str(section)+axis+'.png'
+            imgoutfilename =filename+'_'+str(num)+'_'+str(section)+axis+'.png'
 
          #saving file
-          img_out = pimg.fromarray(myim)
-          img_new =  img_out.convert('RGB')
-          img_new.save(output_dir3+'/'+imgout_filename)
-          text=open(logfile,'a')
-          if not os.path.exists(os.path.join(output_dir3,imgout_filename)):
-            text.write(imageout_filename+' did not work')
+          imgout = pimg.fromarray(myim)
+          imgnew =  imgout.convert('RGB')
+          imgnew.save(outputdir3+'/'+imgoutfilename)
+          #text=open(logfile,'a')
+          if not os.path.exists(os.path.join(outputdir3,imgoutfilename)):
+            #text.write(imageoutfilename+' did not work')
+            logging.info(imageoutfilename+' did not work')
             continue
 
-          text.write('saved image: '+imgout_filename+'\n')
-          text.close()
+          #text.write('saved image: '+imgoutfilename+'\n')
+          #text.close()
+          logging.info('saved image: '+ingoutfilename+'\n')
        
     else:
       continue
-    print("Finished. The images are saved in ",output_dir1 )
-    text=open(logfile,'a')
-    text.write('Finished. The images are saved in %s' %output_dir1)
-    text.close()
+    print("Finished. The images are saved in ",outputdir1 )
+    #text=open(logfile,'a')
+    #text.write('Finished. The images are saved in %s' %outputdir1)
+    #text.close()
+    logging.info('Finished. The images are saved in %s' %outputdir1)
 ##########################################################################################
 
 if __name__=="__main__":
   import argparse
-
+  import time 
+  start_time = time.time()
+  date = str(time.strftime("%d%m%y"))
   parser = argparse.ArgumentParser(description = 'command line argument')
   parser.add_argument('--input', 
-                      dest = 'input_map_dir', 
+                      dest = 'inputmapdir', 
                       type = str,
                       help='the input map directory',
                       default='/dls/mx-scratch/ycc62267/mapfdrbox')
   parser.add_argument('--output',
-                      dest='output_dir', 
+                      dest='outputdir', 
                       type=str,
                       help='the output directory for the images',
                       default = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox')
+  parser.add_argument('--trial',
+                      dest = 'trial',
+                      type = int,
+                      help = 'the trial number for the logfile',
+                      default = 1)
+  parser.add_argument('--lgdir',
+                      dest = 'lgdir',
+                      type = str,
+                      help='the directory to save the logfile',
+                      default =
+                      '/dls/science/users/ycc62267/eclip/eclip/paratry1/')
+  parser.add_argument('--date',
+                      dest = 'date',
+                      type = str,
+                      help = 'date to appear on logfile name',
+                      default = date)
 
   args=parser.parse_args()
 
-  image_slicing(args.input_map_dir,args.output_dir)
+  trialnum = args.trial
+  date = args.date
+  outdir = args.lgdir
+  while
+    os.path.exists(os.path.join(outdir,'log'+date+'_'+str(trialnum)+'.txt')):
+    trialnum+=1
+  logfile = os.path.join(outdir, 'log'+date+'_'+str(trialnum)+'.txt')
+  logging.basicConfig(filename = logfile, level = logging.DEBUG)
+
+  logging.info('Running ConvMAP.py')
+
+  image_slicing(args.inputmapdir,args.outputdir)
+
+  logging.info('Finished -- %s seconds --'%(time.time() - start_time))
 
 
 ###########################################################################################
