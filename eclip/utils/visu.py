@@ -81,7 +81,7 @@ class ConfusionMatrix():
     plt.xlabel('Predicted label')
     plt.tight_layout()
 
-  def print_convstats(prediction,outfile,logfile,y_test):
+  def print_convstats(prediction,outfile,y_test):
     '''
     printConvstats writes to a logfile the values for true negatives, true
     positives, false negatives and false positives and prints these values to

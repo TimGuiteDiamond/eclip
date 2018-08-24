@@ -23,7 +23,7 @@ class MapModel(Sequential):
   def __init__(self):
     Sequential.__init__(self)
 
-  def create_custom1(self,input_shape1,logfile):
+  def create_custom1(self,input_shape1):
     '''
     
     createCustom builds up the layers in the model for raw data.
@@ -81,7 +81,7 @@ class MapModel(Sequential):
 
 
 
-  def create_custom2(self,input_shape2,logfile):
+  def create_custom2(self,input_shape2):
     '''
     
     createCustom2 builds up the layers in the model for processed data.
@@ -197,7 +197,7 @@ def load_json(jsonfile,weights_file):
   json_file=open(jsonfile,'r')
   loaded_model_json=json_file.read()
   json_file.close()
-  model=model_from_json(loaded_model_json,custom_objects={"mapModel":Sequential})
+  model=model_from_json(loaded_model_json,custom_objects={"MapModel":Sequential})
   model.load_weights(weights_file)
   print('loaded model')
   return model

@@ -5,6 +5,7 @@ scores'''
 #from keras.models import predict
 import sqlite3
 import os
+import logging
 
 from utils.modelmanip import load_json
 from utils.datamanip import import_data, ave_first_score, round_first_score,trial_split_list
@@ -175,9 +176,10 @@ def main(jsonfile ='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.json'
   
 
 #########################################################################
-if __name__=='__main__':
+def run():
   import argparse
   import time 
+  from eclip.utils.datamanip import str2bool
   start_time = time.time()
   date = str(time.strftime("%d%m%y"))
 
@@ -245,7 +247,7 @@ if __name__=='__main__':
                       default = 0.5)
   parser.add_argument('--raw',
                       dest = 'raw',
-                      type = bool,
+                      type = str2bool,
                       help = 'Boolean, True if raw data',
                       default = False)
   
@@ -256,8 +258,7 @@ if __name__=='__main__':
   if raw:
     date = date + 'raw'
   outdir = args.out
-  while
-    os.path.exists(os.path.join(outdir,'log'+date+'_'+str(trialnum)+'.txt')):
+  while os.path.exists(os.path.join(outdir,'log'+date+'_'+str(trialnum)+'.txt')):
     trialnum+=1
 
   logfile = os.path.join(outdir,'log'+date+'_'+str(trialnum)+'.txt')
@@ -277,4 +278,7 @@ if __name__=='__main__':
         args.thresh,
         args.raw)
   logging.info('Finished --%s seconds --'%(time.time() - start_time))
-  
+
+
+if __name__=='__main__':
+  run()

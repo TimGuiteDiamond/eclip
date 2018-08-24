@@ -15,7 +15,7 @@ from sklearn.utils import class_weight
 import keras
 from keras.utils import multi_gpu_model
 
-from eclip.utils.datamanip import input_training_images
+from eclip.utils.datamanip import input_training_images, str2bool
 from eclip.utils.visu import ConfusionMatrix, fit_plot, plot_test_results
 from eclip.utils.modelmanip import MapModel, exp_json, exp_yaml
 
@@ -82,8 +82,23 @@ def main(batchsize = 64,
 #  logfile = os.path.join(outputdirectory, 'log'+date+'_'+str(trialnum)+'.txt')
   
   #: A log file is created to record the starting parameters and the results of the learning.
-  logging.info('''Running learn.py for parameters: \n batchsize: %s \n epochs : %s \n loss: %s \n learning rate: %s \n parallelization: %s \n decay rate: %s \n Raw:%s \n'''  %(batchsize,epochs,lossequation,learningrate,parallel,decayrt,Raw))
-  
+  logging.info('\n'.join(['Running learn.py for parameters: '
+                          'batchsize: %s', 
+                          'epochs : %s',
+                          'loss: %s',
+                          'learning rate: %s',
+                          'parallelization: %s',
+                          'decay rate: %s',
+                          'Raw: %s']) %(batchsize,
+                                        epochs,
+                                        lossequation,
+                                        learningrate,
+                                        parallel,
+                                        decayrt,
+                                        Raw))
+  print('epochs = %s'%epochs)
+  print('para = %s'%(parallel))
+  print('nmb = %s'%(number))
   #text=open(logfile,'w')
   #text.write('''Running learn.py for parameters: \n batchsize: %s \n epochs : %s \n
   #loss: %s \n learning rate: %s \n parallelization: %s \n decay rate: %s \n Raw:%s \n'''
@@ -125,9 +140,9 @@ def main(batchsize = 64,
   #building model
   model = MapModel()
   if Raw:
-    model.create_custom1(input_shape1=inputshape, logfile=logfile)
+    model.create_custom1(input_shape1=inputshape)
   else:
-    model.create_custom2(input_shape2=inputshape,logfile=logfile)
+    model.create_custom2(input_shape2=inputshape)
   
   
   #optimiser could be opt=keras.optimizers.SGD(lr=0.0001), but should check
@@ -205,7 +220,7 @@ def main(batchsize = 64,
   
   #writing predictions
   outpred=os.path.join(outputdirectory,'predict'+date+'_'+str(trialnum)+'.txt')
-  y_pred=ConfusionMatrix.print_convstats(prediction,outpred,logfile,y_test)
+  y_pred=ConfusionMatrix.print_convstats(prediction,outpred,y_test)
    
   #text=open(logfile,'a')
   #model.summary(print_fn=lambda x: text.write(x+'\n'))
@@ -227,8 +242,8 @@ def main(batchsize = 64,
   plot_test_results(y_test,y_p,splotout)
 
 ########################################################################################  
-  
-if __name__=="__main__":
+
+def run():
   import argparse
   import time
   start_time = time.time()
@@ -256,7 +271,7 @@ if __name__=="__main__":
                       default = 0.0001)
   parser.add_argument('--para',
                       dest='para',
-                      type = bool,
+                      type = str2bool,
                       help = 'boolean: True if data parallisation.',
                       default = True)
   parser.add_argument('--trial', 
@@ -276,7 +291,7 @@ if __name__=="__main__":
                       default = 1e-8)
   parser.add_argument('--raw',
                       dest = 'raw',
-                      type = bool,
+                      type = str2bool,
                       help = 'boolean: True if using .pha files',
                       default = False)
   parser.add_argument('--insh',
@@ -324,4 +339,11 @@ if __name__=="__main__":
        args.inshape,
        outdir,
        args.nmb)
+
   logging.info('Finished -- %s seconds --'%(time.time()-start_time))
+
+
+if __name__=="__main__":
+  run()
+
+

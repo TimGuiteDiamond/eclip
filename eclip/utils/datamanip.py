@@ -13,6 +13,7 @@ import random
 import logging
 
 from keras.utils import to_categorical
+import argparse
 
 ####################################
 def normal_array(n_array):
@@ -124,6 +125,7 @@ def input_training_images(database,input_shape,fractionTrain,raw = False,number=
         filelist.append(location)
         label.append(y_list[i])
 
+  print(filelist)
   filearray=np.array([normal_array(np.array(plt.imread(filename))).flatten() for filename in filelist])
   print('images have been read in')
   numsamples = len(filearray)
@@ -192,7 +194,7 @@ def import_data(datafileloc,proteinlist, input_shape):
           name.append(protein_name)
 
   #making an array
-  filearray=np.array([normalarray(np.array(plt.imread(filename))).flatten() for filename in filelist])
+  filearray=np.array([normal_array(np.array(plt.imread(filename))).flatten() for filename in filelist])
   numsamples= len(filearray)
 
   #reshaping
@@ -234,11 +236,11 @@ def ave_first_score(proteins,name,prediction,outfile,threshold):
     #text.write('\n'+protein+':\n')
     logging.info('\n'+protein+'\n')
     for i in range(0,len(name)):
-      print(name[i])
-      print(protein)
+    #  print(name[i])
+    #  print(protein)
       if name[i] == protein:
         x+= prediction[i][1]
-        logging.info('prediction: '+str(prediction[i][1])+'\n')
+     #   logging.info('prediction: '+str(prediction[i][1])+'\n')
         #text.write('prediction: '+str(prediction[i][1])+'\n')
         if prediction[i][1]>=threshold:
           ones+=1
@@ -299,7 +301,7 @@ def round_first_score(proteins,name, prediction,outfile,threshold):
     for i in range(0,len(name)):
       if name[i]==protein:
         #text.write('prediction: '+str(prediction[i][1])+'\n')
-        loggin.info('prediction: '+str(prediciton[i][1])+'\n')
+        #loggin.info('prediction: '+str(prediciton[i][1])+'\n')
         if prediction[i][1]>=threshold:
           x=+1
           ones=+1
@@ -365,6 +367,12 @@ def column_clear(database, tablename, column):
   for i in columns:
    cur.execute('''UPDATE %s SET %s = Null'''%(tablename,i))
 
-
+def str2bool(v):
+  if v.lower() in ('yes','true','True','t','y','1'):
+    return True
+  elif v.lower() in ('no','false','False','f','n','0'):
+    return False
+  else:
+    raise argparse.ArgumentTypeError('Boolean value expected')
 
 

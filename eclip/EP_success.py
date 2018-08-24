@@ -10,9 +10,9 @@ from eclip.utils.get_data import percent_find, make_list_inverse, make_list_orig
 ###########################################################################################  
 def main(sqlitedb='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite', 
         dirin='/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox', 
-        raw=False
-        out = '/dls/science/melanie/for_METRIX/results_201710/EP_phasing',
-        filename = 'simple_xia2_to shelxcde.log'):
+        raw=False,
+        out = '/dls/mx-scratch/melanie/for_METRIX/results_201710/EP_phasing',
+        filename = 'simple_xia2_to_shelxcde.log'):
   
   
   #connecting to SQLite database
@@ -65,11 +65,11 @@ def main(sqlitedb='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',
   for n in invlst:
     name_i=str(n)
     name=name_i[:-2]
-    logfnm=get_log_filename(name)
+    logfnm=get_log_filename(out,name,filename)
     bsgrp = best_sym(logfnm)
     if bsgrp == -1:
       continue
-    lstfnm=get_lst_filename(name,name_i,bsgrp)
+    lstfnm=get_lst_filename(out,name,name_i,bsgrp)
     percent=percent_find(lstfnm)
     if percent == -1:
       continue
@@ -127,8 +127,9 @@ def main(sqlitedb='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',
   print('EP_success successful')
 
 ############################################################################
-if __name__=="__main__":
-  
+
+
+def run():  
 
   import argparse
 
@@ -167,3 +168,6 @@ if __name__=="__main__":
         args.raw,
         args.out,
         args.fnm)
+  
+if __name__=="__main__":
+  run()

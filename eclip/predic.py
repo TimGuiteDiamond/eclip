@@ -115,10 +115,12 @@ def main(jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.json',
   conn.commit()
   conn.close()
   print('update EP_success successful')
-    
-if __name__=='__main__':
+####################################################################    
 
+
+def run():
   import argparse
+  from eclip.utils.datamanip import str2bool
 
   parser = argparse.ArgumentParser(description = 'command line argument')
   parser.add_argument('--jsn',
@@ -139,6 +141,13 @@ if __name__=='__main__':
                       help = 'location of database',
                       default =
                       '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/')
+  parser.add_argument('--floc',
+                      dest = 'floc',
+                      type = str,
+                      help = 'location to find image directories',
+                      default =
+                      '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/')
+
   parser.add_argument('--psl',
                       dest = 'psl',
                       type = str,
@@ -178,7 +187,7 @@ if __name__=='__main__':
                       default = 0.5)
   parser.add_argument('--raw',
                       dest = 'raw',
-                      type = bool,
+                      type = str2bool,
                       help = 'Boolean, True if raw data',
                       default = False)
   
@@ -187,6 +196,7 @@ if __name__=='__main__':
   main(args.json,
         args.weights,
         args.sqlitedb,
+        args.floc,
         args.psl,
         args.inshape,
         args.met,
@@ -196,3 +206,6 @@ if __name__=='__main__':
         args.thresh,
         args.raw)
   
+if __name__=='__main__':
+  run()
+

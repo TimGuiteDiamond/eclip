@@ -9,16 +9,16 @@ import scipy.ndimage
 import numpy as np
 #mrcfile is a CCP-EM library for i/o to MRC format map files
 import mrcfile 
-
+import logging
 
 ##########################################################################################
 
 def image_slicing(inputmapdirectory, 
                   outputdirectory, 
                   axeslist =['X','Y','Z'],
-                  windowsize=10,
-                  offset =10,
-                  section_skip=2,
+                 # windowsize=10,
+                 # offset =10,
+                  sectionskip=2,
                   normalise = True,
                   mapmin=-2.14,
                   mapmax=4.19,
@@ -63,7 +63,7 @@ def image_slicing(inputmapdirectory,
   #text.write('this is a log file for the progress of image_slicing(). \n')
   #text.close()
 
-  logging.info('this is a log fiel for the progress of image_slicing(). \n')
+  logging.info('this is a log file for the progress of image_slicing(). \n')
 
   #opening file
   #m=0
@@ -153,7 +153,7 @@ def image_slicing(inputmapdirectory,
 
           #text.write('saved image: '+imgoutfilename+'\n')
           #text.close()
-          logging.info('saved image: '+ingoutfilename+'\n')
+          #logging.info('saved image: '+imgoutfilename+'\n')
        
     else:
       continue
@@ -161,12 +161,14 @@ def image_slicing(inputmapdirectory,
     #text=open(logfile,'a')
     #text.write('Finished. The images are saved in %s' %outputdir1)
     #text.close()
-    logging.info('Finished. The images are saved in %s' %outputdir1)
+    logging.info('%s Finished. The images are saved in %s' %(filename,outputdir1))
 ##########################################################################################
 
-if __name__=="__main__":
+def run():
   import argparse
   import time 
+  from eclip.utils.datamanip import str2bool
+  
   start_time = time.time()
   date = str(time.strftime("%d%m%y"))
   parser = argparse.ArgumentParser(description = 'command line argument')
@@ -180,6 +182,42 @@ if __name__=="__main__":
                       type=str,
                       help='the output directory for the images',
                       default = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox')
+  parser.add_argument('--axlst',
+                      dest = 'axlst',
+                      type = list,
+                      help = 'the axes to slice on',
+                      default = ['X','Y','Z'])
+  parser.add_argument('--scskp',
+                      dest = 'sectionskip',
+                      type = int,
+                      help = 'separation between each slice',
+                      default = 2)
+  parser.add_argument('--norm',
+                      dest = 'normalise',
+                      type = str2bool,
+                      help = 'boolean , whether to normalise values in slice between mapmin and mapmax',
+                      default = True)
+  parser.add_argument('--mmin',
+                      dest = 'mapmin',
+                      type = float,
+                      help = 'minimum value for the map',
+                      default = -2.14)
+  parser.add_argument('--mmax',
+                      dest = 'mapmax',
+                      type = float,
+                      help = 'maximum value for the map',
+                      default = 4.19)
+  parser.add_argument('--blur',
+                      dest = 'blur',
+                      type = str2bool,
+                      help = 'boolean, whether to blur data via gausian filter',
+                      default = True)
+  parser.add_argument('--sgma',
+                      dest = 'sigma',
+                      type = float,
+                      help = 'standard deviation for gausian filter',
+                      default = 2.5)
+
   parser.add_argument('--trial',
                       dest = 'trial',
                       type = int,
@@ -202,18 +240,29 @@ if __name__=="__main__":
   trialnum = args.trial
   date = args.date
   outdir = args.lgdir
-  while
-    os.path.exists(os.path.join(outdir,'log'+date+'_'+str(trialnum)+'.txt')):
+  while os.path.exists(os.path.join(outdir,'log'+date+'_'+str(trialnum)+'.txt')):
     trialnum+=1
   logfile = os.path.join(outdir, 'log'+date+'_'+str(trialnum)+'.txt')
   logging.basicConfig(filename = logfile, level = logging.DEBUG)
 
   logging.info('Running ConvMAP.py')
 
-  image_slicing(args.inputmapdir,args.outputdir)
+  image_slicing(args.inputmapdir,
+                args.outputdir
+                args.axlst,
+                args.scskp,
+                args.normalise,
+                args.mmin,
+                args.mmax,
+                args.blur,
+                args.sgma)
 
   logging.info('Finished -- %s seconds --'%(time.time() - start_time))
 
 
 ###########################################################################################
+
+if __name__=="__main__":
+  run()
+
 
