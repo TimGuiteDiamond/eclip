@@ -1,0 +1,7 @@
+#!/bin/env python3
+
+from eclip import predic
+
+if __name__=='__main__':
+  predic.run()
+
