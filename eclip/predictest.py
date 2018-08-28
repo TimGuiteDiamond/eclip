@@ -7,9 +7,9 @@ import sqlite3
 import os
 import logging
 
-from utils.modelmanip import load_json
-from utils.datamanip import import_data, ave_first_score, round_first_score,trial_split_list
-from utils.visu import plot_test_results, ConfusionMatrix
+from eclip.utils.modelmanip import load_json
+from eclip.utils.datamanip import import_data, ave_first_score, round_first_score,trial_split_list
+from eclip.utils.visu import plot_test_results, ConfusionMatrix
 ################
 
 def main(jsonfile ='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.json',
@@ -207,7 +207,7 @@ def run():
                       type = str,
                       help = 'Location to find image files.',
                       default =
-                      '/dls/mx-scratch/ycc62267/ingfdr/blur2_5_maxminbox/')
+                      '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/')
   parser.add_argument('--psl',
                       dest='psl',
                       type = str,

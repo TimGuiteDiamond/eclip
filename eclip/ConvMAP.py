@@ -248,7 +248,7 @@ def run():
   logging.info('Running ConvMAP.py')
 
   image_slicing(args.inputmapdir,
-                args.outputdir
+                args.outputdir,
                 args.axlst,
                 args.scskp,
                 args.normalise,

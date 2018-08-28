@@ -28,7 +28,7 @@ def CreatingNewModel(input_map_directory1,
   logfile = os.path.join(lgdir, 'log'+date+'_'+str(trialnum)+'.log')
 
   logging.basicConfig(filename = logfile, level = logging.DEBUG)
-  logging.info('Running running.py')
+  logging.info('Running RunTrain.py')
 
 # calling Convmap
   image_slicing(input_map_directory1,output_directory1)
@@ -49,7 +49,7 @@ def CreatingNewModel(input_map_directory1,
 
 def run():  
   import argparse
-  from eclip.utils.datamanip import stsr2bool
+  from eclip.utils.datamanip import str2bool
 
   parser = argparse.ArgumentParser(description = 'command line argument')
   parser.add_argument('--input',
