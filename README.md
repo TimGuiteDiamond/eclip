@@ -85,7 +85,8 @@ The sections are as follows:
 * **predictest** tests the predictions of the new model
 * **predic** uses a pretrained model on new images
 
-**RunTrain** is comprised of ConvMAP,EP\_success, learn and predictest
+**RunTrain** is comprised of ConvMAP, EP\_success, learn and predictest
+
 **RunPred** is comprised of ConvMAP and predic
 
 RunTrain  is run by typing "RunTrain" in the command line. 
