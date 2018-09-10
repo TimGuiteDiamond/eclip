@@ -1,5 +1,36 @@
-'''This is a module to convert .map to images, following the same structure as
-from cyro EM and edited. This splits the 3D map into 2D image slices'''
+'''
+ConvMAP is the module that converts .map files to images. This splits the 3D map
+into 2D image slices along 3 perpendicular axes.
+
+Calling learn results in the creation of 600 images per protein. 
+
+|
+
+Arguments
+^^^^^^^^^^^
+
+The command line arguments for learn are as follows: 
+
+* **--input:** This is a string indicating where to find the .map files. Default: /dls/mx-scratch/ycc62267/mapfdrbox
+* **--output:** This is a string indicating where to save the image files. Default: /dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox
+* **--axlst:** The axis to section along. Default: ['X','Y','Z']
+* **--scskp:** The separation between each section slice. Default: 2 
+* **--norm:** Boolean, if to normalise values in a slice to be between mmin and mmax. Default:  True 
+* **--mmin:** The minimum value for the map. Default: -2.14  
+* **--mmax:** The maximum vlaue for the map. Default: 4.19 
+* **--blur:** Boolean, if to blur the data via a gaussian filter. Default: True 
+* **--sgma:** If blur is True, this is the standard deviation for the gaussian. Default: 2.5
+* **--trial:** The trial number for the logfile name. Default: 1
+* **--lgdir:** The directory to save the logfile. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1/
+* **--date:** The date to appear on logfile name. Default: current date
+
+|
+
+Functions in module
+^^^^^^^^^^^^^^^^^^^^^^
+|
+
+'''
 
 import os
 from PIL import Image as pimg
@@ -16,8 +47,6 @@ import logging
 def image_slicing(inputmapdirectory, 
                   outputdirectory, 
                   axeslist =['X','Y','Z'],
-                 # windowsize=10,
-                 # offset =10,
                   sectionskip=2,
                   normalise = True,
                   mapmin=-2.14,
@@ -28,26 +57,12 @@ def image_slicing(inputmapdirectory,
 
 
   '''
+  image_slicing is the main function for ConvMAP. It takes a set of 3D electron
+  density maps and slices them into 2 dimensional surfaces and saves these as 
+  images. 
 
-  ConvMAP takes a set of 3D electron density maps and slices them into 2d
-  surfaces and saves these as images. 
-|
+  |
 
-**Arguments for image_slicing:**
-
-* **inputmapdirectory:** this is a string indicating where to find the .map files 
-* **outputdirectory:** this is a string indicating where to save the image files 
-* **axeslist:** axis to section along (default: axeslist = ['X','Y','Z'])
-* **windowsize:** the linear dimension of the scanning window for each slice (default:  windowsize=20) 
-* **offset:** the offset distance between each window position. (default: offset = 10) 
-* **sectionskip:** the separation between each section slice. (default: sectionskip =2) 
-* **normalise:** boolean, decide whether to normalise values in a slice to be between mapmin and mapmax (default: normalise = True) 
-* **mapmin:** minimum value for the map (default: mapmin = -2.14)  
-* **mapmax:** maximum vlaue for the map (default: mapmax =  4.19) 
-* **blur:** boolean, decide whether to blur the data via a gaussian filter. (default: blur = True) 
-* **sigma:** if blur is True, this is the standard deviation for the gaussian.(default: sigma = 2.5) 
-  
-  
   '''
 
 
@@ -57,15 +72,11 @@ def image_slicing(inputmapdirectory,
     print("creating output directory "+outputdirectory)
     os.mkdir(outputdirectory)
 
-  #creating logfile  
-  #logfile = os.path.join(outputdirectory, 'loffile_image_slicing.txt')
-  #text = open(logfile,'a')
-  #text.write('this is a log file for the progress of image_slicing(). \n')
-  #text.close()
-
+  
   logging.info('this is a log file for the progress of image_slicing(). \n')
 
   #opening file
+  #m can be used to test when edditing the code - remove at the end
   #m=0
   for file in os.listdir(inputmapdirectory):
   #  m+=1
@@ -75,15 +86,13 @@ def image_slicing(inputmapdirectory,
       f=str(file)
       mrc = mrcfile.open(os.path.join(inputmapdirectory,f))
       filename = os.path.splitext(f)[0]
-      #text=open(logfile,'a')
-      #text.write('\n'+filename+'\n')
       logging.info('\n'+filename+'\n')
 
       if filename.endswith('_i'):
         protein=filename[:-2]
       else:
         protein=filename
-      print(protein)
+      
   
       outputdir1 = os.path.join(outputdirectory,protein)
       #ensuring the output directory exists
@@ -99,8 +108,7 @@ def image_slicing(inputmapdirectory,
       #the value of axis_list was specified above, we need to loop over the axes
       #specified in this list and transpose the data columns accordingly- we need the
       #sectioning axis to be in mrc.data[2]
-      #text.close()
-
+      
       for axis in axeslist:
         if axis in ['X']:
           locmrcdataa=np.transpose(mrc.data,(1,2,0))
@@ -124,13 +132,12 @@ def image_slicing(inputmapdirectory,
         #to slice the images
         num=0
         for section in range(0,locmrcdata.shape[2], sectionskip):
-          print("processing section",section)
           num +=1
           myim = locmrcdata[:,:,section].copy(order='C')
          
           #to normalise the contrast of the image
           if normalise:
-            print('normalising') 
+             
             myim = 255.0*np.clip((myim-mapmin)/(mapmax-mapmin),0,1)  
 
           #this is to same the files in order and is otherwise unimportant
@@ -145,26 +152,23 @@ def image_slicing(inputmapdirectory,
           imgout = pimg.fromarray(myim)
           imgnew =  imgout.convert('RGB')
           imgnew.save(outputdir3+'/'+imgoutfilename)
-          #text=open(logfile,'a')
+          
           if not os.path.exists(os.path.join(outputdir3,imgoutfilename)):
-            #text.write(imageoutfilename+' did not work')
             logging.info(imageoutfilename+' did not work')
             continue
 
-          #text.write('saved image: '+imgoutfilename+'\n')
-          #text.close()
-          #logging.info('saved image: '+imgoutfilename+'\n')
-       
+                 
     else:
       continue
     print("Finished. The images are saved in ",outputdir1 )
-    #text=open(logfile,'a')
-    #text.write('Finished. The images are saved in %s' %outputdir1)
-    #text.close()
-    logging.info('%s Finished. The images are saved in %s' %(filename,outputdir1))
 ##########################################################################################
 
 def run():
+  '''
+  run allows ConvMAP to be called from the command line. 
+
+  '''
+
   import argparse
   import time 
   from eclip.utils.datamanip import str2bool
@@ -188,7 +192,7 @@ def run():
                       help = 'the axes to slice on',
                       default = ['X','Y','Z'])
   parser.add_argument('--scskp',
-                      dest = 'sectionskip',
+                      dest = 'scskp',
                       type = int,
                       help = 'separation between each slice',
                       default = 2)
@@ -252,10 +256,10 @@ def run():
                 args.axlst,
                 args.scskp,
                 args.normalise,
-                args.mmin,
-                args.mmax,
+                args.mapmin,
+                args.mapmax,
                 args.blur,
-                args.sgma)
+                args.sigma)
 
   logging.info('Finished -- %s seconds --'%(time.time() - start_time))
 

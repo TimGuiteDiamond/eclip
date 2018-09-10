@@ -1,5 +1,10 @@
 ################
-'''Functions to find and manipulate data for learning'''
+'''
+Functions to find and manipulate data for learning
+
+|
+
+'''
 ##############
 import numpy as np
 import sqlite3
@@ -19,13 +24,15 @@ import argparse
 def normal_array(n_array):
 
   '''
-  **Arguments for normalarray:**
+  **Arguments for normal_array:**
 
   * **n_array:** An array
 
-  **Outputs of normalarray:***
+  **Outputs of normal_array:***
 
   * **norm_array:** A normalised version of the input array with values between 0 and 1.
+
+  |
 
   '''
 
@@ -34,27 +41,35 @@ def normal_array(n_array):
   norm_array=(n_array-mini)/(maxi-mini)
   return norm_array
 
-def input_training_images(database,input_shape,fractionTrain,raw = False,number=10):
+def input_training_images(database,
+                          input_shape,
+                          fractionTrain,
+                          raw =False,
+                          number=10,
+                          trialsplit = True):
   '''
 
-  **Arguments for inputTrainingImages:**
+  **Arguments for input_training_images:**
 
   * **database:** The file location of an sqlite database with the correct format
   * **input_shape:** The dimensions of the image files to be retrieved
   * **fractionTrain:** The fraction of the data retrieved to be used to test the model
   * **raw:** parameter specifying whether to take the raw or processed imagedata default = False
+  * **number:** The number of images to call in per axis per protein
+  * **trialsplit:** Boolean, true if some proteins should be kept separate
 
-  **Outputs of inputTrainingImages:**
+  **Outputs of input_training_images:**
 
   * **x_train:** An array of the image data from all the images read in for training
   * **y_train:** A two dimensional array of the true score of the images for training
   * **x_test:** An array of the image data from all the images read in for testing
   * **y_test:** A two dimensional array of the true score of the images for training
 
+  |
+
   '''
 
-  trialsplit=True
-
+  
   conn=sqlite3.connect(database)
   cur=conn.cursor()
   
@@ -83,7 +98,6 @@ def input_training_images(database,input_shape,fractionTrain,raw = False,number=
     cur.execute('''SELECT ep_success_o FROM Phasing WHERE pdb_id_id = "%s"'''%item)
     y_o=list(cur.fetchall()[0])[0]
     if not y_o==None:
-      y_list.append(y_o)
       if raw:
         cur.execute('''SELECT ep_raw_o FROM Phasing WHERE pdb_id_id =
         "%s"'''%item)
@@ -92,19 +106,24 @@ def input_training_images(database,input_shape,fractionTrain,raw = False,number=
         cur.execute('''SELECT ep_img_o FROM Phasing WHERE pdb_id_id =
         "%s"'''%item)
         x_o=list(cur.fetchall()[0])[0]
-      x_dir.append(x_o)
+      if not x_o==None:
+        y_list.append(y_o)
+        x_dir.append(x_o)
+
     cur.execute('''SELECT ep_success_i FROM Phasing WHERE pdb_id_id =
     "%s"'''%item)
     y_i=list(cur.fetchall()[0])[0]
     if not y_i == None:
-      y_list.append(y_i)
       if raw:
         cur.execute('''SELECT ep_raw_i FROM Phasing WHERE pdb_id_id = "%s"'''%item)
         x_i = list(cur.fetchall()[0])[0]
       else:
         cur.execute('SELECT ep_img_i FROM Phasing WHERE pdb_id_id = "%s"'''%item)
         x_i=list(cur.fetchall()[0])[0]
-      x_dir.append(x_i)
+      if not x_i==None:
+        y_list.append(y_i)
+        x_dir.append(x_i)
+        print(x_i)
 
   #x_dir is a list of directories, in these directories there are X,Y,Z
   #directories, in each of these there are files.
@@ -119,13 +138,13 @@ def input_training_images(database,input_shape,fractionTrain,raw = False,number=
       img_dir=os.path.join(dirin,dir)
 
       #chosing random files from directory
-      for m in range(1,number):
+      for m in range(0,number):
         file_name=random.choice(os.listdir(img_dir))
         location=os.path.join(img_dir,file_name)
         filelist.append(location)
         label.append(y_list[i])
 
-  print(filelist)
+  
   filearray=np.array([normal_array(np.array(plt.imread(filename))).flatten() for filename in filelist])
   print('images have been read in')
   numsamples = len(filearray)
@@ -160,38 +179,81 @@ def input_training_images(database,input_shape,fractionTrain,raw = False,number=
   return x_train,y_train,x_test,y_test
 
 
-def import_data(datafileloc,proteinlist, input_shape):
+def import_data(database, proteinlist, input_shape,raw, number = 10):
   '''Function to import new data to predict
 
-  **Arguments for importData:**
+  **Arguments for import_data:**
 
-  * **datafileloc:** the directory where the protein directories containing  X,Y,Z directories containing the image files are kept
+  * **datafileloc:** The location of the sqlite database
   * **proteinlist:** A list of the proteins to select from this directory
   * **input_shape:** The shape of a individual image to be selected 
+  * **raw:** boolean, true if using unprocessed data
+  * **number:** The number of images to use per axis per protein
 
-  **Outputs for importData:**
+  **Outputs for import_data:**
 
-  * **x_pred:** An array containing the data for the selected images
+  * **x_predic:** An array containing the data for the selected images
   * **name:** A list of the names of the proteins associated with each image
+  * **protein_list:** Proteins opened
+
+  |
 
   '''
   name = []
   filelist = []
   protein_list = []
+ 
+  conn=sqlite3.connect(database)
+  cur=conn.cursor()
+
   for protein in proteinlist:
-    path = os.path.join(datafileloc,protein)
-    for dir in os.listdir(path):
-      protein_name=dir
-      path = os.path.join(datafileloc,protein,protein_name)
-      protein_list.append(protein_name)
-      for dir in os.listdir(path):
-        path2= os.path.join(path,dir)
-        for m in range(0,51):
-          file = random.choice(os.listdir(path2))
-          location= os.path.join(path2,file)
-          filelist.append(location)
+    cur.execute(''' SELECT id FROM PDB_id WHERE pdb_id = "%s" ''' %(protein))
+    pdb_id_id = list(cur.fetchall()[0])[0] 
+
+    cur.execute('''SELECT ep_success_o FROM Phasing WHERE pdb_id_id = "%s"'''%(pdb_id_id))
+    y_o = list(cur.fetchall()[0])[0]
+    if not y_o==None:
+      if raw:
+        cur.execute('''SELECT ep_raw_o FROM Phasing WHERE pdb_id_id =
+        "%s"'''%(pdb_id_id))
+        f=list(cur.fetchall()[0])[0]
+      else:
+        cur.execute('''SELECT ep_img_o FROM Phasing WHERE pdb_id_id = "%s"'''
+        %(pdb_id_id))
+        f=list(cur.fetchall()[0])[0]
+      if not f==None:
+        protein_list.append(protein)
+        for dir in os.listdir(f):
+          direct = os.path.join(f,dir)
+          for m in range(0,number):
+            file = random.choice(os.listdir(direct))
+            location = os.path.join(direct,file)
+            filelist.append(location)
+            name.append(protein)
+
          
-          name.append(protein_name)
+    cur.execute('''SELECT ep_success_i From Phasing WHERE pdb_id_id="%s"'''%(pdb_id_id))
+    y_i = list(cur.fetchall()[0])[0]
+    if not y_i == None:
+      if raw: 
+        cur.execute('''SELECT ep_raw_i FROM Phasing WHERE pdb_id_id = "%s"'''
+        %(pdb_id_id))
+        f=list(cur.fetchall()[0])[0]
+      else:
+        cur.execute('''SELECT ep_img_i FROM Phasing WHERE pdb_id_id = "%s"'''
+        %(pdb_id_id))
+        f=list(cur.fetchall()[0])[0]
+      if not f==None:
+        protein_list.append(protein+'_i')
+        for dir in os.listdir(f):
+          direct = os.path.join(f,dir)
+          for m in range(0,number):
+            file = random.choice(os.listdir(direct))
+            location = os.path.join(direct,file)
+            filelist.append(location)
+            name.append(protein+'_i')
+
+
 
   #making an array
   filearray=np.array([normal_array(np.array(plt.imread(filename))).flatten() for filename in filelist])
@@ -199,6 +261,8 @@ def import_data(datafileloc,proteinlist, input_shape):
 
   #reshaping
   x_predic = filearray[:numsamples].reshape(numsamples,input_shape[0],input_shape[1],input_shape[2])
+
+ 
   return x_predic, name, protein_list
 
 
@@ -209,23 +273,26 @@ def ave_first_score(proteins,name,prediction,outfile,threshold):
   method averages the confidence first and then rounds to 1 or 0 for the whole
   map.
 
-  **Arguments for avefirstscore:**
+  **Arguments for ave_first_score:**
 
   * **proteins:** a list of the proteins being predicted
-  * **predictionsL** the predictions produced by the model
-  * **outfileL** the text file to save the predictions to
+  * **name:** A list of protein names
+  * **predictions:** the predictions produced by the model
+  * **outfile:** the text file to save the predictions to
   * **threshold:** the certainty decimal tht the flag needs to have to classify as 1
 
-  **Outputs of avefirstscore:**
+  **Outputs of ave_first_score:**
 
   * **score:** the integer value (one or zero) given to the map - 1 for phased, 0 for unphased
   * **pred:** the confidence measure for how likely it is to be phased: 1 = 100% confident that this is phased, 0 = 0% confidence that this is phased
   * **ones:** the number of images that the model labeled as phased
   * **zeros:** the number of images that the model labeled as unphased
 
+  |
+
   '''
 
-  #text=open(outfile,'a')
+  
   pred = []
   score =[]
   for protein in proteins:
@@ -233,75 +300,66 @@ def ave_first_score(proteins,name,prediction,outfile,threshold):
     n=0
     ones = 0
     zeros = 0
-    #text.write('\n'+protein+':\n')
-    logging.info('\n'+protein+'\n')
     for i in range(0,len(name)):
-    #  print(name[i])
-    #  print(protein)
       if name[i] == protein:
         x+= prediction[i][1]
-     #   logging.info('prediction: '+str(prediction[i][1])+'\n')
-        #text.write('prediction: '+str(prediction[i][1])+'\n')
         if prediction[i][1]>=threshold:
           ones+=1
         else:
           zeros+=1
-        n+=1
-       
+        n+=1   
       else:
         continue
     p=x/n
-    pred.append(p)
-    #text.write('averaged likelihood of being phased: %s\n'%p)
-    logging.info('averaged likelihood of being phased: %s\n'%p)
+    pred.append(p)   
     if p>=threshold:
       score.append(1)
-      #text.write('score of map: 1\n')
-      logging.info('score of map: 1\n')
+      logging.info(
+          '%s: averaged likelihood of being phased: %s score of map: 1'%(protein,p))
     else:
       score.append(0)
-      #text.write('score of map:0\n')
-      logging.info('score of map: 0\n')
-    #text.write('ones %s\n'%ones)
-    #text.write('zeros %s\n'%zeros)
-    logging.info('ones %s\nzeros %s\n'%(ones,zeros))
+      logging.info(
+          '%s: averaged likelihood of being phased: %s score of map: 0'%(protein,p))
+    logging.info('ones %s: zeros %s\n'%(ones,zeros))
 
-  #text.close()
   return score, pred, ones, zeros
 
 def round_first_score(proteins,name, prediction,outfile,threshold):
 
-  ''' A function to convert the prediction of the model into a score, confidence
+  ''' 
+  A function to convert the prediction of the model into a score, confidence
   measure, and a count of the ones and zeros for one map. The round first method
   rounds the prediction for each image to 1 or 0 before averaging all images in
   the map
 
-  **Arguments for avefirstscore:**
+  **Arguments for round_first_score:**
 
   * **proteins:** a list of the proteins being predicted
+  * **name:** list of protein names
   * **predictions:** the predictions produced by the model
   * **outfile:** the text file to save the predictions to
+  * **threshold:** value to round up from
 
-  **Outputs of avefirstscore:**
+  **Outputs of round_first_score:**
 
   * **score:** the integer value (one or zero) given to the map - 1 for phased, 0 for unphased
   * **pred:** the confidence measure for how likely it is to be phased: 1 = 100% confident that this is phased, 0 = 0% confidence that this is phased
   * **ones:** the number of images that the model labeled as phased
   * **zeros:** the number of images that the model labeled as unphased
 
+  |
+  
   '''
   pred = []
   score =[]
-  #text=open(outfile,'a')
+  
   for proteins in proteins:
     x=0
     n=0
-    #text.write('\n'+protein+':\n')
-    logging.info('\n'+protein+'\n')
+    ones = 0
+    zeros = 0 
     for i in range(0,len(name)):
       if name[i]==protein:
-        #text.write('prediction: '+str(prediction[i][1])+'\n')
-        #loggin.info('prediction: '+str(prediciton[i][1])+'\n')
         if prediction[i][1]>=threshold:
           x=+1
           ones=+1
@@ -309,21 +367,16 @@ def round_first_score(proteins,name, prediction,outfile,threshold):
           zeros+=1
         n+=1
     p=x/n
-    pred.append(p)
-    #text.write('averaged likelihood of being phased: %s\n'%p)
-    logging.info('averaged likelihood of being phased: %s\n'%p)
+    pred.append(p)        
     if p>=threshold:
       score.append(1)
-      #text.write('score of map: 1\n')
-      logging.info('score of map: 1\n')
+      logging.info(
+        '%s: averaged likelihood of being phased: %s score of map: 1'%(protein,p))
     else:
       score.append(0)
-      #text.write('score of map: 0\n')
-      logging.info('score of map: 0\n')
-    #text.write('ones %s\n'%ones)
-    #text.write('zeros %s\n'%zeros)
-    #text.close()
-    logging.info('ones %s\nzeros %s\n'%(ones,zeros))
+      logging.info(
+        '%s: averaged likelihood of being phased: %s score of map: 0'%(protein,p))
+    logging.info('ones %s: zeros %s\n'%(ones,zeros))
 
     return score, pred, ones, zeros
 
@@ -332,13 +385,16 @@ def trial_split_list(listloc):
   ''' 
   A function to read the file detailing which proteins were not used to train  and read them into a list
 
-  **Arguments for trialsplitlist:**
+  **Arguments for trial_split_list:**
 
   * **listloc** The file location for the .txt file 
 
-  **Output for trialsplitlist:**
+  **Output for trial_split_list:**
 
   * **list_protein** The list of protein names that were excluded from training
+  
+  |
+  
   '''
   text=open(listloc,'r')
   list_protein=[]
@@ -348,6 +404,29 @@ def trial_split_list(listloc):
   text.close()
   return list_protein
 
+def from_dir_list(fileloc):
+  ''' 
+  A function to read the names from the directory into a list
+
+  **Arguments for from_dir_list:**
+
+  * **fileloc:** the location of the directory to make a list from
+
+  **Outputs for from_dir_list:**
+
+  * **proteinlist:** the list of proteins
+  
+  |
+  
+  '''
+  proteinlist = []
+  for file in os.listdir(fileloc):
+    name = file
+    proteinlist.append(name)
+  return proteinlist
+
+
+
 
 
 def column_clear(database, tablename, column):
@@ -355,19 +434,30 @@ def column_clear(database, tablename, column):
   Function to change all values in a column of  a given column of an SQLite
   database to Null
 
-  **Arguments for columnclear:**
+  **Arguments for column_clear:**
 
   * **database:** file location for a given database
   * **tablename:** name of table
-  * **column:** name of column
+  * **column:** name of column in list
 
+  |
+  
   '''
   conn = sqlite3.connect(database)
   cur = conn.cursor()
-  for i in columns:
+  for i in column:
    cur.execute('''UPDATE %s SET %s = Null'''%(tablename,i))
+   print('done')
+  conn.commit()
+  conn.close()
 
 def str2bool(v):
+  '''
+  Function to get argparse to recognise boolean arguments
+
+  |
+
+  '''
   if v.lower() in ('yes','true','True','t','y','1'):
     return True
   elif v.lower() in ('no','false','False','f','n','0'):

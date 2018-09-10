@@ -1,9 +1,46 @@
 ############
-'''Code to run using existing model'''
+'''
+RunPred is the module to use an existing model to predict scores on new maps.
+The module slices the maps into images, and loads a pretrained model to predict
+scores for these images, which are then averaged to produce a score for the
+maps. It does not have the full flexibility that calling each indiviually
+provides, but does provide an easier way of running the Eclip package. 
+
+Other modules called by RunPred:
+
+  * ConvMAP
+  * predic
+
+Calling RunPred results in the creation of: 
+
+  * Images of slices of the maps
+  * log------_-.txt
+  * populated collumns for predictions in the sqlite database 
+
+| 
+
+Arguments
+^^^^^^^^^^
+
+The command line arguments are as follows.
+  
+* **--input:** The location for the input map directory. Default: /dls/mx-scratch/ycc62267/mappredfdr
+* **--output:** The location for the output direcotry for the images. Default: /dls/mx-scratch/ycc62267/imgfdr/pred
+* **--db:** The location of the sqlite database file. Default: /dls/science/users/ycc62267/metrix_db/metrix_db.sqlite
+* **--raw:** Boolean, whether using heavy atom positions or processed data. Default: False
+* **--op:** The output loction for the prediction file. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1/
+
+| 
+
+Functions in module
+^^^^^^^^^^^^^^^^^^^^
+|
+
+'''
 ##############
 
-from ConvMAP import image_slicing
-from predic import  main as predicf
+from eclip.ConvMAP import image_slicing
+from eclip.predic import  main as predicf
 import time
 
 ##########
@@ -11,12 +48,22 @@ def Predictfromexisting(input_map_directory1,
                         output_directory1,
                         sqlite_db,
                         raw,
-                        outpred):
+                        outpred,
+                        ning,
+                        name):
+  '''
+  Predictfromexisting is the main function of RunPred
+
+  |
+
+  '''
 
   start_time = time.time()
   date = str(time.strftime("%d%m%y"))
   if raw:
     date = date +'raw'
+  if ning:
+    date = date + name
 
 #calling ConvMAP
   image_slicing(input_map_directory1,output_directory1)
@@ -32,6 +79,10 @@ def Predictfromexisting(input_map_directory1,
 #######################################################################
 def run():
 
+  '''
+  run allows RunPred to be called from the command line.
+
+  '''
   import argparse
   from eclip.utils.datamanip import str2bool
 
@@ -40,13 +91,13 @@ def run():
                       dest = 'input_m',
                       type=str,
                       help = 'The input map directory',
-                      default = '/dls/mx-scratch/ycc62267/mapfdrbox')
+                      default = '/dls/mx-scratch/ycc62267/mappredfdr')
   parser.add_argument('--output',
                       dest = 'output_m',
                       type=str,
                       help = 'The output directory for the images',
                       default =
-                      '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox')
+                      '/dls/mx-scratch/ycc62267/imgfdr/pred')
   parser.add_argument('--db',
                       dest = 'sqlitedb',
                       type = str,
@@ -61,7 +112,17 @@ def run():
                       dest = 'op',
                       type = str,
                       help = 'output location for prediction file',
-                      default = '/dls/science/users/ycc62267/eclip/eclip/paratry/')
+                      default = '/dls/science/users/ycc62267/eclip/eclip/paratry1/')
+  parser.add_argument('--ning',
+                      dest = 'ning',
+                      type = str2bool,
+                      help = 'Boolean, True if adding name onto date',
+                      default = False)
+  parser.add_argument('--name',
+                      dest = 'name',
+                      type = str,
+                      help = 'name to add to date',
+                      default = '')
   
   args=parser.parse_args()
 
@@ -69,7 +130,9 @@ def run():
                       args.output_m,
                       args.sqlitedb,
                       args.raw,
-                      args.op)
+                      args.op,
+                      args.ning,
+                      args.name)
 
 
 ###########

@@ -1,13 +1,73 @@
 ################
-''' Code to predict new scores for full maps'''
+''' 
+Module to predict new scores for maps.
+
+predic loads a model from a json file and weights from a weights file and uses
+this to predict the score for a new map - already in image form. The
+predictions are then saved to a txt file and added to the sqlite database. 
+
+**Warning** this requires the protein to be present in the PDB_id part of the
+database
+
+The list of proteins to consider can either be given in a list in a text file,
+or can be all the proteins present in the given image directory. 
+
+Other classes and functios called in the module:
+
+  From eclip.utils.datamanip
+   * inport_data
+   * ave_first_score
+   * round_first_score
+   * trial_split_list
+   * from_dir_list
+  From eclip.utils.visu
+   * plot_test_results
+  From eclip.utils.modelmanip
+   * load_json
+
+Calling predic results in the populating of the collumns for predictions in the
+sqlite database with the predictions that the loaded model produces. 
+
+| 
+
+Arguments
+^^^^^^^^^^
+
+The command line arguments are as follows. 
+
+**Arguments**
+
+* **--jsn:** The location for the json file for the model. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1/model.json
+* **--wfl:** The location for the weights file for the model. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1/model.h5
+* **--db:** The location of the sqlite database. Default: /dls/science/users/ycc62267/metrix_db/metrix_db.sqlite
+* **--floc:** The location to find image directories. Default: /dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/
+* **--pdl:** The location for list of proteins to use. Default: /dls/science/users/ycc62267/eclip/eclip/trialsplit.txt
+* **--insh:** The input image shape, as a list of dimensions. Default: [201,201,3]
+* **--met:** The method used to round the predictions, either "average first" or "round first". Default: average first
+* **--out:** The location of director to save output files. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1/
+* **--date:** The date to appear on saved files. Default: current date
+* **--trial:** The starting trial number. Default: 1
+* **--th:** The value to round up from. Default: 0.5
+* **--raw:** Boolean, whether using heavy atom positions or processed data. Default: False
+* **--pfm:** The parameter for protein name location. "fromlist" or "fromdir". Default: fromdir
+
+|
+
+Functions in module
+^^^^^^^^^^^^^^^^^^^^^^^
+|
+
+'''
 ##############
 import keras
 import sqlite3
 import os.path
 
-from utils.modelmanip import load_json
-from utils.datamanip import import_data, ave_first_score,round_first_score,trial_split_list
-from utils.visu import plot_test_results
+from eclip.utils.modelmanip import load_json
+from eclip.utils.datamanip import import_data,ave_first_score,round_first_score,trial_split_list, from_dir_list
+from eclip.utils.visu import plot_test_results
+import logging
+import os
 ################
 
 def main(jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.json',
@@ -21,41 +81,34 @@ def main(jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.json',
           date = '070818a',
           trial_num = 1,
           threshold = 0.5,
-          raw = False):
+          raw = False,
+          protfrom = 'fromdir'):
 
 
   '''
-  predic loads a model from a json file and weights from a weights file and uses
-  this to predict the score for a new map - already in image form. the
-  predictions are then saved to a txt file and added to the sqlite database. 
+  main is the overall function for predic 
 
-  **Warning** this requires the protein to be present in the PDB_id part of the
-  database
+  |
 
- 
-  
-  jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.json'
-  weights_file ='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.h5'
-  fileloc = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/'
-  protein_split = trialsplitlist('/dls/science/users/ycc62267/eclip/eclip/trialsplit.txt')
-  inputshape = [201,201,3]
-  #method can be either 'average first' or 'round first'
-  method = 'average first'
-  #output predictions file
-  outdir = '/dls/science/users/ycc62267/eclip/eclip/paratry1/'
-  date = '070818'
   '''
 
-  while os.path.exists(os.path.join(outdir,'datapredic'+ date+'_'+str(trial_num)+'.txt')):
-    trial_num+=1
-  
-  proteinsplit = trial_split_list(protein_split_list)
+  #getting list of protein names
+  if protfrom == 'fromlist':
+    proteinsplit = trial_split_list(protein_split_list)
+  elif protfrom == 'fromdir':
+    proteinsplit = from_dir_list(fileloc)
+  else: 
+    raise RuntimeError('need protfrom to be either fromlist for fromdir')
+
+
   outfile = os.path.join(outdir,'datapredic'+date+'_'+str(trial_num)+'.txt')
-    
+
+  #loading data  
   x, name, proteins = import_data(datafileloc=fileloc,
                                   proteinlist=proteinsplit,
                                   input_shape=inputshape)
   
+  #loading model
   model = load_json(jsonfile,weights_file)
   prediction = model.predict(x)
    
@@ -119,8 +172,18 @@ def main(jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.json',
 
 
 def run():
+
+  '''
+  run allows predic to be called from the command line. 
+
+  '''
+
   import argparse
   from eclip.utils.datamanip import str2bool
+  import time
+
+  start_time= time.time()
+  date = str(time.strftime("%d%m%y"))
 
   parser = argparse.ArgumentParser(description = 'command line argument')
   parser.add_argument('--jsn',
@@ -174,7 +237,7 @@ def run():
                       dest = 'date',
                       type = str,
                       help = 'date to appear on saved files',
-                      default = '160818')
+                      default = date)
   parser.add_argument('--trial',
                       dest = 'trial',
                       type = int,
@@ -190,8 +253,26 @@ def run():
                       type = str2bool,
                       help = 'Boolean, True if raw data',
                       default = False)
+  parser.add_argument('--pfm',
+                      dest = 'pfm',
+                      type = str,
+                      help = 'Parameter for protein name location. "fromlist" or "fromdir"',
+                      default = 'fromdir')
   
   args = parser.parse_args()
+
+  raw = args.raw
+  trialnum = args.trial
+  date = args.date
+  if raw:
+    date = date+'raw'
+  outdir = args.out
+  while os.path.exists(os.path.join(outdir,'log'+date+'_'+str(trialnum)+'.txt')):
+    trialnum+=1
+
+  logfile = os.path.join(outdir,'log'+date+'_'+str(trialnum)+'.txt')
+  logging.basicConfig(filename = logfile, level = logging.DEBUG)
+  logging.info('Running predic.py')
 
   main(args.json,
         args.weights,
@@ -201,10 +282,13 @@ def run():
         args.inshape,
         args.met,
         args.out,
-        args.date,
-        args.trial,
+        date,
+        trialnum,
         args.thresh,
-        args.raw)
+        args.raw,
+        args.pfm)
+
+  logging.info('Finished --%s seconds --' %(time.time() - start_time))
   
 if __name__=='__main__':
   run()

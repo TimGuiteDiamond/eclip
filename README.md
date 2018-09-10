@@ -18,6 +18,7 @@ machine.
 
 ### Prerequisites
 
+####Software
 To install this software you will need: 
 
 * keras
@@ -34,9 +35,24 @@ To install this software you will need:
 These should be installed when the environment is setup, however, sometimes
 there are issues when installing and using tensorflow and keras. 
 
+Python3 must also be installed inorder to run this program. 
+
+####Data
 For the program to work the map files need to be stored in one directory.
 This layout is automatically created by the Topaz program if being used before
 Eclip. 
+
+If using RunTrain or EP\_success, there must also be a directory with a
+sub-directory for each of the protein names. Each of these sub diectories must
+have a log file (each one with the same name). These log files (default is
+simple\_xia2\_to\_shelxcde.log) need to contain the characters: "Best space group:
+" followed by a space group. 
+In the same sub-direcotry there must also be a directory names by this space
+group. In there there must be a .lst file with the same name as the protein
+(with \_i if inverse phasing). This file must contain the characters "with CC "
+followed by a percentages, between the last 1000 and last 700 characters.
+Alternatively, it can contain the words "CC is less than zero - giving up". This
+is so that EP\_success can assign scores to the proteins for training. 
 
 The SQLite database must have a table called "**Phasing**", with collumn names: 
 * pdb\_id\_id
@@ -59,11 +75,9 @@ The SQLite database must have a table called "**Phasing**", with collumn names:
 
 ### Installing 
 
-To get a development env running:
+To get a development env running, first download the package. Then go to the
+direcotry containing setup.py and type the following into the command line: 
 
-At the moment, this is how the environment is setup. 
-Download various files.
-Go to directory containing setup.py and type:
 ```
 > python3 setup.py develop --user
 
@@ -74,9 +88,9 @@ The functions should then be available to use in command line.
 
 ### How to use
 
-To use Eclip, it is simplest to run first the training then implementing
-programs, however each individual section can be run independantly. Running
-independantly allows for more flexibility in the arguments.  
+To use Eclip, it is simplest to run first the training function (RunTrain), and then the predicting
+function (RunPred). However, each individual section can also be run independantly. This allows for 
+more flexibility in the arguments.  
 
 The sections are as follows: 
 * **ConvMAP:** Converts the maps into images
@@ -120,26 +134,13 @@ Examples of how to call:
 >RunPred --input=/INPUT-IMAGE-DIRECTORY/ --output=/OUTPUT-IMAGE-DIRECTORY
 ```
 
-### Running tests
-
-To run the tests...
-
-'''
-example of tests
-'''
-
-expected outcome
-'''
-expected outcome
-'''
-
 ## Authors
 
 * **Jenna Elliott** 
 
 ## Acknowledgements
 
-* **Melanie Vollmar**: Supervisor
-* **James Parkhurst**
-* **Gwyndaf Evans**
+* Supervisor: **Melanie Vollmar**:
+* Co-supervisor: **James Parkhurst**
+* Principle Investigator: **Gwyndaf Evans**
 

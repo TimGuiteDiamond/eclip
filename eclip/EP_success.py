@@ -1,4 +1,45 @@
-''' Forming Classification collumn for EP images '''
+'''
+EP_success is the module for populating the collumns of the Phasing table in the sqlite
+database for the 2D images.
+
+In the Phasing table, the 'success' collumns are the scores, 1 is good, 0 is bad. The
+'percent' collumn has the CC percentage found from the log file (which is used to assess whether the map is good or bad). 
+
+Other classes and functions called in the module:
+
+ From eclip.utils.get_data:
+  * get_log_filename
+  * best_sym
+  * get_lst_filename
+  * percent_find
+  * make_list_inverse
+  * make_list_original
+  
+Calling EP_success results in the population of collumns of the Phasing table in
+the sqlite database. 
+
+|
+
+Arguments
+^^^^^^^^^^^
+
+The command line arguments are as follows. 
+
+* **--db:** The location for the sqlite database. Default: /dls/science/users/ycc62267/metrix_db/metrix_db/sqlite
+* **--dirin:** The directory location for the input images. Default: /dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox'
+* **--raw:** Boolean, whether the data is just the heavy atom positions. Default: False
+* **--out:** The direcotry location to find the logfiles containing the
+* percentage. Default: /dls/mx-scratch/melanie/for_METRIX/results_201710/EP_phasing
+* **--fnm:** The name of the log file containing the percentages. Default: simple_xia2_to_shelxcde.log
+* **--clr:** Whether to clear the columns (for both o and i): 'ep_success','ep_img' and 'ep_raw' Default: True
+
+|
+
+Functions in module 
+^^^^^^^^^^^^^^^^^^^^^^
+|
+
+'''
 
 #############################################################################
 
@@ -6,15 +47,30 @@ import sqlite3
 import os.path
 from eclip.utils.get_data import get_log_filename, best_sym, get_lst_filename
 from eclip.utils.get_data import percent_find, make_list_inverse, make_list_original
+from eclip.utils.datamanip import column_clear
+
 
 ###########################################################################################  
 def main(sqlitedb='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite', 
         dirin='/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox', 
         raw=False,
         out = '/dls/mx-scratch/melanie/for_METRIX/results_201710/EP_phasing',
-        filename = 'simple_xia2_to_shelxcde.log'):
+        filename = 'simple_xia2_to_shelxcde.log',
+        clear = True):
   
+  '''
+  main is the overall function for EP_success. 
+
+  |
+
+  '''
   
+  # Clearing ep_success_o and ep_success_i in database
+  if clear==True:
+    column_clear(sqlitedb,
+                  'Phasing',
+                  ['ep_success_o','ep_success_i','ep_img_o','ep_img_i','ep_raw_o','ep_raw_i'])
+
   #connecting to SQLite database
   conn=sqlite3.connect(sqlitedb)
   cur=conn.cursor()
@@ -131,10 +187,15 @@ def main(sqlitedb='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',
 
 def run():  
 
+  '''
+  run allows EP_success to be called from the command line. 
+
+  '''
   import argparse
+  from eclip.utils.datamanip import str2bool
 
   parser = argparse.ArgumentParser(description = 'command line argument')
-  parser.add_argument('--sqlitedb',
+  parser.add_argument('--db',
                       dest = 'sqlitedb', 
                       type = str, 
                       help = 'the location of the sqlite database',
@@ -149,17 +210,22 @@ def run():
                       type=str,
                       help='parameter specifying raw or not',
                       default=False)
-  parser.ad_argument('--out',
+  parser.add_argument('--out',
                       dest = 'out',
                       type = str,
                       help = 'directory to find log files etc',
                       default =
-                      '/dls/science/melanie/for_METRIX/results_201710/EP_phasing')
+                      '/dls/mx-scratch/melanie/for_METRIX/results_201710/EP_phasing')
   parser.add_argument('--fnm',
                       dest = 'fnm',
                       type = str,
                       help = 'name of log file',
-                      default = 'simple_xia2_to shelxcde.log')
+                      default = 'simple_xia2_to_shelxcde.log')
+  parser.add_argument('--clr',
+                      dest = 'clr',
+                      type = str2bool,
+                      help = 'Boolean, true if clearing datebase',
+                      default = True)
 
   args = parser.parse_args()
   

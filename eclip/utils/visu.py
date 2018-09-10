@@ -1,5 +1,10 @@
 #######################
-'''Functions for visualising the progess of the network'''
+'''
+Functions for visualising the progess of the network
+
+|
+
+'''
 #########################
 import numpy as np
 import matplotlib as mpl
@@ -52,8 +57,7 @@ class ConfusionMatrix():
     * **self:** 
     * **cm:** confusion matrix as an array
     * **classes:** a list of the class names
-    * **normalize:** a boolean stating whether to produce a normalised plot or
-    * not
+    * **normalize:** a boolean stating whether to produce a normalised plot or not
     * **title:** Title for the plot
     * **cmap:** controls the color mape used
 
@@ -83,7 +87,7 @@ class ConfusionMatrix():
 
   def print_convstats(prediction,outfile,y_test):
     '''
-    printConvstats writes to a logfile the values for true negatives, true
+    print_convstats writes to a logfile the values for true negatives, true
     positives, false negatives and false positives and prints these values to
     the terminal. It also converts the predictions into a list
     to be used to produce the confusion matrix. 
@@ -92,18 +96,17 @@ class ConfusionMatrix():
 
     * **prediction:** The prediction produced through keras predict
     * **outfile:** File location to write prediction into
-    * **logfile:** File location of logfile
     * **y_test:** True scores for test data
 
     **Outputs for printConvstats:**
 
     * **outfile:** Saved txt file of predictions
     * **y_pred:** A list of the predicted scores
-    * **logfile update:**
+    
+    |
 
     '''
     outfile=open(outfile,'w')
-    #text=open(logfile,'a')
     n_tn=0
     n_tp=0
     n_fn=0
@@ -129,12 +132,7 @@ class ConfusionMatrix():
     print('Number of false negatives = ',n_fn)
     print('Number of true positives = ', n_tp)
     print('Number of flase positives = ',n_fp)
-    #text.write('Number of true negatives = %s\n'%n_tn)
-    #text.write('Number of false negatives = %s\n'%n_fn)
-    #text.write('Number of true positives = %s\n'%n_tp)
-    #text.write('Number of false positives = %s\n'%n_fp)
-    #
-    #text.close()
+   
     logging.info('Number of true negatives = %s\n'%n_tn)
     logging.info('Number of false negatives = %s\n'%n_fn)
     logging.info('Number of true positives = %s\n'%n_tp)
@@ -146,7 +144,7 @@ class ConfusionMatrix():
   
 def fit_plot(loss,val_loss,acc,val_acc,outputfile):
   '''
-  fitplot is a function that plots a figure of two graphs. One graph of
+  fit_plot is a function that plots a figure of two graphs. One graph of
   validation and training loss against epochs and one graph of validation and
   training accuracy against epochs.
 
@@ -157,6 +155,8 @@ def fit_plot(loss,val_loss,acc,val_acc,outputfile):
   * **val_acc:** The validation accuracy from keras.fit
   * **outputfile:** File location for the saved image
 
+  |
+  
   '''
   fig=plt.figure()
   plt.subplot(2,2,1)
@@ -179,7 +179,7 @@ def fit_plot(loss,val_loss,acc,val_acc,outputfile):
 
 
 
-def plot_test_results(y_test, y_pred,outputfile):
+def plot_test_results(y_test, y_pred,outputfile, thresh):
 
   '''
   plot_test_results takes the predicted and expected scores for data and outputs
@@ -190,10 +190,14 @@ def plot_test_results(y_test, y_pred,outputfile):
   * **y_test:** This is a list of the true scores for the data
   * **y_pred:** This is a list of the predicted (percentage) scores of the data
   * **outputfile:** This is the location to save the plot as a .png file
+  * **thresh:** The value to round up from
 
   **Outputs of plot_test_results:**
 
   * **image:** The image of the plot saved in the location specified by outputfile
+  
+  |
+  
   '''
 
   y_test = [ y_test for _,y_test in sorted(zip(y_pred,y_test))]
@@ -201,17 +205,24 @@ def plot_test_results(y_test, y_pred,outputfile):
   x=np.arange(len(y_test))
 
 
-  truex=list(np.where(y_test == np.rint(y_pred))[0])
-  falsex=list(np.where(y_test != np.rint(y_pred))[0])
+
+
+  truex=[]
+  falsex=[]
+  
+  for i in range(0,len(y_test)):
+    if y_pred[i] > thresh:
+      y_round = 1
+    else:
+      y_round = 0
+    if y_test[i] == y_round:
+      truex.append(i)
+    else:
+      falsex.append(i)
 
   truey=[y_test[i] for i in truex]
   falsey=[y_test[i] for i in falsex]
-  print(len(x))
-  print(len(y_pred))
-  print(len(truey))
-  print(len(truex))
-  print(len(falsex))
-  print(len(falsey))
+
   fig=plt.figure()
   plt.plot(x,y_pred,truex,truey,'g.',falsex,falsey,'r.')
   plt.title('Decimal Prediction against True Value')
