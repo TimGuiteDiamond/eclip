@@ -182,7 +182,7 @@ def main(batchsize = 64,
                     batch_size =batchsize, 
                     epochs=epochs, 
                     verbose=1,
-                    validation_split=(0.33),
+                    validation_data=(x_test,y_test),
                     callbacks=[])
   
   #: The validation loss and training loss is plotted against epochs 

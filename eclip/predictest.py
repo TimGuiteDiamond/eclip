@@ -199,6 +199,8 @@ def main(jsonfile ='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.json'
   conn.commit()
   conn.close()
   print('update EP_success successful')
+  print('problem list = ')
+  print(problemlist)
   acc = (n_tp+n_tn)/(n_fp+n_fn+n_tp+n_tn)
    
   #writing to text file 
@@ -320,7 +322,7 @@ def run():
                       dest = 'nmb',
                       type = int,
                       help = 'number of images per protein per axis',
-                      default = 10)
+                      default = 15)
   
   args = parser.parse_args()
   raw = args.raw

@@ -83,11 +83,45 @@ def input_training_images(database,
 
   t=open('/dls/science/users/ycc62267/eclip/eclip/trialsplit.txt','w')
   if trialsplit == True:
-    for i in range(0,51):
+    m=0
+    while m<100:
       name_id=random.choice(Protein_id)
       Protein_id.remove(name_id)
       cur.execute('''SELECT pdb_id FROM PDB_id WHERE id = "%s"'''%(name_id))
       name_str=cur.fetchall()
+      cur.execute('''SELECT ep_success_o FROM Phasing WHERE pdb_id_id =
+      "%s"'''%(name_id))
+      score_o = list(cur.fetchall()[0])[0]
+      cur.execute('''SELECT ep_success_i FROM Phasing WHERE pdb_id_id =
+      "%s"'''%(name_id))
+      score_i = list(cur.fetchall()[0])[0]
+
+      if raw:
+        cur.execute('''SELECT ep_raw_o FROM Phasing WHERE pdb_id_id =
+        "%s"'''%(name_id))
+        rawimg=list(cur.fetchall()[0])[0]
+        cur.execute('''SELECT ep_raw_i FROM Phasing WHERE pdb_id_id =
+        "%s"'''%(name_id))
+        rawimg_i=list(cur.fetchall()[0])[0]
+        if not rawimg == None:
+          if not score_o == None:
+            m+=1
+        if not rawimg_i == None:
+          if not score_i == None:
+            m+=1
+      else:
+        cur.execute('''SELECT ep_img_o FROM Phasing WHERE pdb_id_id =
+        "%s"'''%(name_id))
+        img=list(cur.fetchall()[0])[0]
+        cur.execute('''SELECT ep_img_i FROM Phasing WHERE pdb_id_id =
+        "%s"'''%(name_id))
+        img_i=list(cur.fetchall()[0])[0]
+        if not img == None:
+          if not score_o == None:
+            m+=1
+        if not img_i == None:
+          if not score_i == None:
+            m+=1
       t.write(str(name_id)+' '+str(name_str)+'\n')
   t.close()
   
@@ -202,7 +236,7 @@ def import_data(database, proteinlist, input_shape,raw, number = 10):
   name = []
   filelist = []
   protein_list = []
- 
+  problem = 0
   conn=sqlite3.connect(database)
   cur=conn.cursor()
 
@@ -230,6 +264,10 @@ def import_data(database, proteinlist, input_shape,raw, number = 10):
             location = os.path.join(direct,file)
             filelist.append(location)
             name.append(protein)
+      else: 
+        problem+=1
+    else:
+      problem+=1
 
          
     cur.execute('''SELECT ep_success_i From Phasing WHERE pdb_id_id="%s"'''%(pdb_id_id))
@@ -252,6 +290,10 @@ def import_data(database, proteinlist, input_shape,raw, number = 10):
             location = os.path.join(direct,file)
             filelist.append(location)
             name.append(protein+'_i')
+      else:
+        problem+=1
+    else: 
+      problem+=1
 
 
 
@@ -262,7 +304,8 @@ def import_data(database, proteinlist, input_shape,raw, number = 10):
   #reshaping
   x_predic = filearray[:numsamples].reshape(numsamples,input_shape[0],input_shape[1],input_shape[2])
 
- 
+  print('number of maps = %s'%(len(protein_list))) 
+  print('problems = %s'%problem)
   return x_predic, name, protein_list
 
 
@@ -321,7 +364,7 @@ def ave_first_score(proteins,name,prediction,outfile,threshold):
       logging.info(
           '%s: averaged likelihood of being phased: %s score of map: 0'%(protein,p))
     logging.info('ones %s: zeros %s\n'%(ones,zeros))
-
+  print('number of maps with scores = %s'%(len(score)))
   return score, pred, ones, zeros
 
 def round_first_score(proteins,name, prediction,outfile,threshold):

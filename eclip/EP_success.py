@@ -65,7 +65,7 @@ def main(sqlitedb='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',
 
   '''
   
-  # Clearing ep_success_o and ep_success_i in database
+  # Clearing collumns in database
   if clear==True:
     column_clear(sqlitedb,
                   'Phasing',
@@ -111,11 +111,13 @@ def main(sqlitedb='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',
     if raw:
       directory = os.path.join(dirin,name,name)
       cur.execute('''
-        UPDATE Phasing SET ep_raw_o = "%s" WHERE Phasing.pdb_id_id = "%s"'''%(directory,pdbpk))
+        UPDATE Phasing SET ep_raw_o = "%s" WHERE 
+        Phasing.pdb_id_id = "%s"'''%(directory,pdbpk))
     else:
       directory = os.path.join(dirin,name,name)
       cur.execute('''
-        UPDATE Phasing SET ep_img_o = "%s" WHERE Phasing.pdb_id_id = "%s"'''%(directory,pdbpk))
+        UPDATE Phasing SET ep_img_o = "%s" WHERE 
+        Phasing.pdb_id_id = "%s"'''%(directory,pdbpk))
   
   invlst = make_list_inverse(dirin)
   for n in invlst:
@@ -175,8 +177,9 @@ def main(sqlitedb='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',
   cur.execute('''
     UPDATE Phasing SET ep_success_i =1 WHERE (ep_percent_i-ep_percent_o)>10 AND
     (ep_percent_o NOT NULL AND ep_percent_i NOT NULL)''')
-  
-  
+ 
+  #Manual adjustments
+  cur.execute(''' UPDATE Phasing SET ep_success_i = 0 WHERE pdb_id_id = "506"''') 
   
   conn.commit()
   conn.close()

@@ -225,7 +225,7 @@ def plot_test_results(y_test, y_pred,outputfile, thresh):
 
   fig=plt.figure()
   plt.plot(x,y_pred,truex,truey,'g.',falsex,falsey,'r.')
-  plt.title('Decimal Prediction against True Value')
+  plt.title('Prediction and True Value against Index')
   plt.xlabel('Index')
   plt.ylabel('Score')
   plt.legend(['Predictions','True Value Correct','True Value Incorrect'],loc=6)

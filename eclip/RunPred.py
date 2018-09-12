@@ -29,6 +29,9 @@ The command line arguments are as follows.
 * **--db:** The location of the sqlite database file. Default: /dls/science/users/ycc62267/metrix_db/metrix_db.sqlite
 * **--raw:** Boolean, whether using heavy atom positions or processed data. Default: False
 * **--op:** The output loction for the prediction file. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1/
+* **--ning:** Boolean, true is name should be added to date
+* **--name:** Name to add
+* **-model:** The directory to find the model.json and model.h5 files
 
 | 
 
@@ -50,7 +53,8 @@ def Predictfromexisting(input_map_directory1,
                         raw,
                         outpred,
                         ning,
-                        name):
+                        name,
+                        model):
   '''
   Predictfromexisting is the main function of RunPred
 
@@ -65,11 +69,16 @@ def Predictfromexisting(input_map_directory1,
   if ning:
     date = date + name
 
+  jsonfile= os.path.join(model,'model.json')
+  weightsfile=os.path.join(model,'model.h5')
+
 #calling ConvMAP
   image_slicing(input_map_directory1,output_directory1)
 
 #calling predic
-  predicf(sqlite_db=sqlite_db,
+  predicf(jsonfile= jsonfile,
+          weights_file = weightsfile,
+          sqlite_db=sqlite_db,
           fileloc = output_directory1,
           outdir = outpred,
           date = date, 
@@ -123,6 +132,11 @@ def run():
                       type = str,
                       help = 'name to add to date',
                       default = '')
+  parser.add_argument('--model',
+                      dest = 'model',
+                      type = str,
+                      help = 'location of directory for model to use, should have model.json and model.h5',
+                      default = '/dls/science/users/ycc62267/eclip/eclip/paratry1/')
   
   args=parser.parse_args()
 
@@ -132,7 +146,8 @@ def run():
                       args.raw,
                       args.op,
                       args.ning,
-                      args.name)
+                      args.name,
+                      args.model)
 
 
 ###########
