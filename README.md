@@ -18,7 +18,7 @@ machine.
 
 ### Prerequisites
 
-####Software
+#### Software
 To install this software you will need: 
 
 * keras
@@ -37,7 +37,7 @@ there are issues when installing and using tensorflow and keras.
 
 Python3 must also be installed inorder to run this program. 
 
-####Data
+#### Data
 For the program to work the map files need to be stored in one directory.
 This layout is automatically created by the Topaz program if being used before
 Eclip. 
