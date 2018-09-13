@@ -140,6 +140,7 @@ There are two pretrained models in this package. Their performance and data type
 is found in the table below. 
 
 | Model | Data | Maps | Images | Training | Predicting | Image Accuracy | Map Accuracy |
+|-------|--|---|---|--|--|--|--|
 | 1 | Feature Enhanced | 786 | 35370 | 5h49min | 34sec | 97% | 93% |
 | 2 | | | | | | | |
 
