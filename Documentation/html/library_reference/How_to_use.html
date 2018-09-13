@@ -1,0 +1,189 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>How to use &#8212; Eclip 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Feature Enhanced Data" href="FeatureEnhanced.html" />
+    <link rel="prev" title="Getting Started" href="Getting_started.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="FeatureEnhanced.html" title="Feature Enhanced Data"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Getting_started.html" title="Getting Started"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Eclip 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="eclip.html" accesskey="U">Eclip</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">How to use</a><ul>
+<li><a class="reference internal" href="#examples-of-how-to-use">Examples of how to use</a><ul>
+<li><a class="reference internal" href="#how-to-call">How to call:</a></li>
+<li><a class="reference internal" href="#available-functions">Available Functions:</a><ul>
+<li><a class="reference internal" href="#runtrain">RunTrain</a></li>
+<li><a class="reference internal" href="#runpred">RunPred</a></li>
+<li><a class="reference internal" href="#convmap">ConvMAP</a></li>
+<li><a class="reference internal" href="#ep-success">EP_success</a></li>
+<li><a class="reference internal" href="#learn">learn</a></li>
+<li><a class="reference internal" href="#predictest">predictest</a></li>
+<li><a class="reference internal" href="#predic">predic</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Getting_started.html"
+                        title="previous chapter">Getting Started</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="FeatureEnhanced.html"
+                        title="next chapter">Feature Enhanced Data</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/library_reference/How_to_use.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="how-to-use">
+<h1>How to use<a class="headerlink" href="#how-to-use" title="Permalink to this headline">¶</a></h1>
+<p>To use Eclip, it is simpest to run the training function (RunTrain), and then the
+predicting function (RunPred). However, each function making up these can also be run
+independantly. This allows for more flexibility in the arguments.</p>
+<p>The programs are run by calling the functions in the command line.</p>
+<div class="section" id="examples-of-how-to-use">
+<span id="examples"></span><h2>Examples of how to use<a class="headerlink" href="#examples-of-how-to-use" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="how-to-call">
+<h3>How to call:<a class="headerlink" href="#how-to-call" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>RunPred --input<span class="o">=</span>/INPUT-IMAGE-DIRECTORY/ --output<span class="o">=</span>/OUTPUT-IMAGE-DIRECTORY
+</pre></div>
+</div>
+</div>
+<div class="section" id="available-functions">
+<span id="functions"></span><h3>Available Functions:<a class="headerlink" href="#available-functions" title="Permalink to this headline">¶</a></h3>
+<p>The functions able to be called are as follows:</p>
+<div class="section" id="runtrain">
+<h4>RunTrain<a class="headerlink" href="#runtrain" title="Permalink to this headline">¶</a></h4>
+<p>RunTrain is the module that produces a trained model, using input maps. Find the documentation for this module <a class="reference internal" href="RunTrain.html#runtrain"><span class="std std-ref">here</span></a>.</p>
+</div>
+<div class="section" id="runpred">
+<h4>RunPred<a class="headerlink" href="#runpred" title="Permalink to this headline">¶</a></h4>
+<p>RunPred is the module that produces a score using a pretrained model. Find the
+documentation for this module <a class="reference internal" href="RunPred.html#runpred"><span class="std std-ref">here</span></a>.</p>
+</div>
+<div class="section" id="convmap">
+<h4>ConvMAP<a class="headerlink" href="#convmap" title="Permalink to this headline">¶</a></h4>
+<p>ConvMAP is the module that converts maps to images. Find the documentation for
+this module <a class="reference internal" href="ConvMAP.html#convmap"><span class="std std-ref">here</span></a>.</p>
+</div>
+<div class="section" id="ep-success">
+<h4>EP_success<a class="headerlink" href="#ep-success" title="Permalink to this headline">¶</a></h4>
+<p>EP_success is the module that updates the SQLite database with scores for the
+training data, and links to the image directories. Find the documentation for
+this module <a class="reference internal" href="EP_success.html#ep-success"><span class="std std-ref">here</span></a>.</p>
+</div>
+<div class="section" id="learn">
+<h4>learn<a class="headerlink" href="#learn" title="Permalink to this headline">¶</a></h4>
+<p>learn if the module that trains a new model. Find the documentation for this
+module <a class="reference internal" href="learn.html#learn"><span class="std std-ref">here</span></a>.</p>
+</div>
+<div class="section" id="predictest">
+<h4>predictest<a class="headerlink" href="#predictest" title="Permalink to this headline">¶</a></h4>
+<p>predictest is the module that tests the model on a testing set of proteins and
+outputs statistices on its performance. Find the documentation for this module
+<a class="reference internal" href="predictest.html#predictest"><span class="std std-ref">here</span></a>.</p>
+</div>
+<div class="section" id="predic">
+<h4>predic<a class="headerlink" href="#predic" title="Permalink to this headline">¶</a></h4>
+<p>predic is the module that takes in a map file and outputs a score using a
+pretrained model. Find the documentation for this module <a class="reference internal" href="predic.html#predic"><span class="std std-ref">here</span></a>.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="FeatureEnhanced.html" title="Feature Enhanced Data"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Getting_started.html" title="Getting Started"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Eclip 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="eclip.html" >Eclip</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Jenna Elliott.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+    </div>
+  </body>
+</html>

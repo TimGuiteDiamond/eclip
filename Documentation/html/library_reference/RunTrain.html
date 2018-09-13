@@ -1,0 +1,199 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>RunTrain Module &#8212; Eclip 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="RunPred Module" href="RunPred.html" />
+    <link rel="prev" title="eclip.utils package" href="eclip.utils.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="RunPred.html" title="RunPred Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="eclip.utils.html" title="eclip.utils package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Eclip 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="eclip.html" accesskey="U">Eclip</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">RunTrain Module</a><ul>
+<li><a class="reference internal" href="#arguments">Arguments</a></li>
+<li><a class="reference internal" href="#functions-in-module">Functions in module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="eclip.utils.html"
+                        title="previous chapter">eclip.utils package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="RunPred.html"
+                        title="next chapter">RunPred Module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/library_reference/RunTrain.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-eclip.RunTrain">
+<span id="runtrain-module"></span><span id="runtrain"></span><h1>RunTrain Module<a class="headerlink" href="#module-eclip.RunTrain" title="Permalink to this headline">¶</a></h1>
+<p>Module for creating model in full. The module slices the maps into images,
+updates the sqlite database and trains and tests a model. It does not 
+have the full flexibility that calling each individually provides, but 
+does provide an easier way of running the Eclip package.</p>
+<p>Other modules called by RunTrain:</p>
+<blockquote>
+<div><ul class="simple">
+<li>ConvMAP</li>
+<li>EP_success</li>
+<li>learn</li>
+<li>predictest</li>
+</ul>
+</div></blockquote>
+<p>Calling RunTrain results in the creation of:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Images of slices of the maps</li>
+<li>populated sqlite Phasing table</li>
+<li>model.json</li>
+<li>model.yaml</li>
+<li>model.hs</li>
+<li>predict——_-.txt</li>
+<li>log——_-.txt</li>
+<li>Plot——__.png</li>
+<li>CnfM——_-.png</li>
+<li>Complot——_-.png</li>
+<li>newpredic——_-.txt</li>
+<li>map_results——_-.png</li>
+<li>map_cnf——_-.png</li>
+</ul>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="section" id="arguments">
+<h2>Arguments<a class="headerlink" href="#arguments" title="Permalink to this headline">¶</a></h2>
+<p>The command line arguments are as follows.</p>
+<ul class="simple">
+<li><strong>–input:</strong> The location for the imput map directory. Default: /dls/mx-scratch/ycc62267/mapfdrbox</li>
+<li><strong>–output:</strong> The location for the output directory for the images. Default: /dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox</li>
+<li><strong>–dtdr:</strong> The location of the directory containing the log files. Default: /dls/mx-scratch/melanie/for_METRIX/results_201710/EP_phasing</li>
+<li><strong>–db:</strong> The location of the sqlite database file. Default: /dls/science/users/ycc62267/metrix_db/metrix_db.sqlite</li>
+<li><strong>–raw:</strong> Boolean, if the data is just heavy atom positions or processed. Default: False</li>
+<li><strong>–epochs:</strong> The number of epochs to run for. Default: 300</li>
+<li><strong>–nmb:</strong> The number of images to use per axis per protein. Default: 15</li>
+<li><strong>–trial:</strong> The starting trial number. Default: 1</li>
+<li><strong>–lgdir:</strong> The output directory for stats. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1</li>
+<li><strong>–ning:</strong> Boolean, whether to add a name onto filenames to be saved. Default = False</li>
+<li><strong>–name:</strong> The name to add the the filenames to be saved. default = ‘’</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="functions-in-module">
+<h2>Functions in module<a class="headerlink" href="#functions-in-module" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<dl class="function">
+<dt id="eclip.RunTrain.CreatingNewModel">
+<code class="descclassname">eclip.RunTrain.</code><code class="descname">CreatingNewModel</code><span class="sig-paren">(</span><em>input_map_directory1</em>, <em>output_directory1</em>, <em>data_directory</em>, <em>sqlite_db</em>, <em>raw</em>, <em>epochs</em>, <em>number</em>, <em>trialnum</em>, <em>lgdir</em>, <em>naming</em>, <em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#eclip.RunTrain.CreatingNewModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>CreatingNewModel is the main function of RunTrain</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="eclip.RunTrain.run">
+<code class="descclassname">eclip.RunTrain.</code><code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#eclip.RunTrain.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>run allows RunTrain to be called from the command line.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="RunPred.html" title="RunPred Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="eclip.utils.html" title="eclip.utils package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Eclip 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="eclip.html" >Eclip</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Jenna Elliott.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+    </div>
+  </body>
+</html>

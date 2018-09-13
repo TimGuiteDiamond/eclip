@@ -1,0 +1,10 @@
+.. _EP_add_new:
+
+EP_add_new
+================
+
+.. automodule:: eclip.EP_add_new
+   :members:
+   :undoc-members:
+   :show-inheritance:
+

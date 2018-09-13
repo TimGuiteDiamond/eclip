@@ -1,0 +1,12 @@
+.. _RunTrain:
+
+RunTrain Module
+================
+
+
+.. automodule:: eclip.RunTrain
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+

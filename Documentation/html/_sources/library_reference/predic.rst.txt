@@ -1,0 +1,9 @@
+.. _predic:
+
+predic Module
+=================
+
+.. automodule:: eclip.predic
+   :members:
+   :undoc-members:
+   :show-inheritance:

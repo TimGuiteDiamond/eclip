@@ -1,0 +1,219 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Getting Started &#8212; Eclip 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="How to use" href="How_to_use.html" />
+    <link rel="prev" title="Eclip" href="eclip.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="How_to_use.html" title="How to use"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="eclip.html" title="Eclip"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Eclip 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="eclip.html" accesskey="U">Eclip</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Getting Started</a><ul>
+<li><a class="reference internal" href="#prerequisites">Prerequisites</a><ul>
+<li><a class="reference internal" href="#software">Software</a></li>
+<li><a class="reference internal" href="#data">Data</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#installing">Installing</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="eclip.html"
+                        title="previous chapter">Eclip</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="How_to_use.html"
+                        title="next chapter">How to use</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/library_reference/Getting_started.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p>These instuctions will get a copy of the project working on your local machine.</p>
+<div class="section" id="prerequisites">
+<span id="id1"></span><h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="software">
+<h3>Software<a class="headerlink" href="#software" title="Permalink to this headline">¶</a></h3>
+<p>To install this software you will need:</p>
+<ul class="simple">
+<li>keras</li>
+<li>tensorflow</li>
+<li>matplotlib</li>
+<li>scikit-learn</li>
+<li>Pillow</li>
+<li>numpy</li>
+<li>scipy</li>
+<li>mrcfile</li>
+<li>logging</li>
+<li>argparse</li>
+</ul>
+<p>These should all be installed (or alreading were installed) when the environment
+is setup (see <a class="reference internal" href="#installing"><span class="std std-ref">here</span></a>). However, sometimes there are issues when
+installing and using tensorflow and keras. CHECK WHICH VERSIONS.</p>
+<p>python3 must also be set up on your machine inorder to work.</p>
+</div>
+<div class="section" id="data">
+<h3>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h3>
+<p>For this program to work, the map files need to be stored in one directory. This
+layout is automatically created by the Topaz program designed to prepare the map
+files for eclip.</p>
+<p>If using RunTrain or EP_success, there must also be a directory with a
+sub-directory for each of the protein names. Each of these sub directories must
+have a log file (each one with the same name). These log files (default is
+simple_xia2_to_shelxcde.log) need to contain the characters: “Best space group:
+” followed by a space group. In the same sub-directory there must also be a
+directory named this space group. In there there must be a .lst file with
+the same name as the protein (with _i if inverse). This file must contain
+the characters “with CC ” followed by a percentage, between the last 1000
+and last 700 charaters. Alternatively, it can contain the words “CC is less
+than zero - giving up”, or “Pseudo-free CC = “. This is to that EP_success can assign scores to the
+proteins for training.</p>
+<p>A diagram of this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MapDirectory</span>
+    <span class="o">-</span> <span class="n">ProteinName1</span><span class="o">.</span><span class="n">map</span>
+    <span class="o">-</span> <span class="n">ProteinName1_i</span><span class="o">.</span><span class="n">map</span>
+    <span class="o">-</span> <span class="n">ProteinName2</span><span class="o">.</span><span class="n">map</span>
+    <span class="o">.</span>
+    <span class="o">.</span>
+    <span class="o">.</span>
+
+<span class="n">EP_phasing</span>
+    <span class="o">-</span> <span class="n">ProteinName1</span>
+        <span class="o">-</span> <span class="n">SpaceGroup</span>
+            <span class="o">-</span> <span class="n">ProteinName</span><span class="o">.</span><span class="n">lst</span>
+        <span class="s1">&#39;simple_xia2_to_shelxcde.log&#39;</span>
+    <span class="o">-</span> <span class="n">ProteinName2</span>
+    <span class="o">.</span>
+    <span class="o">.</span>
+    <span class="o">.</span>
+</pre></div>
+</div>
+<p>The SQLite database must have a table called “<strong>Phasing</strong>”, with collumn names:</p>
+<ul class="simple">
+<li>pdb_id_id</li>
+<li>ep_success_o</li>
+<li>ep_percent_o</li>
+<li>ep_score_o</li>
+<li>ep_score_rawo</li>
+<li>ep_confidence_o</li>
+<li>ep_confidence_rawo</li>
+<li>ep_success_i</li>
+<li>ep_success_rawi</li>
+<li>ep_confidence_i</li>
+<li>ep_confidence_rawi</li>
+<li>ep_img_o</li>
+<li>ep_raw_o</li>
+<li>ep_img_i</li>
+<li>ep_raw_i</li>
+</ul>
+</div>
+</div>
+<div class="section" id="installing">
+<span id="id2"></span><h2>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h2>
+<p>To get a development environment running, first download the package. The code
+can be found on the github repositary <a class="reference external" href="https://github.com/jmp1985/topaz">here</a>. Then go to the directory containing
+setup.py and type the following into the command line:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 setup.py develop --user
+
+<span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:~/.local/bin
+</pre></div>
+</div>
+<p>The functions should then be available to use in command line.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="How_to_use.html" title="How to use"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="eclip.html" title="Eclip"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Eclip 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="eclip.html" >Eclip</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Jenna Elliott.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+    </div>
+  </body>
+</html>

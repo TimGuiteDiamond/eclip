@@ -1,0 +1,11 @@
+.. _predictest:
+
+predictest Module
+====================
+
+.. automodule:: eclip.predictest
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+

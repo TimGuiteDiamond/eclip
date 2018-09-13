@@ -1,0 +1,68 @@
+How to use
+===========
+To use Eclip, it is simpest to run the training function (RunTrain), and then the
+predicting function (RunPred). However, each function making up these can also be run
+independantly. This allows for more flexibility in the arguments. 
+
+The programs are run by calling the functions in the command line. 
+
+.. _Examples:
+
+Examples of how to use
+-------------------------
+
+How to call:
+""""""""""""""
+.. code-block:: bash
+
+   RunPred --input=/INPUT-IMAGE-DIRECTORY/ --output=/OUTPUT-IMAGE-DIRECTORY
+
+.. _Functions:
+
+Available Functions:
+"""""""""""""""""""""
+The functions able to be called are as follows: 
+
+
+RunTrain
+^^^^^^^^^
+RunTrain is the module that produces a trained model, using input maps. Find the documentation for this module :ref:`here <RunTrain>`.
+ 
+RunPred
+^^^^^^^^
+RunPred is the module that produces a score using a pretrained model. Find the
+documentation for this module :ref:`here <RunPred>`.
+
+ConvMAP
+^^^^^^^^
+ConvMAP is the module that converts maps to images. Find the documentation for
+this module :ref:`here <ConvMAP>`.
+
+EP_success
+^^^^^^^^^^^^
+EP_success is the module that updates the SQLite database with scores for the
+training data, and links to the image directories. Find the documentation for
+this module :ref:`here <EP_success>`.
+
+learn
+^^^^^^
+learn if the module that trains a new model. Find the documentation for this
+module :ref:`here <learn>`.
+
+predictest
+^^^^^^^^^^^
+predictest is the module that tests the model on a testing set of proteins and
+outputs statistices on its performance. Find the documentation for this module
+:ref:`here <predictest>`.
+
+predic
+^^^^^^^
+predic is the module that takes in a map file and outputs a score using a
+pretrained model. Find the documentation for this module :ref:`here <predic>`.
+
+
+
+
+
+
+

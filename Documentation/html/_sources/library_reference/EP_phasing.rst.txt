@@ -1,0 +1,8 @@
+EP_phasing
+================
+
+.. automodule:: eclip.EP_phasing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+

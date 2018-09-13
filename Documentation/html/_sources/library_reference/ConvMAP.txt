@@ -1,0 +1,10 @@
+.. _ConvMAP:
+
+ConvMAP Module
+================
+
+.. automodule:: eclip.ConvMAP
+   :members:
+   :undoc-members:
+   :show-inheritance:
+

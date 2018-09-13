@@ -1,0 +1,22 @@
+.. _HeavyAtoms:
+
+Heavy Atom Positions Data
+=========================
+
+The Heavy Atom Positions Data consisted of .... maps. Each map was produced from
+data produced from SHELX after fully fitting the backbone. However, only the
+information on the location of the heavy atoms were included. This was done to
+see how well a model could perform on minimal information input, but is not 
+guarrenteed to work with the heavy atom positions produced before fitting. The
+commands used to do this can be seen :ref:`below. <codeSHELXHA>` This was
+followed by the CCP4 functions 'f2map', 'cfft', and 'mapmask' called using a
+dispatcher, to convert to a tessalated map format. This last step is done using
+the package TOPAZ. 
+
+The images produced when training this model can be found in the same directory
+as the model. 
+
+.. _codeSHELXHA:
+
+SHELX code for Heavy Atom Positions Data
+-----------------------------------------

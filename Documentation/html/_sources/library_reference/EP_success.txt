@@ -1,0 +1,10 @@
+.. _EP_success:
+
+EP_success
+================
+
+.. automodule:: eclip.EP_success
+   :members:
+   :undoc-members:
+   :show-inheritance:
+

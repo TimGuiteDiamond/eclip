@@ -1,0 +1,213 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>learn Module &#8212; Eclip 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="predictest Module" href="predictest.html" />
+    <link rel="prev" title="EP_success" href="EP_success.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="predictest.html" title="predictest Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="EP_success.html" title="EP_success"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Eclip 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="eclip.html" accesskey="U">Eclip</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">learn Module</a><ul>
+<li><a class="reference internal" href="#arguments">Arguments</a></li>
+<li><a class="reference internal" href="#functions-in-module">Functions in module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="EP_success.html"
+                        title="previous chapter">EP_success</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="predictest.html"
+                        title="next chapter">predictest Module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/library_reference/learn.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-eclip.learn">
+<span id="learn-module"></span><span id="learn"></span><h1>learn Module<a class="headerlink" href="#module-eclip.learn" title="Permalink to this headline">¶</a></h1>
+<p>Learn is the module that creates and trains a new CNN model using keras. The
+module compiles the model  and fits it, using a set of parameters and keras functions.</p>
+<p>Other classes and funcitons called in the module:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>From eclip.utils.datamanip</dt>
+<dd><ul class="first last simple">
+<li>input_training_image</li>
+<li>str2bool</li>
+</ul>
+</dd>
+<dt>From eclip.utils.visu</dt>
+<dd><ul class="first last simple">
+<li>ConfusionMatrix</li>
+<li>fit_plot</li>
+<li>plot_test_results</li>
+</ul>
+</dd>
+<dt>From eclip.utils.modelmanip</dt>
+<dd><ul class="first last simple">
+<li>MapModel</li>
+<li>exp_json</li>
+<li>exp_yaml</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+<p>Calling learn results in the creation of:</p>
+<blockquote>
+<div><ul class="simple">
+<li>model.json</li>
+<li>model.yaml</li>
+<li>model.h5</li>
+<li>predict——_-.txt</li>
+<li>log——_-.txt</li>
+<li>Plot——_-.png</li>
+<li>CnfM——_-.png</li>
+<li>Complot——_-.png</li>
+</ul>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="section" id="arguments">
+<h2>Arguments<a class="headerlink" href="#arguments" title="Permalink to this headline">¶</a></h2>
+<p>The command line arguments for learn are as follows.</p>
+<ul class="simple">
+<li><strong>–batchsize:</strong> The batchsize for learning. Default: 64</li>
+<li><strong>–epochs:</strong> The epochs for learning. Default: 300</li>
+<li><strong>–loss:</strong> The loss equation for learning. Default: categorical_crossentropy</li>
+<li><strong>–lrt:</strong> The starting learning rate. Default: 0.0001</li>
+<li><strong>–para:</strong> Boolean, whether using data parallisation. Default: True</li>
+<li><strong>–trial:</strong> The starter for trial number. Default: 1</li>
+<li><strong>–date:</strong> Date to appear on saved names. Default: current date</li>
+<li><strong>–drt:</strong> Rate of decay of learning rate. Default: 1e-8</li>
+<li><strong>–raw:</strong> Boolean, if learning on just heavy atom positions. Default: False</li>
+<li><strong>–insh:</strong> The input shape of the images, as a list of dimensions. Default: [201,201,3]</li>
+<li><strong>–out:</strong> Directory location for the states etc to be saved. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1</li>
+<li><strong>–th:</strong> Threshold to round predictions up from</li>
+<li><strong>–nmb:</strong> The number of images per protein per axis</li>
+<li><strong>–ning:</strong> Boolean, true if adding name to date</li>
+<li><strong>–name:</strong> Name to add to date if ning is true</li>
+<li><strong>–db:</strong> The sqlite database</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="functions-in-module">
+<h2>Functions in module<a class="headerlink" href="#functions-in-module" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<dl class="function">
+<dt id="eclip.learn.main">
+<code class="descclassname">eclip.learn.</code><code class="descname">main</code><span class="sig-paren">(</span><em>batchsize=64, epochs=300, lossequation='categorical_crossentropy', learningrate=0.0001, parallel=True, trialnum=1, date='150818', decayrt=1e-08, Raw=False, inputshape=[201, 201, 3], outputdirectory='/dls/science/users/ycc62267/eclip/eclip/paratry1', sqlitedb='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite', number=10, thresh=0.5</em><span class="sig-paren">)</span><a class="headerlink" href="#eclip.learn.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main is the overall function of learn.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="eclip.learn.run">
+<code class="descclassname">eclip.learn.</code><code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#eclip.learn.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>run allows learn to be called from the command line.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="predictest.html" title="predictest Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="EP_success.html" title="EP_success"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Eclip 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="eclip.html" >Eclip</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Jenna Elliott.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,387 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Eclip &#8212; Eclip 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Getting Started" href="Getting_started.html" />
+    <link rel="prev" title="Welcome to Eclip’s documentation!" href="../index.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Getting_started.html" title="Getting Started"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to Eclip’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Eclip 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Eclip</a><ul>
+<li><a class="reference internal" href="#getting-started">Getting Started</a></li>
+<li><a class="reference internal" href="#how-to-use">How to use</a></li>
+<li><a class="reference internal" href="#contents-of-eclip">Contents of Eclip</a><ul>
+<li><a class="reference internal" href="#pretrained-models">Pretrained Models</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#utils-subpackage">Utils Subpackage</a></li>
+<li><a class="reference internal" href="#modules">Modules</a><ul>
+<li><a class="reference internal" href="#eclip-runtrain-module">eclip.RunTrain module</a></li>
+<li><a class="reference internal" href="#eclip-runpred-module">eclip.RunPred module</a></li>
+<li><a class="reference internal" href="#eclip-convmap-module">eclip.ConvMAP module</a></li>
+<li><a class="reference internal" href="#eclip-ep-success-module">eclip.EP_success module</a></li>
+<li><a class="reference internal" href="#eclip-learn-module">eclip.learn module</a></li>
+<li><a class="reference internal" href="#eclip-predictest-module">eclip.predictest module</a></li>
+<li><a class="reference internal" href="#eclip-ep-add-new-module">eclip.EP_add_new module</a></li>
+<li><a class="reference internal" href="#eclip-predic-module">eclip.predic module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#acknowledgements">Acknowledgements</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../index.html"
+                        title="previous chapter">Welcome to Eclip’s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Getting_started.html"
+                        title="next chapter">Getting Started</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/library_reference/eclip.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="eclip">
+<span id="id1"></span><h1>Eclip<a class="headerlink" href="#eclip" title="Permalink to this headline">¶</a></h1>
+<p>Eclip is a package that trains a CNN model to recognise phased (good) and
+unphased (bad) electron density maps. This package reads in the electron density
+maps (in .map format) and slices them into two dimensional images. These images
+are then used to train a modle that will be able to give a label to each image,
+indicating how likely it is that the protein is phased. These labels are then
+averaged to give an overall score for the map.</p>
+<p>The package is split into two sections. The first is used to train the model,
+the second is used to implement this model on new data. It also comes with some
+pretrained models for use with certain data types.</p>
+<p>The github repositary for this package can be found <a class="reference external" href="https://github.com/jmp1985/eclip">here</a>.</p>
+<div class="section" id="getting-started">
+<span id="id2"></span><h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>These instructions will get Eclip running on your local machine.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Getting_started.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Getting_started.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Getting_started.html#installing">Installing</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="how-to-use">
+<span id="id3"></span><h2>How to use<a class="headerlink" href="#how-to-use" title="Permalink to this headline">¶</a></h2>
+<p>To use Eclip, it is simplest to run first the training, and then implementing
+programs. However, each individual section can also be run independantly. This
+allows for more felxibility in the arguments used.</p>
+<p>The training program is run by calling RunTrain from the command line.
+The implementing program is similarly run by calling RunPred from the command
+line.</p>
+<p>You can learn more about how to do this, and the arguments required, here:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="How_to_use.html">How to use</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="How_to_use.html#examples-of-how-to-use">Examples of how to use</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="contents-of-eclip">
+<span id="id4"></span><h2>Contents of Eclip<a class="headerlink" href="#contents-of-eclip" title="Permalink to this headline">¶</a></h2>
+<p>Details on individual functions and their arguments can be found here, as well
+as details on the pretrained models available:</p>
+<div class="section" id="pretrained-models">
+<h3>Pretrained Models<a class="headerlink" href="#pretrained-models" title="Permalink to this headline">¶</a></h3>
+<p>There are two pretrained models in this package. Their performance and data type
+is found in the table below.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="19%" />
+<col width="7%" />
+<col width="9%" />
+<col width="11%" />
+<col width="13%" />
+<col width="18%" />
+<col width="16%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Model</td>
+<td>Data</td>
+<td>Maps</td>
+<td>Images</td>
+<td>Training</td>
+<td>Predicting</td>
+<td>Image Accuracy</td>
+<td>Map Accuracy</td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>Feature Enhanced</td>
+<td>786</td>
+<td>35370</td>
+<td>5h49min</td>
+<td>34sec</td>
+<td>97%</td>
+<td>93%</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>Heavy Atoms</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+<p>The total number of maps and images used in the creation of these models (the sum
+of those used for training and predicting) are in the columns ‘Maps’ and ‘Images’ respectively.
+The runtimes are under ‘Training’ and ‘Predicting’. The training runtime was
+calculated for the program running on a 4 Nvidia Tesla GPU cluster, and the
+Predicting runtime as calculated for a single MGA-G200e GPU.</p>
+<p>Details on the data types and how they were produced can be found here:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="FeatureEnhanced.html">Feature Enhanced Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="FeatureEnhanced.html#shelx-code-for-feature-enhanced-data">SHELX code for Feature Enhanced Data</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="HeavyAtoms.html">Heavy Atom Positions Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="HeavyAtoms.html#shelx-code-for-heavy-atom-positions-data">SHELX code for Heavy Atom Positions Data</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>To use the pretrained models to predict new scores, make sure the input data has
+been preprocessed in the same way as the data used to train the model (see
+above). Then call RunPred with the model location (see example below). The
+$CHOICE_OF_DATA_TYPES should be replaced with either ‘FeatureEnhanced’ or
+‘HeavyAtoms’.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>RunPred --model<span class="o">=</span>/<span class="nv">$YOUR_LOCATION_FOR_ECLIP</span>/eclip/eclip/pretrainedmodels/<span class="nv">$CHOICE_OF_DATA_TYPE</span>/
+</pre></div>
+</div>
+</div>
+<div class="section" id="utils-subpackage">
+<h3>Utils Subpackage<a class="headerlink" href="#utils-subpackage" title="Permalink to this headline">¶</a></h3>
+<p>The utils subpackage is a package containing all the functions that could be
+needed more than once.</p>
+<p>Its contents can be found here:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="eclip.utils.html">eclip.utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="eclip.utils.html#module-eclip.utils.datamanip">eclip.utils.datamanip module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="eclip.utils.html#module-eclip.utils.modelmanip">eclip.utils.modelmanip module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="eclip.utils.html#module-eclip.utils.visu">eclip.utils.visu module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="eclip.utils.html#module-eclip.utils.get_data">eclip.utils.get_data module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="modules">
+<h3>Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="eclip-runtrain-module">
+<h4>eclip.RunTrain module<a class="headerlink" href="#eclip-runtrain-module" title="Permalink to this headline">¶</a></h4>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="RunTrain.html">RunTrain Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="RunTrain.html#arguments">Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunTrain.html#functions-in-module">Functions in module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="eclip-runpred-module">
+<h4>eclip.RunPred module<a class="headerlink" href="#eclip-runpred-module" title="Permalink to this headline">¶</a></h4>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="RunPred.html">RunPred Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="RunPred.html#arguments">Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunPred.html#functions-in-module">Functions in module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="eclip-convmap-module">
+<h4>eclip.ConvMAP module<a class="headerlink" href="#eclip-convmap-module" title="Permalink to this headline">¶</a></h4>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ConvMAP.html">ConvMAP Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ConvMAP.html#arguments">Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ConvMAP.html#functions-in-module">Functions in module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="eclip-ep-success-module">
+<h4>eclip.EP_success module<a class="headerlink" href="#eclip-ep-success-module" title="Permalink to this headline">¶</a></h4>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="EP_success.html">EP_success</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="EP_success.html#arguments">Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="EP_success.html#functions-in-module">Functions in module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="eclip-learn-module">
+<h4>eclip.learn module<a class="headerlink" href="#eclip-learn-module" title="Permalink to this headline">¶</a></h4>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="learn.html">learn Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="learn.html#arguments">Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="learn.html#functions-in-module">Functions in module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="eclip-predictest-module">
+<h4>eclip.predictest module<a class="headerlink" href="#eclip-predictest-module" title="Permalink to this headline">¶</a></h4>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="predictest.html">predictest Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="predictest.html#arguments">Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictest.html#functions-in-module">Functions in module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="eclip-ep-add-new-module">
+<h4>eclip.EP_add_new module<a class="headerlink" href="#eclip-ep-add-new-module" title="Permalink to this headline">¶</a></h4>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="EP_add_new.html">EP_add_new</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="EP_add_new.html#arguments">Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="EP_add_new.html#functions-in-module">Functions in module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="eclip-predic-module">
+<h4>eclip.predic module<a class="headerlink" href="#eclip-predic-module" title="Permalink to this headline">¶</a></h4>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="predic.html">predic Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="predic.html#arguments">Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predic.html#functions-in-module">Functions in module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="acknowledgements">
+<span id="id5"></span><h2>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Supervisor: Melaine Vollmar</li>
+<li>co-supervisor: James Parkhurst</li>
+<li>Principle Investigator: Gwyndaf Evans</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Getting_started.html" title="Getting Started"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to Eclip’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Eclip 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Jenna Elliott.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+    </div>
+  </body>
+</html>

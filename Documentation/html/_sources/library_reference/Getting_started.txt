@@ -1,0 +1,87 @@
+Getting Started
+===================
+
+These instuctions will get a copy of the project working on your local machine. 
+
+.. _prerequisites:
+
+Prerequisites
+---------------
+
+Software
+^^^^^^^^^
+To install this software you will need:
+
+* keras
+* tensorflow
+* matplotlib
+* scikit-learn
+* Pillow
+* numpy
+* scipy
+* mrcfile
+* logging
+* argparse
+
+These should all be installed (or alreading were installed) when the environment
+is setup (see :ref:`here <Installing>`). However, sometimes there are issues when
+installing and using tensorflow and keras. CHECK WHICH VERSIONS.
+
+python3 must also be set up on your machine inorder to work. 
+
+Data
+^^^^^
+For this program to work, the map files need to be stored in one directory. This
+layout is automatically created by the Topaz program designed to prepare the map
+files for eclip.
+
+If using RunTrain or EP_success, there must also be a directory with a 
+sub-directory for each of the protein names. Each of these sub directories must 
+have a log file (each one with the same name). These log files (default is
+simple_xia2_to_shelxcde.log) need to contain the characters: "Best space group:
+" followed by a space group. In the same sub-directory there must also be a 
+directory named this space group. In there there must be a .lst file with 
+the same name as the protein (with _i if inverse). This file must contain 
+the characters "with CC " followed by a percentage, between the last 1000 
+and last 700 charaters. Alternatively, it can contain the words "CC is less 
+than zero - giving up", or "Pseudo-free CC = ". This is to that EP_success can assign scores to the 
+proteins for training.
+
+The SQLite database must have a table called "**Phasing**", with collumn names:
+
+* pdb_id_id
+* ep_success_o
+* ep_percent_o
+* ep_score_o
+* ep_score_rawo
+* ep_confidence_o
+* ep_confidence_rawo
+* ep_success_i
+* ep_success_rawi
+* ep_confidence_i
+* ep_confidence_rawi
+* ep_img_o
+* ep_raw_o
+* ep_img_i
+* ep_raw_i
+
+.. _Installing:
+
+Installing
+-----------
+
+To get a development environment running, first download the package. The code
+can be found on the github repositary `here
+<https://github.com/jmp1985/topaz>`_. Then go to the directory containing
+setup.py and type the following into the command line:
+
+.. code-block:: bash
+
+   python3 setup.py develop --user
+
+   export PATH=$PATH:~/.local/bin
+
+The functions should then be available to use in command line. 
+
+
+  

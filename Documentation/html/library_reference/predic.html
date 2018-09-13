@@ -1,0 +1,195 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>predic Module &#8212; Eclip 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="EP_add_new" href="EP_add_new.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="EP_add_new.html" title="EP_add_new"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Eclip 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="eclip.html" accesskey="U">Eclip</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">predic Module</a><ul>
+<li><a class="reference internal" href="#arguments">Arguments</a></li>
+<li><a class="reference internal" href="#functions-in-module">Functions in module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="EP_add_new.html"
+                        title="previous chapter">EP_add_new</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/library_reference/predic.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-eclip.predic">
+<span id="predic-module"></span><span id="predic"></span><h1>predic Module<a class="headerlink" href="#module-eclip.predic" title="Permalink to this headline">¶</a></h1>
+<p>Module to predict new scores for maps.</p>
+<p>predic loads a model from a json file and weights from a weights file and uses
+this to predict the score for a new map - already in image form. The
+predictions are then saved to a txt file and added to the sqlite database.</p>
+<p><strong>Warning</strong> this requires the protein to be present in the PDB_id part of the
+database</p>
+<p>The list of proteins to consider can either be given in a list in a text file,
+or can be all the proteins present in the given image directory.</p>
+<p>Other classes and functios called in the module:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>From eclip.utils.datamanip</dt>
+<dd><ul class="first last simple">
+<li>inport_data</li>
+<li>ave_first_score</li>
+<li>round_first_score</li>
+<li>trial_split_list</li>
+<li>from_dir_list</li>
+</ul>
+</dd>
+<dt>From eclip.utils.visu</dt>
+<dd><ul class="first last simple">
+<li>plot_test_results</li>
+</ul>
+</dd>
+<dt>From eclip.utils.modelmanip</dt>
+<dd><ul class="first last simple">
+<li>load_json</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+<p>Calling predic results in the populating of the collumns for predictions in the
+sqlite database with the predictions that the loaded model produces.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="section" id="arguments">
+<h2>Arguments<a class="headerlink" href="#arguments" title="Permalink to this headline">¶</a></h2>
+<p>The command line arguments are as follows.</p>
+<p><strong>Arguments</strong></p>
+<ul class="simple">
+<li><strong>–jsn:</strong> The location for the json file for the model. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1/model.json</li>
+<li><strong>–wfl:</strong> The location for the weights file for the model. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1/model.h5</li>
+<li><strong>–db:</strong> The location of the sqlite database. Default: /dls/science/users/ycc62267/metrix_db/metrix_db.sqlite</li>
+<li><strong>–floc:</strong> The location to find image directories. Default: /dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/</li>
+<li><strong>–psl:</strong> The location for list of proteins to use. Default: /dls/science/users/ycc62267/eclip/eclip/trialsplit.txt</li>
+<li><strong>–insh:</strong> The input image shape, as a list of dimensions. Default: [201,201,3]</li>
+<li><strong>–met:</strong> The method used to round the predictions, either “average first” or “round first”. Default: average first</li>
+<li><strong>–out:</strong> The location of director to save output files. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1/</li>
+<li><strong>–date:</strong> The date to appear on saved files. Default: current date</li>
+<li><strong>–trial:</strong> The starting trial number. Default: 1</li>
+<li><strong>–th:</strong> The value to round up from. Default: 0.5</li>
+<li><strong>–raw:</strong> Boolean, whether using heavy atom positions or processed data. Default: False</li>
+<li><strong>–pfm:</strong> The parameter for protein name location. “fromlist” or “fromdir”. Default: fromdir</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="functions-in-module">
+<h2>Functions in module<a class="headerlink" href="#functions-in-module" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<dl class="function">
+<dt id="eclip.predic.main">
+<code class="descclassname">eclip.predic.</code><code class="descname">main</code><span class="sig-paren">(</span><em>jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.json', weights_file='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.h5', sqlite_db='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite', fileloc='/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/', protein_split_list='/dls/science/users/ycc62267/eclip/eclip/trialsplit.txt', inputshape=[201, 201, 3], method='average first', outdir='/dls/science/users/ycc62267/eclip/eclip/paratry1/', date='070818a', trial_num=1, threshold=0.5, raw=False, protfrom='fromdir'</em><span class="sig-paren">)</span><a class="headerlink" href="#eclip.predic.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>main is the overall function for predic</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="eclip.predic.run">
+<code class="descclassname">eclip.predic.</code><code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#eclip.predic.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>run allows predic to be called from the command line.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="EP_add_new.html" title="EP_add_new"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Eclip 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="eclip.html" >Eclip</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Jenna Elliott.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,38 @@
+eclip.utils package
+===================
+The utils package contains modules with functions that can be used in different
+situations. 
+
+eclip.utils.datamanip module
+----------------------------
+
+.. automodule:: eclip.utils.datamanip
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+eclip.utils.modelmanip module
+-----------------------------
+
+.. automodule:: eclip.utils.modelmanip
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+eclip.utils.visu module
+-----------------------
+
+.. automodule:: eclip.utils.visu
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+eclip.utils.get_data module
+----------------------------
+
+.. automodule:: eclip.utils.get_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+

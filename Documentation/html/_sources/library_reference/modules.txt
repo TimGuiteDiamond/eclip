@@ -1,0 +1,7 @@
+Eclip
+=====
+
+.. toctree::
+   :maxdepth: 4
+
+   eclip.rst

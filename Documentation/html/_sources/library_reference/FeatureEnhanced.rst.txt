@@ -1,0 +1,21 @@
+.. _FeatureEnhanced:
+
+Feature Enhanced Data
+=======================
+
+The Feature Enhanced Data consisted of .... maps. Each map was produced from data
+that first underwent full feature enhancement using SHELX, such that an attempt
+on backbone fitting could have been made. The commands used to do this can be
+seen :ref:`below. <codeSHELXFE>` This was followed by the CCP4 functions 'f2map',
+'cfft' and 'mapmask' called using a dispatcher, to convert to a tessalated map
+format. This last step is done using the package TOPAZ. 
+
+The images produced when training this model can be found in the same directory
+as the model. 
+
+.. _codeSHELXFE:
+
+SHELX code for Feature Enhanced Data
+--------------------------------------
+
+

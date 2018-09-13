@@ -1,0 +1,178 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>EP_add_new &#8212; Eclip 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="predic Module" href="predic.html" />
+    <link rel="prev" title="predictest Module" href="predictest.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="predic.html" title="predic Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="predictest.html" title="predictest Module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Eclip 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="eclip.html" accesskey="U">Eclip</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">EP_add_new</a><ul>
+<li><a class="reference internal" href="#arguments">Arguments</a></li>
+<li><a class="reference internal" href="#functions-in-module">Functions in module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="predictest.html"
+                        title="previous chapter">predictest Module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="predic.html"
+                        title="next chapter">predic Module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/library_reference/EP_add_new.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="ep-add-new">
+<span id="id1"></span><h1>EP_add_new<a class="headerlink" href="#ep-add-new" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-eclip.EP_add_new"></span><p>EP_add_new is the module for adding or updating columns for specific proteins
+when predicting new scores.</p>
+<p>In the Phasing table, the ‘score’ collumns contain the scores, 1 is good, 0 is
+bad. If the ep_img_o, ep_img_i, ep_raw_i or ep_raw_o were populated, they would
+have been cleared and repopulated.</p>
+<p>Other classes and functions called in the module:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>From eclip.utils.get_data:</dt>
+<dd><ul class="first last simple">
+<li>make_list_inverse</li>
+<li>make_list_original</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+<p>Calling EP_add_new results in the population of collumns pdb_id_id, scores, and
+image locatoins of the Phasing table in the sqlite database.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="section" id="arguments">
+<h2>Arguments<a class="headerlink" href="#arguments" title="Permalink to this headline">¶</a></h2>
+<p>The command line arguments are as follows.</p>
+<ul class="simple">
+<li><strong>–db:</strong> The location for the sqlite database. Default: /dls/science/users/ycc62267/metrix_db/metrix_db/sqlite</li>
+<li><strong>–dirin:</strong> The directory location for the input images. Default: /dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox’</li>
+<li><strong>–raw:</strong> Boolean, whether the data is just the heavy atom positions. Default: False</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="functions-in-module">
+<h2>Functions in module<a class="headerlink" href="#functions-in-module" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<dl class="function">
+<dt id="eclip.EP_add_new.main">
+<code class="descclassname">eclip.EP_add_new.</code><code class="descname">main</code><span class="sig-paren">(</span><em>sqlitedb='/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite'</em>, <em>dirin='/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox'</em>, <em>raw=False</em><span class="sig-paren">)</span><a class="headerlink" href="#eclip.EP_add_new.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>main is the overall function for EP_add_new.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="eclip.EP_add_new.run">
+<code class="descclassname">eclip.EP_add_new.</code><code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#eclip.EP_add_new.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>run allows EP_add_new to be called from the command line.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="predic.html" title="predic Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="predictest.html" title="predictest Module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Eclip 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="eclip.html" >Eclip</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Jenna Elliott.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+    </div>
+  </body>
+</html>
