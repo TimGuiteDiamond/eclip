@@ -134,6 +134,27 @@ Examples of how to call:
 >RunPred --input=/INPUT-IMAGE-DIRECTORY/ --output=/OUTPUT-IMAGE-DIRECTORY
 ```
 
+### Pretrained Models
+
+There are two pretrained models in this package. Their performance and data type
+is found in the table below. 
+
+| Model | Data | Maps | Images | Training | Predicting | Image Accuracy | Map Accuracy |
+| 1 | Feature Enhanced | 786 | 35370 | 5h49min | 34sec | 97% | 93% |
+| 2 | | | | | | | |
+
+The total number of maps and images used in the creation of these models (the
+sum of those used for training and predicting are in the columns 'maps and
+'Images' respectively. The runtimes are under 'Training' and 'Predicting'. the
+training runtime was calculated for the program running on a 4 Nvidia Tesla GPU
+cluster, and the predicting runtime was calculated for a single MGA-G200e GPU.
+
+Details on the data types and how they were produced can be found in the
+doccumentation. In summary, the Feature Enhanced Data is data for the electron
+density of the structure, having been improved using SHELXe, whereas the Heavy
+Atom Positions data includes only the information on the positions of the heavy
+atoms in the structure. 
+
 ## Authors
 
 * **Jenna Elliott** 
