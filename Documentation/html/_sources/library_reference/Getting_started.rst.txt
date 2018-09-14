@@ -44,7 +44,7 @@ directory named this space group. In there there must be a .lst file with
 the same name as the protein (with _i if inverse). This file must contain 
 the characters "with CC " followed by a percentage, between the last 1000 
 and last 700 charaters. Alternatively, it can contain the words "CC is less 
-than zero - giving up", or "Pseudo-free CC = ". This is to that EP_success can assign scores to the 
+than zero - giving up". This is to that EP_success can assign scores to the 
 proteins for training.
 
 A diagram of this::
@@ -60,7 +60,7 @@ A diagram of this::
   EP_phasing
       - ProteinName1
           - SpaceGroup
-              - ProteinName.lst
+              - ProteinName1.lst
           'simple_xia2_to_shelxcde.log'
       - ProteinName2
       .

@@ -70,6 +70,8 @@ is found in the table below.
 +-------+-----------------+------+--------+----------+------------+----------------+--------------+
 |   2   | Heavy Atoms     |      |        |          |            |                |              |
 +-------+-----------------+------+--------+----------+------------+----------------+--------------+
+|   3   | Initial Phases  | 845  | 38025  | 5h32min  |   95sec    | 86%            | 70%          |
++-------+-----------------+------+--------+----------+------------+----------------+--------------+
 
 The total number of maps and images used in the creation of these models (the sum 
 of those used for training and predicting) are in the columns 'Maps' and 'Images' respectively.  
@@ -86,6 +88,10 @@ Details on the data types and how they were produced can be found here:
 .. toctree::
 
    HeavyAtoms.rst
+
+.. toctree::
+
+   InitialPhases.rst
 
 
 To use the pretrained models to predict new scores, make sure the input data has
@@ -176,7 +182,7 @@ eclip.predic module
 Acknowledgements
 =================
 * Supervisor: Melaine Vollmar
-* co-supervisor: James Parkhurst
+* Co-Supervisor: James Parkhurst
 * Principle Investigator: Gwyndaf Evans
 
 

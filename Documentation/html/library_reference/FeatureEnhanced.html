@@ -88,7 +88,7 @@
             
   <div class="section" id="feature-enhanced-data">
 <span id="featureenhanced"></span><h1>Feature Enhanced Data<a class="headerlink" href="#feature-enhanced-data" title="Permalink to this headline">¶</a></h1>
-<p>The Feature Enhanced Data consisted of …. maps. Each map was produced from data
+<p>The Feature Enhanced Data consisted of 786 maps. Each map was produced from data
 that first underwent full feature enhancement using SHELX, such that an attempt
 on backbone fitting could have been made. The commands used to do this can be
 seen <a class="reference internal" href="#codeshelxfe"><span class="std std-ref">below.</span></a> This was followed by the CCP4 functions ‘f2map’,
@@ -98,6 +98,134 @@ format. This last step is done using the package TOPAZ.</p>
 as the model.</p>
 <div class="section" id="shelx-code-for-feature-enhanced-data">
 <span id="codeshelxfe"></span><h2>SHELX code for Feature Enhanced Data<a class="headerlink" href="#shelx-code-for-feature-enhanced-data" title="Permalink to this headline">¶</a></h2>
+<p>The Feature Enhanced data is the ‘.phs’ file containing the electron density
+phases produced when completing a full backbone trace using SHELXe.</p>
+<p>To create the data in this form:</p>
+<p>For each protein, first run SHELXc using an input file containing the lines
+shown in the example below (replace relavant parts for new proteins):</p>
+<blockquote>
+<div><ul class="simple">
+<li>TITL 4FDW_fa.ins MAD in P21221</li>
+<li>CELL 0.9800 79.11 112.29 56.08 90.00 90.00 90.00</li>
+<li>LATT -1</li>
+<li>SYMM -X,Y,-Z</li>
+<li>SYMM 1/2+X,-Y,1/2-Z</li>
+<li>SYMM 1/2-X,-Y,1/2+Z</li>
+<li>SFAC SE</li>
+<li>UNIT 128</li>
+<li>FIND 2</li>
+<li>SHEL 999 2.4</li>
+<li>MIND -1.5 -0.1</li>
+<li>PATS</li>
+<li>NTRY 1000</li>
+<li>SEED 42</li>
+<li>HKLF 3</li>
+<li>END</li>
+</ul>
+</div></blockquote>
+<p>This will produce a series of files with ‘_fa’ in the name.</p>
+<p>Then run SHELXd with these _fa files. This finds the heavy atom positions
+and writes them to a ‘.hat’ file.</p>
+<p>Next run SHELXe. This first uses the ‘.hat’ file and runs one of the
+command below, then creates ‘_i.hat’ and runs the same command for the
+inverse.</p>
+<blockquote>
+<div><ul>
+<li><table class="first docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-s</span></kbd></td>
+<td><p class="first last">solvent content</p>
+</td></tr>
+</tbody>
+</table>
+</li>
+<li><table class="first docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-m</span></kbd></td>
+<td><p class="first last">cycles of solvent flattening: default=10</p>
+</td></tr>
+</tbody>
+</table>
+</li>
+<li><table class="first docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span></kbd></td>
+<td><p class="first last">heavy atoms intrinsic part of the protein. Either in the sequence or essentail metal: we assume all are Se (selenium)</p>
+</td></tr>
+</tbody>
+</table>
+</li>
+<li><table class="first docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-z</span></kbd></td>
+<td><p class="first last">optimising heavy atom substructure</p>
+</td></tr>
+</tbody>
+</table>
+</li>
+<li><table class="first docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-a</span></kbd></td>
+<td><p class="first last">number of autotracing cycles: here=5</p>
+</td></tr>
+</tbody>
+</table>
+</li>
+<li><table class="first docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-q</span></kbd></td>
+<td><p class="first last">look for alpha helices</p>
+</td></tr>
+</tbody>
+</table>
+</li>
+<li><table class="first docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-e</span></kbd></td>
+<td><p class="first last">free lunch algorithm</p>
+</td></tr>
+</tbody>
+</table>
+</li>
+</ul>
+</div></blockquote>
+<p>The command to run SHELXe for this data was as follows:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">shelxe</span> <span class="p">{</span><span class="mi">0</span><span class="p">}{</span><span class="mi">1</span><span class="p">}</span> <span class="o">-</span><span class="n">s</span><span class="p">{</span><span class="mi">2</span><span class="p">}</span> <span class="o">-</span><span class="n">m</span> <span class="o">-</span><span class="n">h</span><span class="p">{</span><span class="mi">3</span><span class="p">}</span> <span class="o">-</span><span class="n">z</span><span class="p">{</span><span class="mi">3</span><span class="p">}</span> <span class="o">-</span><span class="n">a5</span> <span class="o">-</span><span class="n">q</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">fa</span><span class="p">,</span> <span class="n">solvent_frac</span><span class="p">,</span>
+<span class="n">find</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Where:</p>
+<blockquote>
+<div><ul class="simple">
+<li>name –&gt; PDB_id</li>
+<li>fa –&gt; files with _fa in name</li>
+<li>solvent_frac –&gt; solvent content as determined by Mathews coefficient</li>
+<li>find –&gt; number of heavy atoms to look for: determined by counting the  number of methionines (Ms) in the sequence and multiplying by the number of molecules expected for the ASU as determined by Mathews coefficient.</li>
+</ul>
+</div></blockquote>
+<p>Running this will produce the necessary files to run the prerequisite program
+Topaz.</p>
 </div>
 </div>
 

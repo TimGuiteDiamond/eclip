@@ -20,3 +20,59 @@ as the model.
 
 SHELX code for Heavy Atom Positions Data
 -----------------------------------------
+
+The Heavy Atom Position Data is the '.pha' file containing the heavy atom phases
+produced when completing a full backbone trace using SHELXe.
+
+To create the data in this form:
+
+For each protein, first run SHELXc using an input file containding the lines
+shown in the example below (replace relevant parts for new proteins):
+
+  * TITL 4FDW_fa.ins MAD in P21221
+  * CELL 0.9800 79.11 112.29 56.08 90.00 90.00 90.00
+  * LATT -1
+  * SYMM -X,Y,-Z
+  * SYMM 1/2+X,-Y,1/2-Z
+  * SYMM 1/2-X,-Y,1/2+Z
+  * SFAC SE
+  * UNIT 128
+  * FIND 2
+  * SHEL 999 2.4
+  * MIND -1.5 -0.1
+  * PATS
+  * NTRY 1000
+  * SEED 42
+  * HKLF 3
+  * END
+
+This will produce a series of files with '_fa' in the name. 
+
+Next run SHELXe. This first uses the '.hat' file and runs some of 
+the command options below (see code block for which), then creates '_i.hat' and
+runs the same command for the inverse. 
+
+  * -s    solvent content
+  * -m    cycles of solvent flattening: default=10
+  * -h    heavy atoms intrinsic part of the protein. Either in the sequence or essential metal: we assume all are Se (selenium)
+  * -z    optimising heavy atom substructure
+  * -a    number of autotracing cycles: here=5
+  * -q    look for alpha helices 
+  * -e    free lunch algorithm
+
+The command to run SHELXe for this data was as follows:
+
+.. code-block:: python3
+
+   shelxe {0}{1} -s{2} -m -h{3} -z{3} -a5 -q.format(name, fa, solvent_frac,
+   find)
+
+Where: 
+
+  * name --> PDB_id
+  * fa --> files with _fa in the name
+  * solvent_frac --> solvent content as determined by Mathews coefficient
+  * find --> number of heavy atoms to look for: determined by counting the  number of methionines (Ms) in the sequence and multiplying by the number of  molecules expected for the ASU as determined by Mathews coefficient. 
+
+Running this will produce the necessary files to run the prerequisite program
+Topaz. 

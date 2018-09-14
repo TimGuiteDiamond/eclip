@@ -49,6 +49,12 @@ learn
 learn if the module that trains a new model. Find the documentation for this
 module :ref:`here <learn>`.
 
+EP_add_new
+^^^^^^^^^^^^
+EP_add_new is the module that updates the SQLite database with the pdb_ids
+of the new data and links to the image directories. Find the documentation
+for this module :ref:`here <EP_add_new>`.
+
 predictest
 ^^^^^^^^^^^
 predictest is the module that tests the model on a testing set of proteins and

@@ -1,25 +1,28 @@
-.. _FeatureEnhanced:
+.. _InitialPhases:
 
-Feature Enhanced Data
+Initial Phases Data
 =======================
 
-The Feature Enhanced Data consisted of 786 maps. Each map was produced from data
-that first underwent full feature enhancement using SHELX, such that an attempt
-on backbone fitting could have been made. The commands used to do this can be
-seen :ref:`below. <codeSHELXFE>` This was followed by the CCP4 functions 'f2map',
+The Initial Phases Data consisted of 845 maps. Each map was produced from data
+produced using SHELX with no feature enhancement. The commands used to do this can be
+seen :ref:`below. <codeSHELXIP>` This was followed by the CCP4 functions 'f2map',
 'cfft' and 'mapmask' called using a dispatcher, to convert to a tessalated map
 format. This last step is done using the package TOPAZ. 
+
+For the training data, a full fitting of the protein backbone must also be done
+using SHELXe.
 
 The images produced when training this model can be found in the same directory
 as the model. 
 
-.. _codeSHELXFE:
+.. _codeSHELXIP:
 
-SHELX code for Feature Enhanced Data
+SHELX code for Initial Phases Data
 --------------------------------------
 
-The Feature Enhanced data is the '.phs' file containing the electron density
-phases produced when completing a full backbone trace using SHELXe. 
+The Initial Phases data is the '.phs' file containing the electron density
+phases produced when using SHELXe to produce the electron density without any
+feature enhancement. The full fitting of a protein backbone must also be done. 
 
 To create the data in this form:
 
@@ -63,9 +66,13 @@ inverse.
 The command to run SHELXe for this data was as follows: 
 
 .. code-block:: python3
-
-   shelxe {0}{1} -s{2} -m -h{3} -z{3} -a5 -q.format(name, fa, solvent_frac,
+    
+   #for the backbone fitting
+   shelxe{0}{1}-s{2}-m-h{3}-z{3}-a5-q.format(name, fa, solvent_frac,
    find)
+
+   #for the initial phases data
+   shelxe{0}{1}-s{2}-h{3}-z{3}.format(name,fa,solvent_frac,find)
 
 Where: 
 
