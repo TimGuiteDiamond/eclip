@@ -54,7 +54,7 @@ followed by a percentages, between the last 1000 and last 700 characters.
 Alternatively, it can contain the words "CC is less than zero - giving up". This
 is so that EP\_success can assign scores to the proteins for training.
 
-A diagram of this: 
+A demonstration of this: 
 
   - MapDirectory
       - ProteinName1.map
