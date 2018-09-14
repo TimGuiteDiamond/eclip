@@ -165,6 +165,7 @@ is found in the table below.
 |-------|--|---|---|--|--|--|--|
 | 1 | Feature Enhanced | 786 | 35370 | 5h49min | 34sec | 97% | 93% |
 | 2 | | | | | | | |
+| 3 | Initial Phases | 845 | 38025 | 5h32min | | 86% | 70% |
 
 The total number of maps and images used in the creation of these models (the
 sum of those used for training and predicting are in the columns 'maps and
@@ -176,7 +177,8 @@ Details on the data types and how they were produced can be found in the
 doccumentation. In summary, the Feature Enhanced Data is data for the electron
 density of the structure, having been improved using SHELXe, whereas the Heavy
 Atom Positions data includes only the information on the positions of the heavy
-atoms in the structure. 
+atoms in the structure. The Initial Phases data is data for the electron density
+of the structure, but with no feature enhancement. 
 
 ### Doccumentation
 
@@ -193,6 +195,6 @@ version.
 ## Acknowledgements
 
 * Supervisor: **Melanie Vollmar**:
-* Co-supervisor: **James Parkhurst**
+* Co-Supervisor: **James Parkhurst**
 * Principle Investigator: **Gwyndaf Evans**
 
