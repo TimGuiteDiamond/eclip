@@ -46,6 +46,7 @@ The command line arguments are as follows.
 * **--lgdir:** The output directory for stats. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1
 * **--ning:** Boolean, whether to add a name onto filenames to be saved. Default = False
 * **--name:** The name to add the the filenames to be saved. default = ''
+* **--para:** Whether or not to train on a cluster, boolean
 
 |
 
@@ -74,7 +75,8 @@ def CreatingNewModel(input_map_directory1,
                       trialnum,
                       lgdir,
                       naming,
-                      name):
+                      name,
+                      para):
   '''
   CreatingNewModel is the main function of RunTrain
 
@@ -114,7 +116,8 @@ def CreatingNewModel(input_map_directory1,
           Raw=raw,
           date=date,
           number = number, 
-          trialnum = trialnum)
+          trialnum = trialnumi,
+          parallel = para)
 
 # calling predictest
   predictestf(fileloc = output_directory1, 
@@ -195,6 +198,11 @@ def run():
                       type = str,
                       help = 'name to give if ning is true',
                       default = '')
+  parser.add_argument('--para',
+                      dest = 'ning',
+                      type = str2bool,
+                      help = 'Boolean, true if running on a cluster',
+                      default = True)
 
 
   args=parser.parse_args()
@@ -209,7 +217,8 @@ def run():
                   args.trial,
                   args.lgdir,
                   args.ning,
-                  args.name)
+                  args.name,
+                  args.para)
   
 ############################################################
 

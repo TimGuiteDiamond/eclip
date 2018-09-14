@@ -46,7 +46,8 @@ def input_training_images(database,
                           fractionTrain,
                           raw =False,
                           number=10,
-                          trialsplit = True):
+                          trialsplit = True,
+                          trialsplitloc = '/dls/science/users/eclip/eclip/paratry1'):
   '''
 
   **Arguments for input_training_images:**
@@ -57,6 +58,7 @@ def input_training_images(database,
   * **raw:** parameter specifying whether to take the raw or processed imagedata default = False
   * **number:** The number of images to call in per axis per protein
   * **trialsplit:** Boolean, true if some proteins should be kept separate
+  * **trialsplitloc:** location for file with list of separate proteins
 
   **Outputs of input_training_images:**
 
@@ -76,12 +78,13 @@ def input_training_images(database,
   #Protein_id is a list of the pdb_id_ids from the database
   cur.execute(''' SELECT pdb_id_id FROM Phasing''')
   Protein_id=cur.fetchall()
-
+  print(Protein_id)
+  print(Protein_id[0])
   #Create a list of directory names (x_dir) and a list of the scores (y_list)
   x_dir=[]
   y_list=[]
 
-  t=open('/dls/science/users/ycc62267/eclip/eclip/trialsplit.txt','w')
+  t=open(os.path.join(trialsplitloc,'trialsplit.txt'),'w')
   if trialsplit == True:
     m=0
     while m<100:
@@ -218,7 +221,7 @@ def import_data(database, proteinlist, input_shape,raw, number = 10):
 
   **Arguments for import_data:**
 
-  * **datafileloc:** The location of the sqlite database
+  * **database:** The location of the sqlite database
   * **proteinlist:** A list of the proteins to select from this directory
   * **input_shape:** The shape of a individual image to be selected 
   * **raw:** boolean, true if using unprocessed data
@@ -335,7 +338,7 @@ def ave_first_score(proteins,name,prediction,outfile,threshold):
 
   '''
 
-  
+  text=open(outfile,'w')  
   pred = []
   score =[]
   for protein in proteins:
@@ -359,12 +362,20 @@ def ave_first_score(proteins,name,prediction,outfile,threshold):
       score.append(1)
       logging.info(
           '%s: averaged likelihood of being phased: %s score of map: 1'%(protein,p))
+      text.write(
+          '%s: averaged likelihood of being phased: %s score of map:1'%(protein,p))
     else:
       score.append(0)
       logging.info(
           '%s: averaged likelihood of being phased: %s score of map: 0'%(protein,p))
-    logging.info('ones %s: zeros %s\n'%(ones,zeros))
+      text.write(
+          '%s: averaged likelihood of being phased: %s score of map: 0'%(protein,p))
+
+  logging.info('ones %s: zeros %s\n'%(ones,zeros))
+  text.write('ones %s: zeros %s\n'%(ones,zeros))
   print('number of maps with scores = %s'%(len(score)))
+  text.write('number of maps with scores = %s'%(len(score)))
+  text.close()
   return score, pred, ones, zeros
 
 def round_first_score(proteins,name, prediction,outfile,threshold):
@@ -393,6 +404,7 @@ def round_first_score(proteins,name, prediction,outfile,threshold):
   |
   
   '''
+  text=open(outfile,'w')
   pred = []
   score =[]
   
@@ -415,13 +427,22 @@ def round_first_score(proteins,name, prediction,outfile,threshold):
       score.append(1)
       logging.info(
         '%s: averaged likelihood of being phased: %s score of map: 1'%(protein,p))
+      text.write(
+        '%s: averaged likelihood of being phased: %s score of map: 1'%(protein,p))
+
     else:
       score.append(0)
       logging.info(
         '%s: averaged likelihood of being phased: %s score of map: 0'%(protein,p))
-    logging.info('ones %s: zeros %s\n'%(ones,zeros))
+      text.write(
+        '%s: averaged likelihood of being phased: %s score of map: 0'%(protein,p))
 
-    return score, pred, ones, zeros
+  logging.info('ones %s: zeros %s\n'%(ones,zeros))
+  text.write('ones %s: zeros %s\n'%(ones,zeros))
+  print('number of maps with scores = %s'%(len(score)))
+  text.write('number of maps with scores = %s'%(len(score)))
+  text.close()
+  return score, pred, ones, zeros
 
 
 def trial_split_list(listloc):

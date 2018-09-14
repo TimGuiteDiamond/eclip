@@ -236,7 +236,8 @@ def run():
         args.dirin,
         args.raw,
         args.out,
-        args.fnm)
+        args.fnm,
+        args.clr)
   
 if __name__=="__main__":
   run()

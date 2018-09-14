@@ -19,7 +19,8 @@ setup(
       'bin/learn',
       'bin/EP_success',
       'bin/predic',
-      'bin/predictest'
+      'bin/predictest',
+      'bin/EP_add_new'
     ],
     install_requires=[
       'pytest',

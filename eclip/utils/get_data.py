@@ -66,8 +66,8 @@ def get_lst_filename(out,name,name_i,best_space_group):
   **Arguments:**
 
   * **out:** directory
-  * **name:** subdirectory - protein name
-  * **name_i: ** subsubdirectory - protein name with phase label
+  * **name:** subdirectory (protein name)
+  * **name_i:** subsubdirectory (protein name with phase label)
   * **best_space_group:** the name of the best space group
 
   |

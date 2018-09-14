@@ -156,6 +156,14 @@ density of the structure, having been improved using SHELXe, whereas the Heavy
 Atom Positions data includes only the information on the positions of the heavy
 atoms in the structure. 
 
+### Doccumentation
+
+The doccumentation can be found in the directory /Documentation/html directory.
+Once the package is downloaded, open the index.html file in Google chrome or
+firefox to access the doccumentation. There is also a pdf copy available under
+/Documentation/pdf, however this lacks the interactive links of the html
+version. 
+
 ## Authors
 
 * **Jenna Elliott** 

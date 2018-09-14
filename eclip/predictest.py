@@ -39,7 +39,7 @@ The command line arguments are as follows.
 * **--wfl:** The loctaion of file for model weights. Default: /dls/science/users/ycc62267/eclip/eclip/paratry/model.h5
 * **--db:** The location for the sqlite database. Default: /dls/science/users/ycc62267/metrix_db/metrix_db.sqlite
 * **--floc:** The location to find files. Default: /dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/
-* **--psl:** The location for the list of proteins to use (produced by learn). Default: /dls/science/users/ycc62267/eclip/eclip/trialsplit.txt
+* **--psl:** The location for the list of proteins to use (produced by learn). Default: /dls/science/users/ycc62267/eclip/eclip/paratry1/trialsplit.txt
 * **--insh:** The input shape of the images, as a list of dimensions. Default: [201,201,3]
 * **--met:** The parameter for how to round, either 'average first' or 'round first'. Default: average first
 * **--out:** The directory to save stats and predictions. Default:/dls/science/users/ycc62267/eclip/eclip/paratry1/
@@ -73,7 +73,7 @@ def main(jsonfile ='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.json'
         weights_file ='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.h5', 
         sqlite_db = '/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite',
         fileloc = '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/', 
-        protein_split_list ='/dls/science/users/ycc62267/eclip/eclip/trialsplit.txt',
+        protein_split_list ='/dls/science/users/ycc62267/eclip/eclip/paratry1/trialsplit.txt',
         inputshape =[201,201,3],
         method = 'average first',
         outdir ='/dls/science/users/ycc62267/eclip/eclip/paratry1/',

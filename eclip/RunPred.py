@@ -1,21 +1,24 @@
 ############
 '''
 RunPred is the module to use an existing model to predict scores on new maps.
-The module slices the maps into images, and loads a pretrained model to predict
-scores for these images, which are then averaged to produce a score for the
-maps. It does not have the full flexibility that calling each indiviually
-provides, but does provide an easier way of running the Eclip package. 
+The module slices the maps into images, updates an sqlite database, and loads
+a pretrained model to predict scores for these images, which are then 
+averaged to produce a score for the maps. It does not have the full 
+flexibility that calling each indiviuallyprovides, but does provide an easier 
+way of running the Eclip package. 
 
 Other modules called by RunPred:
 
   * ConvMAP
+  * EP_add_new
   * predic
 
 Calling RunPred results in the creation of: 
 
   * Images of slices of the maps
   * log------_-.txt
-  * populated collumns for predictions in the sqlite database 
+  * populated columns for predictions in the sqlite database 
+  * datapredict------_-.txt
 
 | 
 
@@ -31,7 +34,7 @@ The command line arguments are as follows.
 * **--op:** The output loction for the prediction file. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1/
 * **--ning:** Boolean, true is name should be added to date
 * **--name:** Name to add
-* **-model:** The directory to find the model.json and model.h5 files
+* **--model:** The directory to find the model.json and model.h5 files
 
 | 
 
@@ -44,7 +47,9 @@ Functions in module
 
 from eclip.ConvMAP import image_slicing
 from eclip.predic import  main as predicf
+from eclip.EP_add_new import main as EP_add_new
 import time
+import os.path
 
 ##########
 def Predictfromexisting(input_map_directory1,
@@ -74,6 +79,9 @@ def Predictfromexisting(input_map_directory1,
 
 #calling ConvMAP
   image_slicing(input_map_directory1,output_directory1)
+
+#updating database
+  EP_add_new(sqlitedb=sqlite_db,dirin = output_directory1, raw = raw)
 
 #calling predic
   predicf(jsonfile= jsonfile,

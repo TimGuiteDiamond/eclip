@@ -104,9 +104,10 @@ def main(jsonfile='/dls/science/users/ycc62267/eclip/eclip/paratry1/model.json',
   outfile = os.path.join(outdir,'datapredic'+date+'_'+str(trial_num)+'.txt')
 
   #loading data  
-  x, name, proteins = import_data(datafileloc=fileloc,
+  x, name, proteins = import_data(database=sqlite_db,
                                   proteinlist=proteinsplit,
-                                  input_shape=inputshape)
+                                  input_shape=inputshape,
+                                  raw = raw)
   
   #loading model
   model = load_json(jsonfile,weights_file)

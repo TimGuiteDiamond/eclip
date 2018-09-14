@@ -53,6 +53,7 @@ The command line arguments for learn are as follows.
 * **--ning:** Boolean, true if adding name to date
 * **--name:** Name to add to date if ning is true
 * **--db:** The sqlite database
+
 |
 
 Functions in module
@@ -113,7 +114,8 @@ def main(batchsize = 64,
                           'parallelization: %s',
                           'decay rate: %s',
                           'Raw: %s',
-                          'thresh: %s']) %(batchsize,
+                          'thresh: %s',
+                          'fraction train: 0.7']) %(batchsize,
                                         epochs,
                                         lossequation,
                                         learningrate,
@@ -128,9 +130,10 @@ def main(batchsize = 64,
   x_train,y_train,x_test,y_test=input_training_images(
                             database=sqlitedb,
                             input_shape=inputshape,
-                            fractionTrain=0.8,
+                            fractionTrain=0.7,
                             raw=Raw, 
-                            number=number)
+                            number=number,
+                            trialsplitloc = outputdirectory)
 
 
   #Printing the data dimensions to logfile
