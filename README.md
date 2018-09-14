@@ -52,7 +52,29 @@ group. In there there must be a .lst file with the same name as the protein
 (with \_i if inverse phasing). This file must contain the characters "with CC "
 followed by a percentages, between the last 1000 and last 700 characters.
 Alternatively, it can contain the words "CC is less than zero - giving up". This
-is so that EP\_success can assign scores to the proteins for training. 
+is so that EP\_success can assign scores to the proteins for training.
+
+A diagram of this: 
+
+  - MapDirectory
+      - ProteinName1.map
+      - ProteinName1_i.map
+      - ProteinName2.map
+      .
+      .
+      .
+
+
+  - EP\_phasing
+      - ProteinName1
+          - SpaceGroup
+              - ProteinName1.lst
+          'simple_xia2_to_shelxcde.log'
+      - ProteinName2
+      .
+      .
+      .
+    
 
 The SQLite database must have a table called "**Phasing**", with collumn names: 
 * pdb\_id\_id
