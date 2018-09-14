@@ -1,0 +1,15 @@
+
+Number of true positives:7
+
+              Number of true negatives: 86
+
+              Number of false positives: 1
+
+              Number of false negatives: 6
+accuracy = 0.93743: 3V4M_i
+36: 3S5R
+764: 3LY1
+764: 3LY1_i
+738: 3ULH_i
+638: 4EBG_i
+763: 3E5D_i

@@ -1,0 +1,2 @@
+4DNK: averaged likelihood of being phased: 0.9958931922912597 score of map:1ones 30: zeros 0
+number of maps with scores = 1
