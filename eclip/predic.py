@@ -41,7 +41,7 @@ The command line arguments are as follows.
 * **--wfl:** The location for the weights file for the model. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1/model.h5
 * **--db:** The location of the sqlite database. Default: /dls/science/users/ycc62267/metrix_db/metrix_db.sqlite
 * **--floc:** The location to find image directories. Default: /dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/
-* **--psl:** The location for list of proteins to use. Default: /dls/science/users/ycc62267/eclip/eclip/trialsplit.txt
+* **--psl:** The location for list of proteins to use. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1/trialsplit.txt
 * **--insh:** The input image shape, as a list of dimensions. Default: [201,201,3]
 * **--met:** The method used to round the predictions, either "average first" or "round first". Default: average first
 * **--out:** The location of director to save output files. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1/
@@ -204,7 +204,7 @@ def run():
                       type = str,
                       help = 'location of database',
                       default =
-                      '/dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/')
+                      '/dls/science/users/ycc62267/metrix_db/metrix_db.sqlite')
   parser.add_argument('--floc',
                       dest = 'floc',
                       type = str,
@@ -217,7 +217,7 @@ def run():
                       type = str,
                       help = 'location for list of unused proteins.',
                       default =
-                      '/dls/science/users/ycc62267/eclip/eclip/trialsplit.txt')
+                      '/dls/science/users/ycc62267/eclip/eclip/paratry1/trialsplit.txt')
   parser.add_argument('--insh',
                       dest = 'inshape',
                       type = list,

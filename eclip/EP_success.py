@@ -28,8 +28,7 @@ The command line arguments are as follows.
 * **--db:** The location for the sqlite database. Default: /dls/science/users/ycc62267/metrix_db/metrix_db/sqlite
 * **--dirin:** The directory location for the input images. Default: /dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox'
 * **--raw:** Boolean, whether the data is just the heavy atom positions. Default: False
-* **--out:** The direcotry location to find the logfiles containing the
-* percentage. Default: /dls/mx-scratch/melanie/for_METRIX/results_201710/EP_phasing
+* **--out:** The directory location to find the logfiles containing the percentage. Default: /dls/mx-scratch/melanie/for_METRIX/results_201710/EP_phasing
 * **--fnm:** The name of the log file containing the percentages. Default: simple_xia2_to_shelxcde.log
 * **--clr:** Whether to clear the columns (for both o and i): 'ep_success','ep_img' and 'ep_raw' Default: True
 

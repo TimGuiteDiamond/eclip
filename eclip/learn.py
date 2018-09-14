@@ -48,11 +48,11 @@ The command line arguments for learn are as follows.
 * **--raw:** Boolean, if learning on just heavy atom positions. Default: False
 * **--insh:** The input shape of the images, as a list of dimensions. Default: [201,201,3]
 * **--out:** Directory location for the states etc to be saved. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1
-* **--th:** Threshold to round predictions up from
-* **--nmb:** The number of images per protein per axis
-* **--ning:** Boolean, true if adding name to date
-* **--name:** Name to add to date if ning is true
-* **--db:** The sqlite database
+* **--th:** Threshold to round predictions up from. Default: 0.5
+* **--nmb:** The number of images per protein per axis. Default: 10
+* **--ning:** Boolean, true if adding name to date. Default: False
+* **--name:** Name to add to date if ning is true. Default: ''
+* **--db:** The sqlite database. Default: /dls/science/users/ycc62267/metrix_db/metrix_db.sqlite'
 
 |
 

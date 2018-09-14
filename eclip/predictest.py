@@ -35,8 +35,8 @@ Arguments
 
 The command line arguments are as follows. 
   
-* **--jsn:** The location to find json file for  model. Default: /dls/science/users/ycc62267/eclip/eclip/paratry/model.json
-* **--wfl:** The loctaion of file for model weights. Default: /dls/science/users/ycc62267/eclip/eclip/paratry/model.h5
+* **--jsn:** The location to find json file for  model. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1/model.json
+* **--wfl:** The loctaion of file for model weights. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1/model.h5
 * **--db:** The location for the sqlite database. Default: /dls/science/users/ycc62267/metrix_db/metrix_db.sqlite
 * **--floc:** The location to find files. Default: /dls/mx-scratch/ycc62267/imgfdr/blur2_5_maxminbox/
 * **--psl:** The location for the list of proteins to use (produced by learn). Default: /dls/science/users/ycc62267/eclip/eclip/paratry1/trialsplit.txt
@@ -45,11 +45,11 @@ The command line arguments are as follows.
 * **--out:** The directory to save stats and predictions. Default:/dls/science/users/ycc62267/eclip/eclip/paratry1/
 * **--date:** The date to appear on saved files. Default: current date
 * **--trial:** The starting trial number. Default: 1
-* **--th:** The value to round up from. Default: threshold= 0.5
+* **--th:** The value to round up from. Default: 0.5
 * **--raw:** Boolean, whether using heavy atom positions of processed data. Default: False
-* **--ning:** Boolean, true is adding name to date
-* **--name:** name to add
-* **--nmb:** number of images per protein per axis
+* **--ning:** Boolean, true is adding name to date. Default: False
+* **--name:** name to add. Default: ''
+* **--nmb:** number of images per protein per axis. Default: 15
 
 |
 
@@ -271,7 +271,7 @@ def run():
                       type = str,
                       help = 'location for list of used proteins',
                       default =
-                      '/dls/science/users/ycc62267/eclip/eclip/trialsplit.txt')
+                      '/dls/science/users/ycc62267/eclip/eclip/paratry1/trialsplit.txt')
   parser.add_argument('--insh',
                       dest='inshape',
                       type = list,

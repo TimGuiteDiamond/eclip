@@ -44,9 +44,9 @@ The command line arguments are as follows.
 * **--nmb:** The number of images to use per axis per protein. Default: 15
 * **--trial:** The starting trial number. Default: 1
 * **--lgdir:** The output directory for stats. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1
-* **--ning:** Boolean, whether to add a name onto filenames to be saved. Default = False
-* **--name:** The name to add the the filenames to be saved. default = ''
-* **--para:** Whether or not to train on a cluster, boolean
+* **--ning:** Boolean, whether to add a name onto filenames to be saved. Default: False
+* **--name:** The name to add the the filenames to be saved. Default: ''
+* **--para:** Whether or not to train on a cluster, boolean. Default: True
 
 |
 

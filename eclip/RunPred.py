@@ -32,9 +32,9 @@ The command line arguments are as follows.
 * **--db:** The location of the sqlite database file. Default: /dls/science/users/ycc62267/metrix_db/metrix_db.sqlite
 * **--raw:** Boolean, whether using heavy atom positions or processed data. Default: False
 * **--op:** The output loction for the prediction file. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1/
-* **--ning:** Boolean, true is name should be added to date
-* **--name:** Name to add
-* **--model:** The directory to find the model.json and model.h5 files
+* **--ning:** Boolean, true is name should be added to date. Default: False
+* **--name:** Name to add. Default: ''
+* **--model:** The directory to find the model.json and model.h5 files. Default: /dls/science/users/ycc62267/eclip/eclip/paratry1/
 
 | 
 
