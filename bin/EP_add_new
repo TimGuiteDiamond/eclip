@@ -1,0 +1,8 @@
+#!/bin/env python3
+
+from eclip import EP_add_new
+
+if __name__ =='__main__':
+  EP_add_new.run()
+
+
