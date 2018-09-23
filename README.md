@@ -164,7 +164,7 @@ is found in the table below.
 | Model | Data | Maps | Images | Training | Predicting | Image Accuracy | Map Accuracy |
 |-------|--|---|---|--|--|--|--|
 | 1 | Feature Enhanced | 786 | 35370 | 5h49min | 34sec | 97% | 93% |
-| 2 | Heavy Atoms | 791 | 791 | 35595 | 4h17min | | 81% | 76% |
+| 2 | Heavy Atoms | 791 | 35595 | 4h17min | | 81% | 76% |
 | 3 | Initial Phases | 845 | 38025 | 5h32min | | 86% | 70% |
 
 The total number of maps and images used in the creation of these models (the
