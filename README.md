@@ -191,6 +191,7 @@ version.
 ## Authors
 
 * **Jenna Elliott** 
+* **Tim Guite**
 
 ## Acknowledgements
 
